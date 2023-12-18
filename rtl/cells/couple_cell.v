@@ -24,8 +24,6 @@ module coupled_cell  #(parameter RESET = 0)(
     //
     // If coupling is negative, we want whichever input is 1 first
     // to speed up and outrun the other input.
-    //
-    // TODO: Implement this
 
     wire [2:0] weight;
     assign weight = coupling_weights[(i-1)*3 + 2 : (i-1)*3];
@@ -37,21 +35,37 @@ module coupled_cell  #(parameter RESET = 0)(
     assign pos1   = (weight == 3'b011);
     assign pos2   = (weight == 3'b100);
     
-    assign ns_buf1   = (pos2 &  couple);
-    assign ns_buf2   = (pos1 &  couple);
-    assign ns_buf3   = (zero | ~couple);
-    assign ns_buf4   = (neg1 &  couple);
-    assign ns_buf5   = (neg2 &  couple);
+    assign ns_buf1   = (neg2 &  ~win);
+    assign ns_buf2   = (neg1 &  ~win);
+    assign ns_buf3   = (zero |   win);
+    assign ns_buf4   = (pos1 &  ~win);
+    assign ns_buf5   = (pos2 &  ~win);
     
     wire   [4:0] ns_buf_out;
     buffer ns_buffer[4:0] ({ns_buf_out[3:0], nin}, ns_buf_out);
     
     assign sout    = ~rstn ? RESET      :
-                      buf1 ? ns_buf_out[0] :
-    	              buf2 ? ns_buf_out[1] :
-    	              buf3 ? ns_buf_out[2] :
-    	              buf4 ? ns_buf_out[3] :
-    	              buf5 ? ns_buf_out[4] : 0;
+                      ns_buf1 ? ns_buf_out[0] :
+    	              ns_buf2 ? ns_buf_out[1] :
+    	              ns_buf3 ? ns_buf_out[2] :
+    	              ns_buf4 ? ns_buf_out[3] :
+    	              ns_buf5 ? ns_buf_out[4] : 0;
+    
+    assign ew_buf1   = (neg2 &  ~nin);
+    assign ew_buf2   = (neg1 &  ~nin);
+    assign ew_buf3   = (zero |   nin);
+    assign ew_buf4   = (pos1 &  ~nin);
+    assign ew_buf5   = (pos2 &  ~nin);
+    
+    wire   [4:0] ew_buf_out;
+    buffer ew_buffer[4:0] ({ew_buf_out[3:0], ein}, ew_buf_out);
+    
+    assign eout    = ~rstn ? RESET      :
+                      ew_buf1 ? ew_buf_out[0] :
+    	              ew_buf2 ? ew_buf_out[1] :
+    	              ew_buf3 ? ew_buf_out[2] :
+    	              ew_buf4 ? ew_buf_out[3] :
+    	              ew_buf5 ? ew_buf_out[4] : 0;
 
     end endgenerate
 
