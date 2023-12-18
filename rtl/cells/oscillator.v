@@ -4,14 +4,11 @@
 // Consists of an inverter, N coupled delay ports,
 // and an output port.
 //
-//            N   wave     0
-//      |---<---<---<---<--|
-//  out-|                  |
-//      |-->o--------------|
+//     N   wave     0
+//  |---<---<---<---<--|
+//  |                  |-- out
+//  |-->o--------------|
 //
-//
-// TODO: In practice, this can be implementd with a series of
-// multiplexers and buffers.
 
 `timescale 1ns/1ps
 
@@ -22,53 +19,79 @@ module oscillator #(parameter PORTS = 16)(
 		    input wire rstn, //negedge reset
 		    output wire out);
 
-    wire [PORTS:0] wave;
-    reg  [PORTS:1] wave_reg;
+    wire [PORTS  :0] wave;
+    wire             inv ;
 
-    assign wave[0] = rstn ? ~out : 0;
-    assign out = rstn ? wave[PORTS] : 0;
+    inverter _inv(wave[PORTS], inv);
+
+    assign wave[0] = rstn ? inv      : 0;
+    assign out     = wave[0];
 
     // check if we're matching the coupled input or not
     wire [PORTS-1:0] match;
     assign match = rstn ? ~(coupling_inputs ^ {PORTS{out}}) : 0 ;
 
+    // Coupled delay ports
     genvar i;
     generate for (i = 1; i <= PORTS; i=i+1) begin
-	assign wave[i] = rstn ? wave_reg[i] : 0;
+
 	wire [2:0] weight;
 	assign weight = coupling_weights[(i-1)*3 + 2 : (i-1)*3];
-	always @(*) begin
-	    case(weight)
-	        3'b000: begin
-	                // -2: slow down if input is mismatch
-	                //     speed up if input is match
-			if (match[i]) begin #1 wave_reg[i] = wave[i-1]; end
-			else begin #5 wave_reg[i] = wave[i-1]; end
-	        	end
-	        3'b001: begin
-	                // -1: slow down if input is mismatch
-	                //     speed up if input is match
-			if (match[i]) begin #2 wave_reg[i] = wave[i-1]; end
-			else begin #4 wave_reg[i] = wave[i-1]; end
-	        	end
-	        3'b010: begin
-	                // 0:  no speed change
-	        	#3 wave_reg[i] = wave[i-1];
-	        	end
-	        3'b011: begin
-	                // +1: speed up if input is mismatch
-	                //     slow down if input is match
-			if (match[i]) begin #4 wave_reg[i] = wave[i-1]; end
-			else begin #2 wave_reg[i] = wave[i-1]; end
-	        	end
-	        3'b100: begin
-	                // +2: speed up if input is mismatch
-	                //     slow down if input is match
-			if (match[i]) begin #5 wave_reg[i] = wave[i-1]; end
-			else begin #1 wave_reg[i] = wave[i-1]; end
-	        	end
-	    endcase
-	end
+
+	// TODO: Coupling is currently directed;
+	// if A and B are both coupled, and A and
+	// B are mismatched, they both speed up.
+	// We need to fix this.
+	//
+	// -2: slow down if input is mismatch
+	//     speed up if input is match
+	// -1: slow down if input is mismatch
+	//     speed up if input is match
+	//  0: no speed change
+	// +1: speed up if input is mismatch
+	//     slow down if input is match
+	// +2: speed up if input is mismatch
+	//     slow down if input is match
+	assign neg2   = (weight == 3'b000);
+	assign neg1   = (weight == 3'b001);
+	assign zero   = (weight == 3'b010);
+	assign pos1   = (weight == 3'b011);
+	assign pos2   = (weight == 3'b100);
+
+        assign buf1   = (neg2 & match)  | (pos2 & !match);
+	assign buf2   = (neg1 & match)  | (pos1 & !match);
+	assign buf3   = zero;
+        assign buf4   = (neg1 & !match) | (pos1 & match) ;
+	assign buf5   = (neg2 & !match) | (pos2 & match) ;
+
+	wire   [4:0] buf_out;
+        buffer couple_buffer[4:0] ({buf_out[3:0], wave[i-1]}, buf_out);
+
+	assign wave[i] = ~rstn ? 0          :
+		          buf1 ? buf_out[0] :
+		          buf2 ? buf_out[1] :
+		          buf3 ? buf_out[2] :
+		          buf4 ? buf_out[3] :
+		          buf5 ? buf_out[4] : 0;
+
     end endgenerate
 
+endmodule
+
+// Generic buffer for simulation
+module buffer(input wire i, output wire o);
+    reg o_reg;
+    assign o = o_reg;
+    always @(i) begin
+        #1 o_reg = i;
+    end
+endmodule
+
+// Generic inverter for simulation
+module inverter(input wire i, output wire o);
+    reg o_reg;
+    assign o = o_reg;
+    always @(i) begin
+        #1 o_reg = ~i;
+    end
 endmodule
