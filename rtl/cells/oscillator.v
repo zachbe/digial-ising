@@ -12,7 +12,7 @@
 
 `timescale 1ns/1ps
 
-module oscillator #(parameter PORTS = 16)(
+module oscillator #(parameter PORTS = 16, parameter RESET = 0)(
                     //Coupling weights can fall between -2 and +2
 		    input wire [(3*PORTS)-1:0] coupling_weights,
 	            input wire [PORTS-1    :0] coupling_inputs,
@@ -22,7 +22,7 @@ module oscillator #(parameter PORTS = 16)(
     wire [PORTS  :0] wave;
     wire [PORTS  :0] pad ;
 
-    assign wave[0] = rstn ? ~pad[PORTS] : 0;
+    assign wave[0] = rstn ? ~pad[PORTS] : RESET;
     assign out     = wave[0];
 
     assign pad[0] = wave[PORTS];
@@ -32,9 +32,20 @@ module oscillator #(parameter PORTS = 16)(
     generate for (i = 1; i <= PORTS; i=i+1) begin
 	wire   [4:0] pad_buf_out;
         buffer pad_buffer[4:0] ({pad_buf_out[3:0], pad[i-1]}, pad_buf_out);
-	assign pad[i] = rstn ? pad_buf_out[4] : 0;
+	assign pad[i] = rstn ? pad_buf_out[4] : RESET;
     end endgenerate
 
+
+    // TODO: Coupling needs to be re-designed.
+    // Right now, if A and B are coupled, A tries to catch up to B while
+    // B tries to catch up to A, causing them to repeatedly go fast without
+    // actually ending up in sync.
+    //
+    // Also, coupling one way does not actually cause the coupled oscillator
+    // to lock with the source oscillator.
+    //
+    // -----------------
+    //
     // Check if we want to enable coupling.
     //
     // If our output value is 0 and the coupled output value is 1, positive
@@ -76,7 +87,7 @@ module oscillator #(parameter PORTS = 16)(
 	wire   [4:0] buf_out;
         buffer couple_buffer[4:0] ({buf_out[3:0], wave[i-1]}, buf_out);
 
-	assign wave[i] = ~rstn ? 0          :
+	assign wave[i] = ~rstn ? RESET      :
 	                  buf1 ? buf_out[0] :
 		          buf2 ? buf_out[1] :
 		          buf3 ? buf_out[2] :
