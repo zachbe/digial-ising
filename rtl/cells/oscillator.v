@@ -2,13 +2,13 @@
 // A couple-able ring oscillator.
 //
 // Consists of an inverter, N coupled delay ports,
-// and an output port.
+// N padded buffers, and an output port.
 //
 //     N   wave     0
 //  |---<---<---<---<--|
 //  |                  |-- out
-//  |-->o--------------|
-//
+//  |-->o-->->->->-----|
+//          padding
 
 `timescale 1ns/1ps
 
@@ -20,19 +20,26 @@ module oscillator #(parameter PORTS = 16)(
 		    output wire out);
 
     wire [PORTS  :0] wave;
-    wire             inv ;
+    wire [PORTS  :0] pad ;
 
-    inverter _inv(wave[PORTS], inv);
-
-    assign wave[0] = rstn ? inv      : 0;
+    assign wave[0] = rstn ? ~pad[PORTS] : 0;
     assign out     = wave[0];
+
+    assign pad[0] = wave[PORTS];
+    
+    // Padding delay ports prevent ringing
+    genvar i;
+    generate for (i = 1; i <= PORTS; i=i+1) begin
+	wire   [4:0] pad_buf_out;
+        buffer pad_buffer[4:0] ({pad_buf_out[3:0], pad[i-1]}, pad_buf_out);
+	assign pad[i] = rstn ? pad_buf_out[4] : 0;
+    end endgenerate
 
     // check if we're matching the coupled input or not
     wire [PORTS-1:0] match;
     assign match = rstn ? ~(coupling_inputs ^ {PORTS{out}}) : 0 ;
 
     // Coupled delay ports
-    genvar i;
     generate for (i = 1; i <= PORTS; i=i+1) begin
 
 	wire [2:0] weight;
@@ -67,8 +74,11 @@ module oscillator #(parameter PORTS = 16)(
 	wire   [4:0] buf_out;
         buffer couple_buffer[4:0] ({buf_out[3:0], wave[i-1]}, buf_out);
 
+        // TODO: When we switch from a mismatch to a match,
+	// sometimes we swap buffer configurations in a way
+	// that causes oscillation.
 	assign wave[i] = ~rstn ? 0          :
-		          buf1 ? buf_out[0] :
+	                  buf1 ? buf_out[0] :
 		          buf2 ? buf_out[1] :
 		          buf3 ? buf_out[2] :
 		          buf4 ? buf_out[3] :
@@ -84,14 +94,5 @@ module buffer(input wire i, output wire o);
     assign o = o_reg;
     always @(i) begin
         #1 o_reg = i;
-    end
-endmodule
-
-// Generic inverter for simulation
-module inverter(input wire i, output wire o);
-    reg o_reg;
-    assign o = o_reg;
-    always @(i) begin
-        #1 o_reg = ~i;
     end
 endmodule

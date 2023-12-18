@@ -23,15 +23,15 @@ module osc_tb();
         rstn = 0;
 	coupling_input = 3'b0;
 	coupling_weight = 9'b010010010;
-	#20;
+	#100;
         rstn = 1;
-	#50
+	#500
         rstn = 0;
         coupling_input = 3'b0;
 	coupling_weight = 9'b100010010;
-	#20;
+	#100;
         rstn = 1;
-	#50
+	#500
 	$finish();
     end
 endmodule
