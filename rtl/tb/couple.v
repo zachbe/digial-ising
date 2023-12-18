@@ -9,7 +9,7 @@ module couple_tb();
     wire out_b;
 
     // Start in one phase                          0  0  0
-    oscillator #(3,0) osc_a (.coupling_weights(9'b010010100   ),
+    oscillator #(3,0) osc_a (.coupling_weights(9'b010010010   ),
 	                     .coupling_inputs (3'b0           ),
 	  		     .rstn            (rstn           ),
 			     .out             (out_a          ));
@@ -29,7 +29,7 @@ module couple_tb();
         rstn = 0;
 	#100;
         rstn = 1;
-	#1000
+	#1000;
 	$finish();
     end
 endmodule
