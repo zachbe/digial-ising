@@ -6,8 +6,8 @@ This project is an attempt to create an entirely digital coupled ising solver. I
 
 How it Works:
 
-When oscillators A and B are positively coupled, gating circuits prevent the wave-front of A from getting too far behind B's wave-front, and vice-versa.
+When oscillators A and B are positively coupled, A will speed B up if A is ahead of B, and vice versa.
 
-When oscillators A and B are negatively coupled, gating circuits prevent the wave-front of B from getting too close to B's wave-front, and vice-versa.
+When oscillators A and B are negatively coupled, A will slow B down if A is ahead of B, and vice versa.
 
 Graphics will be added soon.	
