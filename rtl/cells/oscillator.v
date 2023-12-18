@@ -35,9 +35,24 @@ module oscillator #(parameter PORTS = 16)(
 	assign pad[i] = rstn ? pad_buf_out[4] : 0;
     end endgenerate
 
-    // check if we're matching the coupled input or not
-    wire [PORTS-1:0] match;
-    assign match = rstn ? ~(coupling_inputs ^ {PORTS{out}}) : 0 ;
+    // Check if we want to enable coupling.
+    //
+    // If our output value is 0 and the coupled output value is 1, positive
+    // coupling causes us to speed up to try to match the 1.
+    //
+    // If our output value is 1 and the coupled output value is 0, positive
+    // coupling will cause the coupled ring osillator to speed up, so we
+    // don't need to speed up.
+    //
+    // If our output value is 0 and the coupled output value is 1, negative
+    // coupling causes us to try to slow down and continue being out of sync.
+    //
+    // If our output value is 1 and the coupled output value is 0, negative
+    // coupling will cause the coupled ring oscillator to slow down, so we
+    // don't need to slow down.
+    
+    wire [PORTS-1:0] couple;
+    assign couple = rstn ? (coupling_inputs & {PORTS{~out}}) : 0 ;
 
     // Coupled delay ports
     generate for (i = 1; i <= PORTS; i=i+1) begin
@@ -45,38 +60,22 @@ module oscillator #(parameter PORTS = 16)(
 	wire [2:0] weight;
 	assign weight = coupling_weights[(i-1)*3 + 2 : (i-1)*3];
 
-	// TODO: Coupling is currently directed;
-	// if A and B are both coupled, and A and
-	// B are mismatched, they both speed up.
-	// We need to fix this.
-	//
-	// -2: slow down if input is mismatch
-	//     speed up if input is match
-	// -1: slow down if input is mismatch
-	//     speed up if input is match
-	//  0: no speed change
-	// +1: speed up if input is mismatch
-	//     slow down if input is match
-	// +2: speed up if input is mismatch
-	//     slow down if input is match
+	//  5 levels of coupling strengh
 	assign neg2   = (weight == 3'b000);
 	assign neg1   = (weight == 3'b001);
 	assign zero   = (weight == 3'b010);
 	assign pos1   = (weight == 3'b011);
 	assign pos2   = (weight == 3'b100);
 
-        assign buf1   = (neg2 & match)  | (pos2 & !match);
-	assign buf2   = (neg1 & match)  | (pos1 & !match);
-	assign buf3   = zero;
-        assign buf4   = (neg1 & !match) | (pos1 & match) ;
-	assign buf5   = (neg2 & !match) | (pos2 & match) ;
+        assign buf1   = (pos2 &  couple);
+	assign buf2   = (pos1 &  couple);
+	assign buf3   = (zero | ~couple);
+        assign buf4   = (neg1 &  couple);
+	assign buf5   = (neg2 &  couple);
 
 	wire   [4:0] buf_out;
         buffer couple_buffer[4:0] ({buf_out[3:0], wave[i-1]}, buf_out);
 
-        // TODO: When we switch from a mismatch to a match,
-	// sometimes we swap buffer configurations in a way
-	// that causes oscillation.
 	assign wave[i] = ~rstn ? 0          :
 	                  buf1 ? buf_out[0] :
 		          buf2 ? buf_out[1] :

@@ -21,13 +21,13 @@ module osc_tb();
         rstn = 1;
 	#1;
         rstn = 0;
-	coupling_input = 3'b0;
+	coupling_input = 3'b111;
 	coupling_weight = 9'b010010010;
 	#100;
         rstn = 1;
 	#500
         rstn = 0;
-        coupling_input = 3'b0;
+        coupling_input = 3'b111;
 	coupling_weight = 9'b100010010;
 	#100;
         rstn = 1;
