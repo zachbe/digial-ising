@@ -44,6 +44,11 @@ module oscillator #(parameter PORTS = 16, parameter RESET = 0)(
     // New idea: we use some sort of counter to measure the phase match
     // between ROs and use that phase match to affect the timing.
     //
+    // Other idea: try a topology similar to:
+    // https://www.nature.com/articles/s41928-023-01021-y
+    // Mismatches are measured at different points, and affect the
+    // propagation delay from that point.
+    //
     // -----------------
     //
     // Check if we want to enable coupling.
