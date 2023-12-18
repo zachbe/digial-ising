@@ -35,35 +35,28 @@ module oscillator #(parameter PORTS = 16, parameter RESET = 0)(
 	assign pad[i] = rstn ? pad_buf_out[4] : RESET;
     end endgenerate
 
-
-    // TODO: Coupling needs to be re-designed.
-    // Right now, if A and B are coupled, A tries to catch up to B while
-    // B tries to catch up to A, causing them to repeatedly go fast without
-    // actually ending up in sync.
+    // TODO: Issues with coupling:
+    // Currently, once coupling has been re-aligned by a couple cycles,
+    // the propagation delay while the cycles are aligned causes the
+    // wave-front to already be past the part that triggers off of
+    // mismatch.
     //
-    // Also, coupling one way does not actually cause the coupled oscillator
-    // to lock with the source oscillator.
+    // New idea: we use some sort of counter to measure the phase match
+    // between ROs and use that phase match to affect the timing.
     //
     // -----------------
     //
     // Check if we want to enable coupling.
     //
-    // If our output value is 0 and the coupled output value is 1, positive
-    // coupling causes us to speed up to try to match the 1.
+    // If our output value and the coupled output value don't match,
+    // positive coupling causes us to speed up to try to match.
     //
-    // If our output value is 1 and the coupled output value is 0, positive
-    // coupling will cause the coupled ring osillator to speed up, so we
-    // don't need to speed up.
-    //
-    // If our output value is 0 and the coupled output value is 1, negative
-    // coupling causes us to try to slow down and continue being out of sync.
-    //
-    // If our output value is 1 and the coupled output value is 0, negative
-    // coupling will cause the coupled ring oscillator to slow down, so we
-    // don't need to slow down.
+    // If our output value and the coupled output value don't match,
+    // negative coupling causes us to try to slow down and continue
+    // being out of sync.
     
     wire [PORTS-1:0] couple;
-    assign couple = rstn ? (coupling_inputs & {PORTS{~out}}) : 0 ;
+    assign couple = rstn ? (coupling_inputs ^ {PORTS{out}}) : 0 ;
 
     // Coupled delay ports
     generate for (i = 1; i <= PORTS; i=i+1) begin
