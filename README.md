@@ -6,8 +6,8 @@ This project is an attempt to create an entirely digital coupled ising solver. I
 
 How it Works:
 
-When oscillators A and B are positively coupled, A will speed B up if A is ahead of B, and vice versa.
+When oscillators A and B are positively coupled, the oscillators' relative phases will be changed when they are different.
 
-When oscillators A and B are negatively coupled, A will slow B down if A is ahead of B, and vice versa.
+When oscillators A and B are negatively coupled, the oscillators' relative phases will be changed when they are the same.
 
 Graphics will be added soon.	

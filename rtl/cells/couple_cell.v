@@ -11,71 +11,55 @@
 
 module coupled_cell  #(parameter RESET = 0)(
                        //Coupling weight can fall between -2 and +2
-		       input  wire [2:0] coupling_weight,
-	               input  wire nin ,
-		       input  wire win ,
+		       input  wire [2:0] weight,
+	               input  wire sin ,
+		       input  wire din ,
 		       output wire sout,
-		       output wire eout,
+		       output wire dout,
 		       input  wire rstn, //negedge reset
 	               );
 
-    // If coupling is positive, we want whichever input is 1 first
-    // to slow down and wait for the other input.
+    // If coupling is positive, we want to slow down the destination
+    // oscillator when it doesn't match the source oscillator.
     //
-    // If coupling is negative, we want whichever input is 1 first
-    // to speed up and outrun the other input.
-
-    wire [2:0] weight;
-    assign weight = coupling_weights[(i-1)*3 + 2 : (i-1)*3];
-    
+    // If coupling is negative, we want to slow down the destination
+    // oscillator when it does match the source oscillator.
+    //
     //  5 levels of coupling strengh
-    assign neg2   = (weight == 3'b000);
-    assign neg1   = (weight == 3'b001);
-    assign zero   = (weight == 3'b010);
-    assign pos1   = (weight == 3'b011);
-    assign pos2   = (weight == 3'b100);
-    
-    assign ns_buf1   = (neg2 &  ~win);
-    assign ns_buf2   = (neg1 &  ~win);
-    assign ns_buf3   = (zero |   win);
-    assign ns_buf4   = (pos1 &  ~win);
-    assign ns_buf5   = (pos2 &  ~win);
-    
-    wire   [4:0] ns_buf_out;
-    buffer ns_buffer[4:0] ({ns_buf_out[3:0], nin}, ns_buf_out);
-    
-    assign sout    = ~rstn ? RESET      :
-                      ns_buf1 ? ns_buf_out[0] :
-    	              ns_buf2 ? ns_buf_out[1] :
-    	              ns_buf3 ? ns_buf_out[2] :
-    	              ns_buf4 ? ns_buf_out[3] :
-    	              ns_buf5 ? ns_buf_out[4] : 0;
-    
-    assign ew_buf1   = (neg2 &  ~nin);
-    assign ew_buf2   = (neg1 &  ~nin);
-    assign ew_buf3   = (zero |   nin);
-    assign ew_buf4   = (pos1 &  ~nin);
-    assign ew_buf5   = (pos2 &  ~nin);
-    
-    wire   [4:0] ew_buf_out;
-    buffer ew_buffer[4:0] ({ew_buf_out[3:0], ein}, ew_buf_out);
-    
-    assign eout    = ~rstn ? RESET      :
-                      ew_buf1 ? ew_buf_out[0] :
-    	              ew_buf2 ? ew_buf_out[1] :
-    	              ew_buf3 ? ew_buf_out[2] :
-    	              ew_buf4 ? ew_buf_out[3] :
-    	              ew_buf5 ? ew_buf_out[4] : 0;
+    assign neg2     = (weight == 3'b000);
+    assign neg1     = (weight == 3'b001);
+    assign pos1     = (weight == 3'b011);
+    assign pos2     = (weight == 3'b100);
 
-    end endgenerate
+    assign mismatch = (sin ^ din);
+    
+    assign slow1    = (neg1 & ~mismatch) | (pos1 & mismatch);
+    assign slow2    = (neg2 & ~mismatch) | (pos2 & mismatch);
+    
+    // All delay elements are implemented using muxes for simplicity
+    mux s_buffer_mux(.a(sin), .b(1'b0), .s(1'b0), .o(sout));
+
+    // Glitch-free configurable delay cell
+    wire mux0_o;
+    wire mux1_o;
+    wire mux2_o;
+
+    mux mux0(.a(din), .b(1'b0  ), .s(1'b0          ), .o(mux0_o));
+    mux mux2(.a(din), .b(mux0_o), .s(slow1 || slow2), .o(mux1_o));
+    mux mux2(.a(din), .b(mux1_o), .s(slow2         ), .o(mux2_o));
+    
+    assign dout = mux0_o & mux1_o & mux2_o;
 
 endmodule
 
-// Generic buffer for simulation
-module buffer(input wire i, output wire o);
+// Generic mux for simulation
+module mux(input wire a,
+	   input wire b,
+	   input wire s,
+	   output wire o);
     reg o_reg;
     assign o = o_reg;
-    always @(i) begin
-        #1 o_reg = i;
+    always @(a, b, s) begin
+        #1 o_reg = s ? b : a;
     end
 endmodule
