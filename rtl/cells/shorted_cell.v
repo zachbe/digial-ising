@@ -5,6 +5,7 @@
 // Forces two RO sections to have the same phase.
 
 `timescale 1ns/1ps
+`include "../cells/buffer.v"
 
 module shorted_cell (
 	               input  wire sin ,
@@ -19,14 +20,4 @@ module shorted_cell (
     buffer sbuf(.i(out), .o(sout));
     buffer dbuf(.i(out), .o(dout));
 
-endmodule
-
-// Generic buffer for simulation
-module buffer(input  wire i,
-	      output wire o);
-    reg o_reg;
-    assign o = o_reg;
-    always @(i) begin
-        #1 o_reg = i;
-    end
 endmodule

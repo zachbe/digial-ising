@@ -8,6 +8,7 @@
 // Intended to be instantiated in an NxN array.
 
 `timescale 1ns/1ps
+`include "../cells/buffer.v"
 
 module coupled_cell (
                        //Coupling weight can fall between -2 and +2
@@ -39,38 +40,29 @@ module coupled_cell (
     assign slow2d    = (neg2 & ~mismatch_d) | (pos2 & mismatch_d) ;
     assign slow2s    = (neg2 & ~mismatch_s) | (pos2 & mismatch_s) ;
     
-    // All delay elements are implemented using muxes for simplicity
-    wire mux0_s;
-    wire mux1_s;
-    wire mux2_s;
+    // All delay elements are implemented using buffers for simplicity
+    wire buf0_s;
+    wire buf1_s;
+    wire buf2_s;
 
-    mux mux0s(.a(sin), .b(1'b0  ), .s(1'b0           ), .o(mux0_s));
-    mux mux1s(.a(sin), .b(mux0_s), .s(slow2s         ), .o(mux1_s));
-    mux mux2s(.a(sin), .b(mux1_s), .s(slow1s | slow2s), .o(mux2_s));
+    buffer buf0s(.i(sin   ), .o(buf0_s));
+    buffer buf1s(.i(buf0_s), .o(buf1_s));
+    buffer buf2s(.i(buf1_s), .o(buf2_s));
 
-    assign sout = mux2_s;
+    assign sout = slow2s ? buf2_s :
+	          slow1s ? buf1_s :
+		           buf0_s ;
 
-    // Glitch-free configurable delay cell
-    wire mux0_d;
-    wire mux1_d;
-    wire mux2_d;
+    wire buf0_d;
+    wire buf1_d;
+    wire buf2_d;
 
-    mux mux0d(.a(din), .b(1'b0  ), .s(1'b0           ), .o(mux0_d));
-    mux mux1d(.a(din), .b(mux0_d), .s(slow2d         ), .o(mux1_d));
-    mux mux2d(.a(din), .b(mux1_d), .s(slow1d | slow2d), .o(mux2_d));
+    buffer buf0d(.i(din   ), .o(buf0_d));
+    buffer buf1d(.i(buf0_d), .o(buf1_d));
+    buffer buf2d(.i(buf1_d), .o(buf2_d));
     
-    assign dout = mux2_d;
+    assign dout = slow2d ? buf2_d :
+	          slow1d ? buf1_d :
+		           buf0_d ;
 
-endmodule
-
-// Generic mux for simulation
-module mux(input wire a,
-	   input wire b,
-	   input wire s,
-	   output wire o);
-    reg o_reg;
-    assign o = o_reg;
-    always @(a, b, s) begin
-        #1 o_reg = s ? b : a;
-    end
 endmodule

@@ -10,11 +10,11 @@ module couple_tb();
     // Create a 3x3 array of coupled cells
     //
     //  0 | 1 | 2 | 0
-    //  --S--->---V--M
+    //  --S---C---C--M
     //  1 |   |   |
-    //  --V---S--->--M
+    //  --C---S---C--M
     //  2 |   |   |
-    //  -->---V---S--M
+    //  --C---C---S--M
     //  0 |   |   |
     //    M   M   M
     //
@@ -111,7 +111,7 @@ module couple_tb();
         $dumpvars(0, couple_tb);
 
 	ab_weight = 3'b100; // couple A and B positively
-	bc_weight = 3'b000; // couple C and B negatively
+	bc_weight = 3'b100; // couple C and B positively
 	ac_weight = 3'b010; // Dont couple A and C
 
         rst_a = 1'b1;
