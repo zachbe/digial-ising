@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
-[*] Sun Dec 24 22:46:45 2023
+[*] Sun Dec 24 22:50:55 2023
 [*]
 [dumpfile] "/home/zach/repos/ising/rtl/tb/couple.vcd"
 [dumpfile_mtime] "Sun Dec 24 22:46:37 2023"
 [dumpfile_size] 129362
 [savefile] "/home/zach/repos/ising/rtl/tb/couple_tb.gtkw"
-[timestart] 7695000
+[timestart] 7814000
 [size] 1720 1412
 [pos] -1 -1
-*-16.674267 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-17.025908 8270300 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] couple_tb.
 [sst_width] 232
 [signals_width] 279
@@ -62,7 +62,6 @@ couple_tb.bc_right.dout
 couple_tb.bc_right.dout
 couple_tb.bc_right.sin
 couple_tb.bc_right.sout
-couple_tb.bc_left.slow2s
 @200
 -Sout -> Din coupling
 @28
@@ -75,7 +74,6 @@ couple_tb.bc_right.dout
 couple_tb.ac_right.sin
 couple_tb.ac_right.din
 couple_tb.ac_right.sout
-@29
 couple_tb.ac_right.dout
 @200
 -Dout -> Sin coupling

@@ -6,8 +6,8 @@ This project is an attempt to create an entirely digital coupled ising solver. I
 
 How it Works:
 
-When oscillators A and B are positively coupled, the oscillators' relative phases will be changed when they are different.
+When oscillators A and B are positively coupled, incoming signals that will cause the oscillators to go into a mismatched state are slowed down.
 
-When oscillators A and B are negatively coupled, the oscillators' relative phases will be changed when they are the same.
+When oscillators A and B are negatively coupled, incoming signals that will cause the oscillators to go into a matched state are slowed down.
 
 Graphics will be added soon.	
