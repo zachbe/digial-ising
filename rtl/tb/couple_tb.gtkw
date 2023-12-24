@@ -1,0 +1,62 @@
+[*]
+[*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
+[*] Sun Dec 24 22:23:48 2023
+[*]
+[dumpfile] "/home/zach/repos/ising/rtl/tb/couple.vcd"
+[dumpfile_mtime] "Sun Dec 24 22:23:35 2023"
+[dumpfile_size] 148495
+[savefile] "/home/zach/repos/ising/rtl/tb/couple_tb.gtkw"
+[timestart] 8870000
+[size] 1720 1412
+[pos] -1 -1
+*-17.782824 9930000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] couple_tb.
+[sst_width] 232
+[signals_width] 279
+[sst_expanded] 1
+[sst_vpaned_height] 425
+@200
+-Top Signals
+-Cell Outputs
+@28
+couple_tb.osc_a_hor_out[2:0]
+couple_tb.osc_a_ver_out[2:0]
+couple_tb.osc_b_ver_out[2:0]
+couple_tb.osc_b_hor_out[2:0]
+@200
+-Delayed Cell Inputs
+@28
+couple_tb.osc_a_hor_in[2:0]
+couple_tb.osc_a_ver_in[2:0]
+couple_tb.osc_b_ver_in[2:0]
+couple_tb.osc_b_hor_in[2:0]
+@200
+-AB Coupling
+-Dout -> Sin coupling
+@28
+couple_tb.ab_left.dout
+couple_tb.ab_left.sin
+couple_tb.ab_left.sout
+@200
+-Sout -> Din coupling
+@28
+couple_tb.ab_left.sout
+couple_tb.ab_left.din
+couple_tb.ab_left.dout
+@200
+-BC Coupling
+-Dout -> Sin coupling
+@28
+couple_tb.bc_right.dout
+@29
+couple_tb.bc_right.sin
+@28
+couple_tb.bc_right.sout
+@200
+-Sout -> Din coupling
+@28
+couple_tb.bc_right.sout
+couple_tb.bc_right.din
+couple_tb.bc_right.dout
+[pattern_trace] 1
+[pattern_trace] 0

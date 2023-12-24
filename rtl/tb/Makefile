@@ -1,8 +1,8 @@
 
 
 build:
-	iverilog -o osc_tb osc_tb.v -pfileline=1
-	iverilog -o couple couple.v -pfileline=1
+	iverilog -o osc_tb osc_tb.v
+	iverilog -o couple couple.v
 
 test_all:
 	vvp osc_tb

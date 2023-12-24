@@ -45,10 +45,10 @@ module coupled_cell (
     wire mux2_s;
 
     mux mux0s(.a(sin), .b(1'b0  ), .s(1'b0           ), .o(mux0_s));
-    mux mux1s(.a(sin), .b(mux0_s), .s(slow1s | slow2s), .o(mux1_s));
-    mux mux2s(.a(sin), .b(mux1_s), .s(slow2s         ), .o(mux2_s));
+    mux mux1s(.a(sin), .b(mux0_s), .s(slow2s         ), .o(mux1_s));
+    mux mux2s(.a(sin), .b(mux1_s), .s(slow1s | slow2s), .o(mux2_s));
 
-    assign sout = mux0_s & mux1_s & mux2_s;
+    assign sout = mux2_s;
 
     // Glitch-free configurable delay cell
     wire mux0_d;
@@ -56,10 +56,10 @@ module coupled_cell (
     wire mux2_d;
 
     mux mux0d(.a(din), .b(1'b0  ), .s(1'b0           ), .o(mux0_d));
-    mux mux1d(.a(din), .b(mux0_d), .s(slow1d | slow2d), .o(mux1_d));
-    mux mux2d(.a(din), .b(mux1_d), .s(slow2d         ), .o(mux2_d));
+    mux mux1d(.a(din), .b(mux0_d), .s(slow2d         ), .o(mux1_d));
+    mux mux2d(.a(din), .b(mux1_d), .s(slow1d | slow2d), .o(mux2_d));
     
-    assign dout = mux0_d & mux1_d & mux2_d;
+    assign dout = mux2_d;
 
 endmodule
 
