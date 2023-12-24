@@ -96,8 +96,8 @@ module couple_tb();
 	$dumpfile("couple.vcd");
         $dumpvars(0, couple_tb);
 
-	ab_weight = 3'b100; // couple A and B positively
-	bc_weight = 3'b100; // couple C and B negatively
+	ab_weight = 3'b011; // couple A and B positively
+	bc_weight = 3'b000; // couple C and B negatively
 	ac_weight = 3'b010; // Dont couple A and C
 
         rst_a = 1'b1;

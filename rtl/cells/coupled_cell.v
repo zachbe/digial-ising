@@ -31,13 +31,13 @@ module coupled_cell (
     assign pos1     = (weight == 3'b011);
     assign pos2     = (weight == 3'b100);
 
-    assign mismatch_in  = (sin  ^ din );
-    assign mismatch_out = (sout ^ dout);
+    assign mismatch_s  = (sin  ^ dout);
+    assign mismatch_d  = (din  ^ sout);
     
-    assign slow1d    = (neg1 & ~mismatch_in ) | (pos1 &  mismatch_in ) ;
-    assign slow1s    = (neg1 &  mismatch_out) | (pos1 & ~mismatch_out) ;
-    assign slow2d    = (neg2 & ~mismatch_in ) | (pos2 &  mismatch_in ) ;
-    assign slow2s    = (neg2 &  mismatch_out) | (pos2 & ~mismatch_out) ;
+    assign slow1d    = (neg1 & ~mismatch_d) | (pos1 & mismatch_d) ;
+    assign slow1s    = (neg1 & ~mismatch_s) | (pos1 & mismatch_s) ;
+    assign slow2d    = (neg2 & ~mismatch_d) | (pos2 & mismatch_d) ;
+    assign slow2s    = (neg2 & ~mismatch_s) | (pos2 & mismatch_s) ;
     
     // All delay elements are implemented using muxes for simplicity
     wire mux0_s;
@@ -45,8 +45,8 @@ module coupled_cell (
     wire mux2_s;
 
     mux mux0s(.a(sin), .b(1'b0  ), .s(1'b0           ), .o(mux0_s));
-    mux mux1s(.a(sin), .b(mux0_s), .s(slow1d | slow2d), .o(mux1_s));
-    mux mux2s(.a(sin), .b(mux1_s), .s(slow2d         ), .o(mux2_s));
+    mux mux1s(.a(sin), .b(mux0_s), .s(slow1s | slow2s), .o(mux1_s));
+    mux mux2s(.a(sin), .b(mux1_s), .s(slow2s         ), .o(mux2_s));
 
     assign sout = mux0_s & mux1_s & mux2_s;
 
@@ -56,8 +56,8 @@ module coupled_cell (
     wire mux2_d;
 
     mux mux0d(.a(din), .b(1'b0  ), .s(1'b0           ), .o(mux0_d));
-    mux mux1d(.a(din), .b(mux0_d), .s(slow1s | slow2s), .o(mux1_d));
-    mux mux2d(.a(din), .b(mux1_d), .s(slow2s         ), .o(mux2_d));
+    mux mux1d(.a(din), .b(mux0_d), .s(slow1d | slow2d), .o(mux1_d));
+    mux mux2d(.a(din), .b(mux1_d), .s(slow2d         ), .o(mux2_d));
     
     assign dout = mux0_d & mux1_d & mux2_d;
 
