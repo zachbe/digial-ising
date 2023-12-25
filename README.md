@@ -24,6 +24,8 @@ The transmission gates in both Moy et. al. and Ho et. al. act as resistors tying
 
 Assume we are positively coupling two oscillators, A and B. As shown, node n of oscilaltor A is at 1V, node n of oscillator B 0V. Because of the resistor tying B[n] to 1V, B[n] rises from 0 to 1 faster than a non-coupled node of the circuit might (in this diagram, B[n-1]). If A[n] was 0, the resistor would instead slow the rise time of B[n].
 
+![An oscilaltor labeled A coupled to an oscillator labeled B using a resistor. Positive coupling causes the rising egde of B to rise faster when it matches A.](./docs/res_coup.drawio.png)
+
 We observe that when oscillators A and B are positively coupled, incoming signals that will cause the oscillators to go into a matched state are sped up by the resistor, incoming signalsthat will cause the oscillators to go into a mismatched state are slowed down.
 
 The same principle works for negative coupling, except in reverse. When oscillators A and B are negatively coupled, incoming signals that will cause the oscillators to go into a matched state are slowed down by the resistor, and incoming signals that will cause the oscillators to go into a mismatched state are sped up.
@@ -31,6 +33,8 @@ The same principle works for negative coupling, except in reverse. When oscillat
 ### Phase coupling:
 
 As it turns out, we can achieve similar behavior without using resistors at all! Instead, we can use configurable delay cells. Instead, we use an XOR gate to detemine whether or not the incoming signal is matched or mismatched. Then, we use a digitaly programmable delay to change the delay path oscillator B is travelling through based on whether or not it matches with A. In the case shown, B is rising to match A, so its delay is reduced, essentially shifting B's phase forward to get closer to matching A's phase.
+
+![An oscilaltor labeled A coupled to an oscillator labeled B using a configurable delay cell. Positive coupling causes the rising egde of B to rise faster when it matches A.](./docs/phase_coup.drawio.png)
 
 In this case, stronger coupling means that the change in delay between a sped-up and slowed-down path is larger. The design in `coupled_cell.v` is parameterizable to support different possible ranges of coupling weights.
 
