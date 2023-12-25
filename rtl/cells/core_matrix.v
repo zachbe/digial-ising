@@ -4,27 +4,27 @@
 //
 // Example with N = 4:
 //
-//       3|    2|    1|    0|
+//       0|    1|    2|    3|
 //        |     |     |     |
 //    3   |  0  |  1  |  2  |  3
 //  ------S-----C-----C-----C------
 //        |     |     |     |
-//       0|    3|    2|    1|
+//       3|    0|    1|    2|
 //        |     |     |     |
 //    2   |  3  |  0  |  1  |  2
 //  ------C-----S-----C-----C------
 //        |     |     |     |
-//       1|    0|    3|    2|
+//       2|    3|    0|    1|
 //        |     |     |     |
 //    1   |  2  |  3  |  0  |  1
 //  ------C-----C-----S-----C------
 //        |     |     |     |
-//       2|    1|    0|    3|
+//       1|    1|    3|    0|
 //        |     |     |     |
 //    0   |  1  |  2  |  3  |  0
 //  ------C-----C-----C-----S------
 //        |     |     |     |
-//       3|    2|    1|    0|
+//       0|    1|    2|    3|
 //  
 
 `timescale 1ns/1ps
@@ -50,7 +50,7 @@ module core_matrix #(parameter N = 3,
     // Get outputs at the bottom of the array
     // TODO: Figure out how to actually do stuff with these
     generate for (i = 0 ; i < N; i = i + 1) begin
-        assign outputs[i] = osc_ver_out[i][N-i-1];
+        assign outputs[i] = osc_ver_out[i][i];
     end endgenerate
 
     // Create the shorted cells
@@ -82,24 +82,16 @@ module core_matrix #(parameter N = 3,
 	    // See top of file for wire indexing.
 	    //
 	    // Right half:
-	    // Horizontal wire input index is j-i-1.
-	    // Horiztonal wire output index is j-i.
-	    // Vertical wire input index is N-(j-i)-1
-	    // Vertical wire output index is N-(j-i) 
             coupled_cell ij_right(.weight(weight_ij),
-                                  .sin   (osc_ver_in [j][N-(j-i)-1]),
+                                  .sin   (osc_ver_in [j][j-i-1]),
                                   .din   (osc_hor_in [i][j-i-1]),
-                                  .sout  (osc_ver_out[j][N-(j-i)]),
+                                  .sout  (osc_ver_out[j][j-i]),
                                   .dout  (osc_hor_out[i][j-i]));
 	    // Left half:
-	    // Vertical wire input index is j-i-1.
-	    // Vertical wire output index is j-i.
-	    // Horizontal wire input index is N-(j-i)-1
-	    // Horizontal wire output index is N-(j-i) 
             coupled_cell ij_left (.weight(weight_ij),
-                                  .sin   (osc_ver_in [i][j-i-1]),
+                                  .sin   (osc_ver_in [i][N-(j-i)-1]),
                                   .din   (osc_hor_in [j][N-(j-i)-1]),
-                                  .sout  (osc_ver_out[i][j-i]),
+                                  .sout  (osc_ver_out[i][N-(j-i)]),
                                   .dout  (osc_hor_out[j][N-(j-i)]));
  
 	end 
