@@ -17,7 +17,7 @@ module shorted_cell (
     // TODO: Which method for synchronizing should we use?
     assign out = ~(sin & din);
 
-    buffer sbuf(.i(out), .o(sout));
-    buffer dbuf(.i(out), .o(dout));
+    buffer sbuf(.in(out), .out(sout));
+    buffer dbuf(.in(out), .out(dout));
 
 endmodule
