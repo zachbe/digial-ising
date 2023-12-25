@@ -10,9 +10,9 @@
 `timescale 1ns/1ps
 `include "../cells/buffer.v"
 
-module coupled_cell (
-                       //Coupling weight can fall between -2 and +2
-		       input  wire [2:0] weight,
+module coupled_cell #(parameter NUM_WEIGHTS = 5) (
+                       //Parameterize coupling weight
+		       input  wire [$clog2(NUM_WEIGHTS)-1:0] weight,
 	               input  wire sin ,
 		       input  wire din ,
 		       output wire sout,
@@ -26,64 +26,56 @@ module coupled_cell (
     // If coupling is negative, we want to slow down the destination
     // oscillator when it does match the source oscillator, and speed it up
     // otherwise.
-    //
-    //  5 levels of coupling strengh
-    assign neg2     = (weight == 3'b000);
-    assign neg1     = (weight == 3'b001);
-    assign zero     = (weight == 3'b010);
-    assign pos1     = (weight == 3'b011);
-    assign pos2     = (weight == 3'b100);
-
-    //TODO: There is a bug where sin and din both change at the same time,
-    //which causes a combinational loop.
+   
+    // TODO: There is a bug where sin and din both change at the same time,
+    // which causes a combinational loop.
     assign mismatch_s  = (sin  ^ dout);
     assign mismatch_d  = (din  ^ sout);
     
-    assign slow1d    = (neg1 & ~mismatch_d) | (pos1 &  mismatch_d) ;
-    assign slow1s    = (neg1 & ~mismatch_s) | (pos1 &  mismatch_s) ;
-    assign slow2d    = (neg2 & ~mismatch_d) | (pos2 &  mismatch_d) ;
-    assign slow2s    = (neg2 & ~mismatch_s) | (pos2 &  mismatch_s) ;
+    wire [NUM_WEIGHTS-1:0] s_buf;
+    wire [NUM_WEIGHTS-1:0] d_buf;
+ 
+    genvar i;
+
+    // TODO: All of this logic also includes delays when synthesized!
+    // How can we design the RTL such that these delays are utilized instead
+    // of generic buffers?
+
+    // Create a 1-hot array of weights
+    wire [NUM_WEIGHTS-1:0] sel_weights;
+    generate for (i = 0; i < NUM_WEIGHTS; i = i + 1) begin
+	assign sel_weights[i] = (weight == i);
+    end endgenerate
     
-    assign fast1d    = (neg1 &  mismatch_d) | (pos1 & ~mismatch_d) ;
-    assign fast1s    = (neg1 &  mismatch_s) | (pos1 & ~mismatch_s) ;
-    assign fast2d    = (neg2 &  mismatch_d) | (pos2 & ~mismatch_d) ;
-    assign fast2s    = (neg2 &  mismatch_s) | (pos2 & ~mismatch_s) ;
-    
-    // All delay elements are implemented using buffers for simplicity
-    wire buf0_s;
-    wire buf1_s;
-    wire buf2_s;
-    wire buf3_s;
-    wire buf4_s;
+    // Figure out which buffer we should use
+    wire [NUM_WEIGHTS-1:0] sel_buf_s;
+    wire [NUM_WEIGHTS-1:0] sel_buf_d;
 
-    buffer buf0s(.i(sin   ), .o(buf0_s));
-    buffer buf1s(.i(buf0_s), .o(buf1_s));
-    buffer buf2s(.i(buf1_s), .o(buf2_s));
-    buffer buf3s(.i(buf2_s), .o(buf3_s));
-    buffer buf4s(.i(buf3_s), .o(buf4_s));
+    generate for (i = 0; i < NUM_WEIGHTS; i = i + 1) begin
+	assign sel_buf_s[i] = mismatch_s ? sel_weights[i] : sel_weights[NUM_WEIGHTS-1-i];	
+	assign sel_buf_d[i] = mismatch_d ? sel_weights[i] : sel_weights[NUM_WEIGHTS-1-i];	
+    end endgenerate
 
-    assign sout = slow2s ? buf4_s :
-	          slow1s ? buf3_s :
-		  fast1s ? buf1_s :
-		  fast2s ? buf0_s :
-		           buf2_s ;
+    // Use that buffer
+    wire [NUM_WEIGHTS-1:0] s_mux;
+    wire [NUM_WEIGHTS-1:0] d_mux;
 
-    wire buf0_d;
-    wire buf1_d;
-    wire buf2_d;
-    wire buf3_d;
-    wire buf4_d;
+    assign s_mux[0] = s_buf[0];
+    assign d_mux[0] = d_buf[0];
+    generate for (i = 1; i < NUM_WEIGHTS; i = i + 1) begin
+        assign s_mux[i] = sel_buf_s[i] ? s_buf[i] : s_mux[i-1];
+        assign d_mux[i] = sel_buf_d[i] ? d_buf[i] : d_mux[i-1];
+    end endgenerate
 
-    buffer buf0d(.i(din   ), .o(buf0_d));
-    buffer buf1d(.i(buf0_d), .o(buf1_d));
-    buffer buf2d(.i(buf1_d), .o(buf2_d));
-    buffer buf3d(.i(buf2_d), .o(buf3_d));
-    buffer buf4d(.i(buf3_d), .o(buf4_d));
-    
-    assign dout = slow2d ? buf4_d :
-	          slow1d ? buf3_d :
-		  fast1d ? buf1_d :
-		  fast2d ? buf0_d :
-		           buf2_d ;
+    assign sout = s_mux[NUM_WEIGHTS-1];
+    assign dout = d_mux[NUM_WEIGHTS-1];
+
+    // Array of generic delay buffers
+    buffer buf0s(.in(sin   ), .out(s_buf[0]));
+    buffer buf0d(.in(din   ), .out(d_buf[0]));
+    generate for (i = 1; i < NUM_WEIGHTS; i = i + 1) begin
+        buffer bufis(.in(s_buf[i-1]), .out(s_buf[i]));
+        buffer bufid(.in(d_buf[i-1]), .out(d_buf[i]));
+    end endgenerate
 
 endmodule
