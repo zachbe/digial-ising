@@ -1,91 +1,50 @@
 [*]
 [*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
-[*] Sun Dec 24 22:50:55 2023
+[*] Mon Dec 25 07:16:49 2023
 [*]
 [dumpfile] "/home/zach/repos/ising/rtl/tb/couple.vcd"
-[dumpfile_mtime] "Sun Dec 24 22:46:37 2023"
-[dumpfile_size] 129362
+[dumpfile_mtime] "Mon Dec 25 07:15:13 2023"
+[dumpfile_size] 262568
 [savefile] "/home/zach/repos/ising/rtl/tb/couple_tb.gtkw"
-[timestart] 7814000
+[timestart] 8888000
 [size] 1720 1412
 [pos] -1 -1
-*-17.025908 8270300 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-16.952293 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] couple_tb.
+[treeopen] couple_tb.dut.
+[treeopen] couple_tb.dut.genblk2[0].
+[treeopen] couple_tb.dut.genblk2[1].
+[treeopen] couple_tb.dut.genblk2[2].
+[treeopen] couple_tb.dut.genblk3[0].
+[treeopen] couple_tb.dut.genblk3[0].genblk4[1].
+[treeopen] couple_tb.dut.genblk3[0].genblk4[2].
+[treeopen] couple_tb.dut.genblk3[1].
+[treeopen] couple_tb.dut.genblk3[1].genblk4[2].
 [sst_width] 232
 [signals_width] 279
 [sst_expanded] 1
 [sst_vpaned_height] 425
 @200
--Top Signals
--Cell Outputs
-@28
-couple_tb.osc_a_hor_out[2:0]
-couple_tb.osc_a_ver_out[2:0]
-couple_tb.osc_b_ver_out[2:0]
-couple_tb.osc_b_hor_out[2:0]
-@200
--Delayed Cell Inputs
-@28
-couple_tb.osc_a_hor_in[2:0]
-couple_tb.osc_a_ver_in[2:0]
-couple_tb.osc_b_ver_in[2:0]
-couple_tb.osc_b_hor_in[2:0]
-@200
 -AB Coupling
 @28
-couple_tb.ab_left.din
-couple_tb.ab_left.sin
-couple_tb.ab_left.dout
-couple_tb.ab_left.sout
-@200
--Dout -> Sin coupling
-@28
-couple_tb.ab_left.dout
-couple_tb.ab_left.sin
-couple_tb.ab_left.sout
-@200
--Sout -> Din coupling
-@28
-couple_tb.ab_left.sout
-couple_tb.ab_left.din
-couple_tb.ab_left.dout
+couple_tb.dut.genblk3[0].genblk4[1].ij_right.din
+couple_tb.dut.genblk3[0].genblk4[1].ij_right.sin
+couple_tb.dut.genblk3[0].genblk4[1].ij_right.dout
+couple_tb.dut.genblk3[0].genblk4[1].ij_right.sout
 @200
 -BC Coupling
 @28
-couple_tb.bc_right.sin
-couple_tb.bc_right.din
-couple_tb.bc_right.sout
-couple_tb.bc_right.dout
-@200
--Dout -> Sin coupling
-@28
-couple_tb.bc_right.dout
-couple_tb.bc_right.sin
-couple_tb.bc_right.sout
-@200
--Sout -> Din coupling
-@28
-couple_tb.bc_right.sout
-couple_tb.bc_right.din
-couple_tb.bc_right.dout
+couple_tb.dut.genblk3[1].genblk4[2].ij_right.din
+couple_tb.dut.genblk3[1].genblk4[2].ij_right.sin
+couple_tb.dut.genblk3[1].genblk4[2].ij_right.dout
+couple_tb.dut.genblk3[1].genblk4[2].ij_right.sout
 @200
 -AC Coupling
 @28
-couple_tb.ac_right.sin
-couple_tb.ac_right.din
-couple_tb.ac_right.sout
-couple_tb.ac_right.dout
-@200
--Dout -> Sin coupling
-@28
-couple_tb.ac_right.dout
-couple_tb.ac_right.sin
-couple_tb.ac_right.sout
-@200
--Sout -> Din coupling
-@28
-couple_tb.ac_right.sout
-couple_tb.ac_right.din
-couple_tb.ac_right.dout
+couple_tb.dut.genblk3[0].genblk4[2].ij_right.din
+couple_tb.dut.genblk3[0].genblk4[2].ij_right.sin
+couple_tb.dut.genblk3[0].genblk4[2].ij_right.dout
+@29
+couple_tb.dut.genblk3[0].genblk4[2].ij_right.sout
 [pattern_trace] 1
 [pattern_trace] 0
