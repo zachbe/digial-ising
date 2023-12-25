@@ -54,9 +54,10 @@ module core_matrix #(parameter N = 3,
     end endgenerate
 
     // Create the shorted cells
+    reg  [N-1:0] rstn_jit;
     generate for (i = 0 ; i < N; i = i + 1) begin
-        shorted_cell i_short(.sin (rstn ? osc_hor_in[i][N-1] : 1'b0),
-		             .din (rstn ? osc_ver_in[i][N-1] : 1'b0),
+        shorted_cell i_short(.sin (rstn_jit[i] ? osc_hor_in[i][N-1] : 1'b0),
+		             .din (rstn_jit[i] ? osc_ver_in[i][N-1] : 1'b0),
 			     .sout(osc_hor_out[i][0]),
 			     .dout(osc_ver_out[i][0]));
     end endgenerate
@@ -107,4 +108,18 @@ module core_matrix #(parameter N = 3,
 	end
     end endgenerate
 
+    // Add jitter to reset signal.
+    // This is necessary because sometimes iverilog gets stuck in
+    // a combinational loop when two signals are perfectly in sync or out of
+    // sync.
+    //
+    // This is a fix for a bug identified in coupled_cell.v. There's probably
+    // a better fix that's less hacky, but this works for now.
+    //
+    // TODO: Can we do genvar-based delays better?
+    generate for (i = 0 ; i < N; i = i + 1) begin
+        always @(rstn) begin
+	    #i rstn_jit[i] = rstn;
+	end
+    end endgenerate
 endmodule

@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
-[*] Mon Dec 25 07:16:49 2023
+[*] Mon Dec 25 10:45:30 2023
 [*]
 [dumpfile] "/home/zach/repos/ising/rtl/tb/couple.vcd"
-[dumpfile_mtime] "Mon Dec 25 07:15:13 2023"
-[dumpfile_size] 262568
+[dumpfile_mtime] "Mon Dec 25 10:44:04 2023"
+[dumpfile_size] 260688
 [savefile] "/home/zach/repos/ising/rtl/tb/couple_tb.gtkw"
-[timestart] 8888000
+[timestart] 3249000
 [size] 1720 1412
 [pos] -1 -1
-*-16.952293 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-16.371201 3432000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] couple_tb.
 [treeopen] couple_tb.dut.
 [treeopen] couple_tb.dut.genblk2[0].
@@ -27,24 +27,18 @@
 @200
 -AB Coupling
 @28
-couple_tb.dut.genblk3[0].genblk4[1].ij_right.din
-couple_tb.dut.genblk3[0].genblk4[1].ij_right.sin
-couple_tb.dut.genblk3[0].genblk4[1].ij_right.dout
-couple_tb.dut.genblk3[0].genblk4[1].ij_right.sout
+couple_tb.dut.genblk2[0].i_short.din
+couple_tb.dut.genblk2[1].i_short.din
 @200
 -BC Coupling
 @28
-couple_tb.dut.genblk3[1].genblk4[2].ij_right.din
-couple_tb.dut.genblk3[1].genblk4[2].ij_right.sin
-couple_tb.dut.genblk3[1].genblk4[2].ij_right.dout
-couple_tb.dut.genblk3[1].genblk4[2].ij_right.sout
+couple_tb.dut.genblk2[1].i_short.din
+couple_tb.dut.genblk2[2].i_short.din
 @200
 -AC Coupling
 @28
-couple_tb.dut.genblk3[0].genblk4[2].ij_right.din
-couple_tb.dut.genblk3[0].genblk4[2].ij_right.sin
-couple_tb.dut.genblk3[0].genblk4[2].ij_right.dout
+couple_tb.dut.genblk2[0].i_short.din
 @29
-couple_tb.dut.genblk3[0].genblk4[2].ij_right.sout
+couple_tb.dut.genblk2[2].i_short.din
 [pattern_trace] 1
 [pattern_trace] 0
