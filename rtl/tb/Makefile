@@ -1,7 +1,7 @@
 
 
 build:
-	iverilog -o couple couple.v
+	iverilog -o couple couple.v -pfileline=1
 
 test_all:
 	vvp couple
