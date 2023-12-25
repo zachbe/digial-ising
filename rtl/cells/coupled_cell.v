@@ -60,8 +60,8 @@ module coupled_cell #(parameter NUM_WEIGHTS = 5) (
     wire [NUM_WEIGHTS-1:0] s_mux;
     wire [NUM_WEIGHTS-1:0] d_mux;
 
-    assign s_mux[0] = sel_buf_s[0] ? s_buf[0] : 1'b0;
-    assign d_mux[0] = sel_buf_d[0] ? d_buf[0] : 1'b0;
+    assign s_mux[0] = s_buf[0];
+    assign d_mux[0] = d_buf[0];
     generate for (i = 1; i < NUM_WEIGHTS; i = i + 1) begin
         assign s_mux[i] = sel_buf_s[i] ? s_buf[i] : s_mux[i-1];
         assign d_mux[i] = sel_buf_d[i] ? d_buf[i] : d_mux[i-1];
