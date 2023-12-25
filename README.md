@@ -11,3 +11,11 @@ When oscillators A and B are positively coupled, incoming signals that will caus
 When oscillators A and B are negatively coupled, incoming signals that will cause the oscillators to go into a matched state are slowed down, and incoming signals that will cause the oscillators to go into a mismatched state are sped up.
 
 Graphics will be added soon, as well as a more in-depth explanation.
+
+## How to use:
+
+Right now, this repo is still very much in a "proof of concept" state. You can build and run the basic testbench by navigating to the `rtl/tb` directory and running `make build` and then `make test_all`. A GTKWave save file is provided to show successful coupling graphically.
+
+## How to help:
+
+There are a handful of TODOs in the codebase, including feature requests and bugs to fix. If you want to work on these, go ahead! There will be some more formal policies on how contirbution works as the project matures.
