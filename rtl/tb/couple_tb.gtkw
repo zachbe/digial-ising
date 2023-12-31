@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
-[*] Mon Dec 25 10:45:30 2023
+[*] Sun Dec 31 06:22:20 2023
 [*]
 [dumpfile] "/home/zach/repos/ising/rtl/tb/couple.vcd"
-[dumpfile_mtime] "Mon Dec 25 10:44:04 2023"
-[dumpfile_size] 260688
+[dumpfile_mtime] "Sun Dec 31 06:21:52 2023"
+[dumpfile_size] 285786
 [savefile] "/home/zach/repos/ising/rtl/tb/couple_tb.gtkw"
-[timestart] 3249000
+[timestart] 9119500
 [size] 1720 1412
 [pos] -1 -1
-*-16.371201 3432000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-17.483751 9672100 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] couple_tb.
 [treeopen] couple_tb.dut.
 [treeopen] couple_tb.dut.genblk2[0].
@@ -38,7 +38,22 @@ couple_tb.dut.genblk2[2].i_short.din
 -AC Coupling
 @28
 couple_tb.dut.genblk2[0].i_short.din
-@29
 couple_tb.dut.genblk2[2].i_short.din
+@200
+-Outputs
+-AC phase
+@28
+(2)couple_tb.outputs_hor[2:0]
+(2)couple_tb.outputs_ver[2:0]
+@200
+-BC phase
+@28
+(1)couple_tb.outputs_hor[2:0]
+(1)couple_tb.outputs_ver[2:0]
+@200
+-CC Phase
+@28
+(0)couple_tb.outputs_ver[2:0]
+(0)couple_tb.outputs_hor[2:0]
 [pattern_trace] 1
 [pattern_trace] 0

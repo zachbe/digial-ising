@@ -36,7 +36,8 @@ module core_matrix #(parameter N = 3,
 	             parameter WIRE_DELAY = 20) (
 		     input  wire rstn,
 		     input  wire [($clog2(NUM_WEIGHTS)*(N*(N-1)/2))-1:0] weights,
-		     output wire [N-1:0] outputs
+		     output wire [N-1:0] outputs_ver,
+		     output wire [N-1:0] outputs_hor
 	            );
 
     genvar i;
@@ -50,8 +51,9 @@ module core_matrix #(parameter N = 3,
     // Get outputs at the bottom of the array
     // TODO: Figure out how to actually do stuff with these
     generate for (i = 0 ; i < N; i = i + 1) begin
-        assign outputs[i] = osc_ver_out[i][i];
+        assign outputs_ver[i] = osc_ver_out[i][i];
     end endgenerate
+    assign outputs_hor = osc_hor_out[N-1];
 
     // Create the shorted cells
     generate for (i = 0 ; i < N; i = i + 1) begin
