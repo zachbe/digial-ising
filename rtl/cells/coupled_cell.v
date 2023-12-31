@@ -27,8 +27,6 @@ module coupled_cell #(parameter NUM_WEIGHTS = 5) (
     // oscillator when it does match the source oscillator, and speed it up
     // otherwise.
    
-    // TODO: There is a bug where sin and din both change at the same time,
-    // which causes a combinational loop.
     assign mismatch_s  = (sin  ^ dout);
     assign mismatch_d  = (din  ^ sout);
     
@@ -67,8 +65,8 @@ module coupled_cell #(parameter NUM_WEIGHTS = 5) (
         assign d_mux[i] = sel_buf_d[i] ? d_buf[i] : d_mux[i-1];
     end endgenerate
 
-    assign sout = s_mux[NUM_WEIGHTS-1];
-    assign dout = d_mux[NUM_WEIGHTS-1];
+    buffer bufNs(.in(s_mux[NUM_WEIGHTS-1]), .out(sout));
+    buffer bufNd(.in(d_mux[NUM_WEIGHTS-1]), .out(dout));
 
     // Array of generic delay buffers
     buffer buf0s(.in(sin   ), .out(s_buf[0]));
