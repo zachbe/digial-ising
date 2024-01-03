@@ -84,13 +84,15 @@ module core_matrix #(parameter N = 3,
 	    // See top of file for wire indexing.
 	    //
 	    // Right half:
-            coupled_cell ij_right(.weight(weight_ij),
+            coupled_cell #(.NUM_WEIGHTS(NUM_WEIGHTS))
+	                 ij_right(.weight(weight_ij),
                                   .sin   (osc_ver_in [j][j-i-1]),
                                   .din   (osc_hor_in [i][j-i-1]),
                                   .sout  (osc_ver_out[j][j-i]),
                                   .dout  (osc_hor_out[i][j-i]));
 	    // Left half:
-            coupled_cell ij_left (.weight(weight_ij),
+            coupled_cell #(.NUM_WEIGHTS(NUM_WEIGHTS))
+	                 ij_left (.weight(weight_ij),
                                   .sin   (osc_ver_in [i][N-(j-i)-1]),
                                   .din   (osc_hor_in [j][N-(j-i)-1]),
                                   .sout  (osc_ver_out[i][N-(j-i)]),
