@@ -28,19 +28,28 @@ module sample #(parameter N = 3,
     wire [N-1:0] phase_mismatch;
     assign phase_mismatch = outputs_ver ^ outputs_hor;
 
-    reg  [COUNTER_DEPTH-1:0] phase_counters    [N-1:0];
-    reg  [COUNTER_DEPTH-1:0] phase_counters_nxt [N-1:0];
+    reg  [COUNTER_DEPTH-1:0] phase_counters     [N-1:0];
+    wire [COUNTER_DEPTH-1:0] phase_counters_nxt [N-1:0];
+
+    wire [N-1:0] overflow;
+    wire [N-1:0] underflow;
 
     genvar i;
-    generate for (i = 0; i < COUNTER_DEPTH - 1; i = i+1) begin
+    generate for (i = 0; i < N ; i = i+1) begin
         assign phase[i] = (phase_counters[i] >= COUNTER_CUTOFF);
 
-        assign phase_counters_nxt[i] = phase_mismatch[i] ? phase_counters[i] - 1 :
-		                                           phase_counters[i] + 1 ;
+	assign overflow [i] = (phase_counters[i] == {COUNTER_DEPTH{1'b1}});
+	assign underflow[i] = (phase_counters[i] == 0);
+
+        assign phase_counters_nxt[i] = phase_mismatch[i] ? (
+		                       underflow         ? phase_counters[i]      :
+				                           phase_counters[i] - 1 ):(
+				       overflow          ? phase_counters[i]      :
+		                                           phase_counters[i] + 1 );
 
         always @(posedge clk or negedge rstn) begin
-	    if (!rstn) phase_counters[i] <= 0;
-	    else       phase_counters[i] <= phase_counters_nxt[i];
+	    if (!rstn) begin phase_counters[i] <= 0;                     end
+	    else       begin phase_counters[i] <= phase_counters_nxt[i]; end
 	end
     end endgenerate
 endmodule

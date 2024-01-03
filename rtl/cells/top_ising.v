@@ -33,7 +33,7 @@ module top_ising   #(parameter N = 3,
 		  .outputs_hor(outputs_hor)
     );
 
-    sample #(.N(N)
+    sample #(.N(N),
              .COUNTER_DEPTH(COUNTER_DEPTH),
 	     .COUNTER_CUTOFF(COUNTER_CUTOFF)) u_sampler (
 	     .clk(clk),

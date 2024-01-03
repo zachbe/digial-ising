@@ -1,57 +1,65 @@
 [*]
 [*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
-[*] Wed Jan  3 06:21:16 2024
+[*] Wed Jan  3 07:31:50 2024
 [*]
 [dumpfile] "/home/zach/repos/ising/rtl/tb/maxcut.vcd"
-[dumpfile_mtime] "Wed Jan  3 06:18:47 2024"
-[dumpfile_size] 516901
+[dumpfile_mtime] "Wed Jan  3 07:31:41 2024"
+[dumpfile_size] 548722
 [savefile] "/home/zach/repos/ising/rtl/tb/maxcut_tb.gtkw"
-[timestart] 9217800
+[timestart] 0
 [size] 1720 1412
 [pos] -1 -1
-*-17.306206 9575900 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-21.618334 6240000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] maxcut_tb.
 [treeopen] maxcut_tb.dut.
-[treeopen] maxcut_tb.dut.genblk2[0].
-[treeopen] maxcut_tb.dut.genblk2[0].i_short.
-[treeopen] maxcut_tb.dut.genblk2[1].
-[treeopen] maxcut_tb.dut.genblk2[2].
-[treeopen] maxcut_tb.dut.genblk2[3].
-[treeopen] maxcut_tb.dut.genblk2[4].
-[treeopen] maxcut_tb.dut.genblk2[5].
-[treeopen] maxcut_tb.dut.genblk3[0].
-[treeopen] maxcut_tb.dut.genblk3[1].
-[treeopen] maxcut_tb.dut.genblk3[1].genblk4[4].
-[treeopen] maxcut_tb.dut.genblk3[2].
-[treeopen] maxcut_tb.dut.genblk3[2].genblk4[4].
-[treeopen] maxcut_tb.dut.genblk3[3].
-[sst_width] 232
+[treeopen] maxcut_tb.dut.u_core_matrix.
+[treeopen] maxcut_tb.dut.u_core_matrix.genblk2[0].
+[treeopen] maxcut_tb.dut.u_core_matrix.genblk2[1].
+[treeopen] maxcut_tb.dut.u_core_matrix.genblk2[2].
+[treeopen] maxcut_tb.dut.u_core_matrix.genblk2[3].
+[treeopen] maxcut_tb.dut.u_core_matrix.genblk2[4].
+[treeopen] maxcut_tb.dut.u_core_matrix.genblk2[5].
+[sst_width] 447
 [signals_width] 246
 [sst_expanded] 1
 [sst_vpaned_height] 664
 @200
 -A
 @28
-maxcut_tb.dut.genblk2[0].i_short.din
+maxcut_tb.dut.u_core_matrix.genblk2[0].i_short.din
 @200
 -B
 @28
-maxcut_tb.dut.genblk2[1].i_short.din
+maxcut_tb.dut.u_core_matrix.genblk2[1].i_short.din
 @200
 -C
 @28
-maxcut_tb.dut.genblk2[2].i_short.din
+maxcut_tb.dut.u_core_matrix.genblk2[2].i_short.din
 @200
 -D
 @28
-maxcut_tb.dut.genblk2[3].i_short.din
+maxcut_tb.dut.u_core_matrix.genblk2[3].i_short.din
 @200
 -E
 @28
-maxcut_tb.dut.genblk2[4].i_short.din
+maxcut_tb.dut.u_core_matrix.genblk2[4].i_short.din
 @200
 -F (Local Field)
+@28
+maxcut_tb.dut.u_core_matrix.genblk2[5].i_short.din
+@200
+-Phases
+@800022
+maxcut_tb.dut.u_sampler.phase[5:0]
 @29
-maxcut_tb.dut.genblk2[5].i_short.din
+(0)maxcut_tb.dut.u_sampler.phase[5:0]
+@28
+(1)maxcut_tb.dut.u_sampler.phase[5:0]
+(2)maxcut_tb.dut.u_sampler.phase[5:0]
+(3)maxcut_tb.dut.u_sampler.phase[5:0]
+(4)maxcut_tb.dut.u_sampler.phase[5:0]
+(5)maxcut_tb.dut.u_sampler.phase[5:0]
+@1001200
+-group_end
 [pattern_trace] 1
 [pattern_trace] 0

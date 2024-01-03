@@ -1,5 +1,5 @@
 
-`include "../cells/core_matrix.v"
+`include "../cells/top_ising.v"
 
 `timescale 1ns/1ps
 
@@ -27,27 +27,40 @@
 
 module maxcut_tb();
 
+    reg        clk;
     reg        rstn;
 
-    wire [5:0] outputs_hor;
-    wire [5:0] outputs_ver;
+    wire [5:0] phase;
     
     reg [29:0] weights;
 
     // Create a 6x6 array of coupled cells
     // Cell F is the local field, which is positively coupled with all of the
     // other cells.
-    core_matrix #(.N(6),
+    top_ising   #(.N(6),
 	          .NUM_WEIGHTS(3),
-		  .WIRE_DELAY(20)) dut(
+		  .WIRE_DELAY(20),
+	          .COUNTER_DEPTH(5),
+	          .COUNTER_CUTOFF(16)) dut(
+		  .clk(clk),
 		  .rstn(rstn),
 		  .weights(weights),
-		  .outputs_hor(outputs_hor),
-	          .outputs_ver(outputs_ver));
+		  .phase(phase));
+
+    // Use a clock that's prime to wire delay
+    always #51 clk = ~clk;
+
+    integer i;
 
     initial begin
 	$dumpfile("maxcut.vcd");
         $dumpvars(0, maxcut_tb);
+	for (i = 0 ; i < 6; i = i+1) begin
+            $dumpvars(0, dut.u_sampler.phase_counters[i]);
+            $dumpvars(0, dut.u_sampler.phase_counters_nxt[i]);
+	end
+
+	clk = 0;
 
         weights = {10{2'b01}}; // Default to no coupling
 
@@ -70,6 +83,11 @@ module maxcut_tb();
 	#200;
 	rstn = 1'b1;
 	#10000;
+       
+	//             FEDCBA
+	if(phase == 6'b101101) $display("--- TEST PASSED ---");
+	else                   $display("!!! TEST FAILED !!!");
+
 	$finish();
     end
 endmodule
