@@ -8,7 +8,7 @@ This project is an attempt to create an entirely digital coupled Ising machine. 
 
 Right now, this repo is still very much in a "proof of concept" state. You can build and run the basic coupling testbench by navigating to the `rtl/tb` directory and running `make build` and then `make test_all`. A GTKWave save file is provided to show successful coupling graphically.
 
-The testbench currently features 3 ring oscillators. We couple two of them positively, and two of them negatively, and can observe successful coupling.
+There are two testbenches provided. One is a simple proof-of-concept of three coupled oscillators (`couple.v`), while the newer testbench (`maxcut.v`) successfully solves a 5-node max cut problem! More documentation on how this actually works will be written soon.
 
 ### How to help:
 
