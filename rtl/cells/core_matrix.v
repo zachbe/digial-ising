@@ -49,7 +49,6 @@ module core_matrix #(parameter N = 3,
     wire [N-1:0] osc_ver_out [N-1:0];
 
     // Get outputs at the bottom of the array
-    // TODO: Figure out how to actually do stuff with these
     generate for (i = 0 ; i < N; i = i + 1) begin
         assign outputs_ver[i] = osc_ver_out[i][i];
     end endgenerate

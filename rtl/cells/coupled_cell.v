@@ -11,7 +11,8 @@
 `include "../cells/buffer.v"
 
 module coupled_cell #(parameter NUM_WEIGHTS = 5) (
-                       //Parameterize coupling weight
+		       //TODO: Weight should be programmed via regs
+		       //rather than just wires going everywhere.
 		       input  wire [$clog2(NUM_WEIGHTS)-1:0] weight,
 	               input  wire sin ,
 		       input  wire din ,
@@ -45,28 +46,37 @@ module coupled_cell #(parameter NUM_WEIGHTS = 5) (
 	assign sel_weights[i] = (weight == i);
     end endgenerate
     
-    // Figure out which buffer we should use
-    wire [NUM_WEIGHTS-1:0] sel_buf_s;
-    wire [NUM_WEIGHTS-1:0] sel_buf_d;
+    // Select our pair of possible delay elements using the weight array
+    wire [NUM_WEIGHTS-1:0] s_sel_ma;
+    wire [NUM_WEIGHTS-1:0] s_sel_mi;
+    wire [NUM_WEIGHTS-1:0] d_sel_ma;
+    wire [NUM_WEIGHTS-1:0] d_sel_mi;
 
     generate for (i = 0; i < NUM_WEIGHTS; i = i + 1) begin
-	assign sel_buf_s[i] = mismatch_s ? sel_weights[i] : sel_weights[NUM_WEIGHTS-1-i];	
-	assign sel_buf_d[i] = mismatch_d ? sel_weights[i] : sel_weights[NUM_WEIGHTS-1-i];	
+        assign s_sel_ma[i] = sel_weights[NUM_WEIGHTS-1-i] & s_buf[i];
+        assign s_sel_mi[i] = sel_weights[i              ] & s_buf[i];
+        assign d_sel_ma[i] = sel_weights[NUM_WEIGHTS-1-i] & d_buf[i];
+        assign d_sel_mi[i] = sel_weights[i              ] & d_buf[i];
     end endgenerate
+    
+    wire s_ma;
+    wire s_mi;
+    wire d_ma;
+    wire d_mi;
 
-    // Use that buffer
-    wire [NUM_WEIGHTS-1:0] s_mux;
-    wire [NUM_WEIGHTS-1:0] d_mux;
+    assign s_ma = |s_sel_ma;
+    assign s_mi = |s_sel_mi;
+    assign d_ma = |d_sel_ma;
+    assign d_mi = |d_sel_mi;
+    
+    // Select correct option based on mismatch statis
+    wire sout_pre;
+    wire dout_pre;
+    assign sout_pre = mismatch_s ? s_mi : s_ma;
+    assign dout_pre = mismatch_d ? d_mi : d_ma;
 
-    assign s_mux[0] = s_buf[0];
-    assign d_mux[0] = d_buf[0];
-    generate for (i = 1; i < NUM_WEIGHTS; i = i + 1) begin
-        assign s_mux[i] = sel_buf_s[i] ? s_buf[i] : s_mux[i-1];
-        assign d_mux[i] = sel_buf_d[i] ? d_buf[i] : d_mux[i-1];
-    end endgenerate
-
-    buffer bufNs(.in(s_mux[NUM_WEIGHTS-1]), .out(sout));
-    buffer bufNd(.in(d_mux[NUM_WEIGHTS-1]), .out(dout));
+    buffer bufNs(.in(sout_pre), .out(sout));
+    buffer bufNd(.in(dout_pre), .out(dout));
 
     // Array of generic delay buffers
     buffer buf0s(.in(sin   ), .out(s_buf[0]));
