@@ -23,6 +23,7 @@ module cl_hello_world
 `include "cl_common_defines.vh"      // CL Defines for all examples
 `include "cl_id_defines.vh"          // Defines for ID0 and ID1 (PCI ID's)
 `include "cl_hello_world_defines.vh" // CL Defines for cl_hello_world
+`include "top_ising.v"
 
 logic rst_main_n_sync;
 
