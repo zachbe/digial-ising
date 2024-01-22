@@ -5,7 +5,7 @@
 // Forces two RO sections to have the same phase.
 
 `timescale 1ns/1ps
-`include "../cells/buffer.v"
+`include "buffer.v"
 
 module shorted_cell #(parameter NUM_LUTS = 2) (
 	               input  wire sin ,

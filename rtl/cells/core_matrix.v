@@ -28,8 +28,8 @@
 //  
 
 `timescale 1ns/1ps
-`include "../cells/coupled_cell.v"
-`include "../cells/shorted_cell.v"
+`include "coupled_cell.v"
+`include "shorted_cell.v"
 
 module core_matrix #(parameter N = 3,
 	             parameter NUM_WEIGHTS = 5,

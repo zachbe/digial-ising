@@ -1,8 +1,8 @@
 
 
 build:
-	iverilog -o couple couple.v
-	iverilog -o maxcut maxcut.v
+	iverilog -o couple couple.v -I ../cells
+	iverilog -o maxcut maxcut.v -I ../cells
 
 test_all:
 	vvp couple

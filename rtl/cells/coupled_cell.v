@@ -8,7 +8,7 @@
 // Intended to be instantiated in an NxN array.
 
 `timescale 1ns/1ps
-`include "../cells/buffer.v"
+`include "buffer.v"
 
 module coupled_cell #(parameter NUM_WEIGHTS = 5,
                       parameter NUM_LUTS    = 2) (

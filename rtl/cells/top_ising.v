@@ -6,8 +6,8 @@
 // This block doesn't include any smart interfacing yet.
 
 `timescale 1ns/1ps
-`include "../cells/core_matrix.v"
-`include "../cells/sample.v"
+`include "core_matrix.v"
+`include "sample.v"
 
 
 module top_ising   #(parameter N = 3,
