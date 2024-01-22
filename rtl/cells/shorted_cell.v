@@ -7,7 +7,7 @@
 `timescale 1ns/1ps
 `include "../cells/buffer.v"
 
-module shorted_cell (
+module shorted_cell #(parameter NUM_LUTS = 2) (
 	               input  wire sin ,
 		       input  wire din ,
 		       output wire sout,
@@ -17,7 +17,7 @@ module shorted_cell (
     // TODO: Which method for synchronizing should we use?
     assign out = ~(sin & din);
 
-    buffer sbuf(.in(out), .out(sout));
-    buffer dbuf(.in(out), .out(dout));
+    buffer #(NUM_LUTS) sbuf(.in(out), .out(sout));
+    buffer #(NUM_LUTS) dbuf(.in(out), .out(dout));
 
 endmodule

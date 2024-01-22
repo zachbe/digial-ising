@@ -10,7 +10,8 @@
 `timescale 1ns/1ps
 `include "../cells/buffer.v"
 
-module coupled_cell #(parameter NUM_WEIGHTS = 5) (
+module coupled_cell #(parameter NUM_WEIGHTS = 5,
+                      parameter NUM_LUTS    = 2) (
 		       //TODO: Weight should be programmed via regs
 		       //rather than just wires going everywhere.
 		       input  wire [$clog2(NUM_WEIGHTS)-1:0] weight,
@@ -75,15 +76,17 @@ module coupled_cell #(parameter NUM_WEIGHTS = 5) (
     assign sout_pre = mismatch_s ? s_mi : s_ma;
     assign dout_pre = mismatch_d ? d_mi : d_ma;
 
-    buffer bufNs(.in(sout_pre), .out(sout));
-    buffer bufNd(.in(dout_pre), .out(dout));
+    // Prioritize dout over sout
+    // TODO: may need more LUTs to make this not glitch
+    buffer #(NUM_LUTS) bufNs(.in(sout_pre), .out(sout));
+    assign dout = dout_pre;
 
     // Array of generic delay buffers
-    buffer buf0s(.in(sin   ), .out(s_buf[0]));
-    buffer buf0d(.in(din   ), .out(d_buf[0]));
+    buffer #(NUM_LUTS) buf0s(.in(sin   ), .out(s_buf[0]));
+    buffer #(NUM_LUTS) buf0d(.in(din   ), .out(d_buf[0]));
     generate for (i = 1; i < NUM_WEIGHTS; i = i + 1) begin
-        buffer bufis(.in(s_buf[i-1]), .out(s_buf[i]));
-        buffer bufid(.in(d_buf[i-1]), .out(d_buf[i]));
+        buffer #(NUM_LUTS) bufis(.in(s_buf[i-1]), .out(s_buf[i]));
+        buffer #(NUM_LUTS) bufid(.in(d_buf[i-1]), .out(d_buf[i]));
     end endgenerate
 
 endmodule
