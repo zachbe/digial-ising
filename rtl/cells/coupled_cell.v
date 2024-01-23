@@ -12,6 +12,7 @@
 
 module coupled_cell #(parameter NUM_WEIGHTS = 5,
                       parameter NUM_LUTS    = 2) (
+		       input  wire rstn,
 		       //TODO: Weight should be programmed via regs
 		       //rather than just wires going everywhere.
 		       input  wire [$clog2(NUM_WEIGHTS)-1:0] weight,
@@ -21,6 +22,9 @@ module coupled_cell #(parameter NUM_WEIGHTS = 5,
 		       output wire dout
 	               );
 
+    wire s_int;
+    wire d_int;
+
     // If coupling is positive, we want to slow down the destination
     // oscillator when it doesn't match the source oscillator, and speed it up
     // otherwise.
@@ -28,9 +32,9 @@ module coupled_cell #(parameter NUM_WEIGHTS = 5,
     // If coupling is negative, we want to slow down the destination
     // oscillator when it does match the source oscillator, and speed it up
     // otherwise.
-   
-    assign mismatch_s  = (sin  ^ dout);
-    assign mismatch_d  = (din  ^ sout);
+
+    assign mismatch_s  = (s_int  ^ dout);
+    assign mismatch_d  = (d_int  ^ sout);
     
     wire [NUM_WEIGHTS-1:0] s_buf;
     wire [NUM_WEIGHTS-1:0] d_buf;
@@ -88,5 +92,15 @@ module coupled_cell #(parameter NUM_WEIGHTS = 5,
         buffer #(NUM_LUTS) bufis(.in(s_buf[i-1]), .out(s_buf[i]));
         buffer #(NUM_LUTS) bufid(.in(d_buf[i-1]), .out(d_buf[i]));
     end endgenerate
+    
+    // Latches here trick the tool into not thinking there's
+    // a combinational loop in the design.
+    `ifdef SIM
+        assign s_int = rstn ? sin : 1'b0;
+        assign d_int = rstn ? din : 1'b0;
+    `else
+        (* dont_touch = "yes" *) LDCE s_latch (.Q(s_int), .D(sin), .G(rstn), .GE(1'b1), .CLR(1'b0)); 
+        (* dont_touch = "yes" *) LDCE d_latch (.Q(d_int), .D(din), .G(rstn), .GE(1'b1), .CLR(1'b0)); 
+    `endif
 
 endmodule
