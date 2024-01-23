@@ -59,8 +59,9 @@ module core_matrix #(parameter N = 3,
     // Create the shorted cells
     generate for (i = 0 ; i < N; i = i + 1) begin
         shorted_cell #(.NUM_LUTS(NUM_LUTS))
-	             i_short(.sin (rstn ? osc_hor_in[i][N-1] : 1'b0),
-		             .din (rstn ? osc_ver_in[i][N-1] : 1'b0),
+	             i_short(.rstn(rstn),
+			     .sin (osc_hor_in[i][N-1]),
+		             .din (osc_ver_in[i][N-1]),
 			     .sout(osc_hor_out[i][0]),
 			     .dout(osc_ver_out[i][0]));
     end endgenerate
