@@ -23,8 +23,6 @@
 //     A, C, D same phase
 //     B, E    same phase
 //
-// TODO: Add a wrapper module that automatically reads out the solution from
-// the output wires of the core matrix.
 
 module maxcut_tb();
 
