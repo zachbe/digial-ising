@@ -17,6 +17,8 @@ There are two testbenches provided. One is a simple proof-of-concept of three co
 3. Run the `copy_files_aws.sh` script to copy the AWS FPGA project from this repo to the AWS FPGA repo. This replaces the `cl_hello_world` project in the AWS FPGA repo.
 4. Build the modified `cl_hello_world` project according to the instructions [here](https://github.com/aws/aws-fpga/blob/master/hdk/README.md).
 
+**MAJOR OPEN ISSUE:** The ring oscillators work on AWS, but they don't give the correct results.
+
 ### How to help:
 
 There are a handful of TODOs in the codebase, including feature requests and bugs to fix. If you want to work on these, go ahead! There will be some more formal policies on how contirbution works as the project matures.
