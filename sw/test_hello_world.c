@@ -139,20 +139,6 @@ int main(int argc, char **argv)
     rc = peek_poke_example(value, slot_id, FPGA_APP_PF, APP_PF_BAR0);
     fail_on(rc, out, "peek-poke example failed");
 
-    printf("Developers are encouraged to modify the Virtual DIP Switch by calling the linux shell command to demonstrate how AWS FPGA Virtual DIP switches can be used to change a CustomLogic functionality:\n");
-    printf("$ fpga-set-virtual-dip-switch -S (slot-id) -D (16 digit setting)\n\n");
-    printf("In this example, setting a virtual DIP switch to zero clears the corresponding LED, even if the peek-poke example would set it to 1.\nFor instance:\n");
-
-    printf(
-        "# sudo fpga-set-virtual-dip-switch -S 0 -D 1111111111111111\n"
-        "# sudo fpga-get-virtual-led  -S 0\n"
-        "FPGA slot id 0 have the following Virtual LED:\n"
-        "1010-1101-1101-1110\n"
-        "# sudo fpga-set-virtual-dip-switch -S 0 -D 0000000000000000\n"
-        "# sudo fpga-get-virtual-led  -S 0\n"
-        "FPGA slot id 0 have the following Virtual LED:\n"
-        "0000-0000-0000-0000\n"
-    );
 
 #ifndef SV_TEST
     return rc;
@@ -244,28 +230,31 @@ int peek_poke_example(uint32_t value, int slot_id, int pf_id, int bar_id) {
     rc = fpga_pci_attach(slot_id, pf_id, bar_id, 0, &pci_bar_handle);
     fail_on(rc, out, "Unable to attach to the AFI on slot id %d", slot_id);
 #endif
-    
-    /* write a value into the mapped address space */
-    uint32_t expected = byte_swap(value);
-    printf("Writing 0x%08x to HELLO_WORLD register (0x%016lx)\n", value, HELLO_WORLD_REG_ADDR);
-    rc = fpga_pci_poke(pci_bar_handle, HELLO_WORLD_REG_ADDR, value);
 
+    /////////////////////////////////////////////
+    /// Interface for Ising machine
+    /////////////////////////////////////////////
+    
+    /* write to start ising machine */
+    printf("Writing 0x%08x to HELLO_WORLD register (0x%016lx)\n", 1, HELLO_WORLD_REG_ADDR);
+    rc = fpga_pci_poke(pci_bar_handle, HELLO_WORLD_REG_ADDR, 1);
     fail_on(rc, out, "Unable to write to the fpga !");
 
-    /* read it back and print it out; you should expect the byte order to be
-     * reversed (That's what this CL does) */
+    /* read out ising machine result */
     rc = fpga_pci_peek(pci_bar_handle, HELLO_WORLD_REG_ADDR, &value);
     fail_on(rc, out, "Unable to read read from the fpga !");
     printf("=====  Entering peek_poke_example =====\n");
     printf("register: 0x%x\n", value);
-    if(value == expected) {
-        printf("TEST PASSED");
-        printf("Resulting value matched expected value 0x%x. It worked!\n", expected);
-    }
-    else{
-        printf("TEST FAILED");
-        printf("Resulting value did not match expected value 0x%x. Something didn't work.\n", expected);
-    }
+    printf("expected: 0x0000002D\n");
+    
+    /* write to stop ising machine */
+    printf("Writing 0x%08x to HELLO_WORLD register (0x%016lx)\n", 0, HELLO_WORLD_REG_ADDR);
+    rc = fpga_pci_poke(pci_bar_handle, HELLO_WORLD_REG_ADDR, 0);
+    fail_on(rc, out, "Unable to write to the fpga !");
+    
+    /////////////////////////////////////////////
+    /// Done!
+    /////////////////////////////////////////////
 out:
     /* clean up */
     if (pci_bar_handle >= 0) {
