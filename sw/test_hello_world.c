@@ -246,7 +246,10 @@ int peek_poke_example(uint32_t value, int slot_id, int pf_id, int bar_id) {
     printf("=====  Entering peek_poke_example =====\n");
     printf("register: 0x%x\n", value);
     printf("expected: 0x0000002D\n");
-    
+    printf("OR      : 0x00000032\n");
+    printf("OR      : 0x00000036\n");
+    printf("OR      : 0x00000029\n");
+
     /* write to stop ising machine */
     printf("Writing 0x%08x to HELLO_WORLD register (0x%016lx)\n", 0, HELLO_WORLD_REG_ADDR);
     rc = fpga_pci_poke(pci_bar_handle, HELLO_WORLD_REG_ADDR, 0);
