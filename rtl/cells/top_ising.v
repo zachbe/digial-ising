@@ -6,13 +6,14 @@
 // This block doesn't include any smart interfacing yet.
 
 `timescale 1ns/1ps
-`include "../cells/core_matrix.v"
-`include "../cells/sample.v"
+`include "core_matrix.v"
+`include "sample.v"
 
 
 module top_ising   #(parameter N = 3,
 	             parameter NUM_WEIGHTS = 5,
 	             parameter WIRE_DELAY = 20,
+		     parameter NUM_LUTS = 2,
 	             parameter COUNTER_DEPTH = 5,
 	             parameter COUNTER_CUTOFF = 16) (
 		     input  wire clk,
@@ -26,7 +27,8 @@ module top_ising   #(parameter N = 3,
 
     core_matrix #(.N(N),
 	          .NUM_WEIGHTS(NUM_WEIGHTS),
-	          .WIRE_DELAY(WIRE_DELAY)) u_core_matrix (
+	          .WIRE_DELAY(WIRE_DELAY),
+	          .NUM_LUTS(NUM_LUTS)) u_core_matrix (
 		  .rstn(rstn),
 		  .weights(weights),
 		  .outputs_ver(outputs_ver),

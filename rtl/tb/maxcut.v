@@ -1,4 +1,5 @@
 
+`define SIM
 `include "../cells/top_ising.v"
 
 `timescale 1ns/1ps

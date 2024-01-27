@@ -1,4 +1,5 @@
 
+`define SIM
 `include "../cells/core_matrix.v"
 
 `timescale 1ns/1ps

@@ -8,16 +8,22 @@
 // Intended to be instantiated in an NxN array.
 
 `timescale 1ns/1ps
-`include "../cells/buffer.v"
+`include "buffer.v"
 
-module coupled_cell #(parameter NUM_WEIGHTS = 5) (
-                       //Parameterize coupling weight
+module coupled_cell #(parameter NUM_WEIGHTS = 5,
+                      parameter NUM_LUTS    = 2) (
+		       input  wire rstn,
+		       //TODO: Weight should be programmed via regs
+		       //rather than just wires going everywhere.
 		       input  wire [$clog2(NUM_WEIGHTS)-1:0] weight,
 	               input  wire sin ,
 		       input  wire din ,
 		       output wire sout,
 		       output wire dout
 	               );
+
+    wire sout_int;
+    wire dout_int;
 
     // If coupling is positive, we want to slow down the destination
     // oscillator when it doesn't match the source oscillator, and speed it up
@@ -26,9 +32,9 @@ module coupled_cell #(parameter NUM_WEIGHTS = 5) (
     // If coupling is negative, we want to slow down the destination
     // oscillator when it does match the source oscillator, and speed it up
     // otherwise.
-   
-    assign mismatch_s  = (sin  ^ dout);
-    assign mismatch_d  = (din  ^ sout);
+
+    assign mismatch_s  = (sin ^ dout);
+    assign mismatch_d  = (din ^ sout);
     
     wire [NUM_WEIGHTS-1:0] s_buf;
     wire [NUM_WEIGHTS-1:0] d_buf;
@@ -45,35 +51,56 @@ module coupled_cell #(parameter NUM_WEIGHTS = 5) (
 	assign sel_weights[i] = (weight == i);
     end endgenerate
     
-    // Figure out which buffer we should use
-    wire [NUM_WEIGHTS-1:0] sel_buf_s;
-    wire [NUM_WEIGHTS-1:0] sel_buf_d;
+    // Select our pair of possible delay elements using the weight array
+    wire [NUM_WEIGHTS-1:0] s_sel_ma;
+    wire [NUM_WEIGHTS-1:0] s_sel_mi;
+    wire [NUM_WEIGHTS-1:0] d_sel_ma;
+    wire [NUM_WEIGHTS-1:0] d_sel_mi;
 
     generate for (i = 0; i < NUM_WEIGHTS; i = i + 1) begin
-	assign sel_buf_s[i] = mismatch_s ? sel_weights[i] : sel_weights[NUM_WEIGHTS-1-i];	
-	assign sel_buf_d[i] = mismatch_d ? sel_weights[i] : sel_weights[NUM_WEIGHTS-1-i];	
+        assign s_sel_ma[i] = sel_weights[NUM_WEIGHTS-1-i] & s_buf[i];
+        assign s_sel_mi[i] = sel_weights[i              ] & s_buf[i];
+        assign d_sel_ma[i] = sel_weights[NUM_WEIGHTS-1-i] & d_buf[i];
+        assign d_sel_mi[i] = sel_weights[i              ] & d_buf[i];
     end endgenerate
+    
+    wire s_ma;
+    wire s_mi;
+    wire d_ma;
+    wire d_mi;
 
-    // Use that buffer
-    wire [NUM_WEIGHTS-1:0] s_mux;
-    wire [NUM_WEIGHTS-1:0] d_mux;
+    assign s_ma = |s_sel_ma;
+    assign s_mi = |s_sel_mi;
+    assign d_ma = |d_sel_ma;
+    assign d_mi = |d_sel_mi;
+    
+    // Select correct option based on mismatch statis
+    wire sout_pre;
+    wire dout_pre;
+    assign sout_pre = mismatch_s ? s_mi : s_ma;
+    assign dout_pre = mismatch_d ? d_mi : d_ma;
 
-    assign s_mux[0] = s_buf[0];
-    assign d_mux[0] = d_buf[0];
-    generate for (i = 1; i < NUM_WEIGHTS; i = i + 1) begin
-        assign s_mux[i] = sel_buf_s[i] ? s_buf[i] : s_mux[i-1];
-        assign d_mux[i] = sel_buf_d[i] ? d_buf[i] : d_mux[i-1];
-    end endgenerate
-
-    buffer bufNs(.in(s_mux[NUM_WEIGHTS-1]), .out(sout));
-    buffer bufNd(.in(d_mux[NUM_WEIGHTS-1]), .out(dout));
+    // Prioritize dout over sout
+    // TODO: may need more LUTs to make this not glitch
+    buffer #(NUM_LUTS) bufNs(.in(sout_pre), .out(sout_int));
+    assign dout_int = dout_pre;
 
     // Array of generic delay buffers
-    buffer buf0s(.in(sin   ), .out(s_buf[0]));
-    buffer buf0d(.in(din   ), .out(d_buf[0]));
+    buffer #(NUM_LUTS) buf0s(.in(sin   ), .out(s_buf[0]));
+    buffer #(NUM_LUTS) buf0d(.in(din   ), .out(d_buf[0]));
     generate for (i = 1; i < NUM_WEIGHTS; i = i + 1) begin
-        buffer bufis(.in(s_buf[i-1]), .out(s_buf[i]));
-        buffer bufid(.in(d_buf[i-1]), .out(d_buf[i]));
+        buffer #(NUM_LUTS) bufis(.in(s_buf[i-1]), .out(s_buf[i]));
+        buffer #(NUM_LUTS) bufid(.in(d_buf[i-1]), .out(d_buf[i]));
     end endgenerate
+    
+    // Latches here trick the tool into not thinking there's
+    // a combinational loop in the design.
+    `ifdef SIM
+        assign sout = rstn ? sout_int : 1'b0;
+        assign dout = rstn ? dout_int : 1'b0;
+    `else
+        (* dont_touch = "yes" *) LDCE s_latch (.Q(sout), .D(sout_int), .G(rstn), .GE(1'b1), .CLR(1'b0)); 
+        (* dont_touch = "yes" *) LDCE d_latch (.Q(dout), .D(dout_int), .G(rstn), .GE(1'b1), .CLR(1'b0)); 
+    `endif
 
 endmodule

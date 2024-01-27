@@ -4,11 +4,18 @@
 
 This project is an attempt to create an entirely digital coupled Ising machine. Instead of using voltage-based coupling, this project leverages a phase-based coupling method where different oscillators control configurable delay cells in each others' oscillation path. Hopefully this can allow us to create an Ising machine that can be deployed on an FPGA, and ultimately manufactured in an advanced process node.
 
-### How to run tests:
+### How to run Icarus Verilog tests:
 
 Right now, this repo is still very much in a "proof of concept" state. You can build and run the basic coupling testbench by navigating to the `rtl/tb` directory and running `make build` and then `make test_all`. A GTKWave save file is provided to show successful coupling graphically.
 
 There are two testbenches provided. One is a simple proof-of-concept of three coupled oscillators (`couple.v`), while the newer testbench (`maxcut.v`) successfully solves a 5-node max cut problem! More documentation on how this actually works will be written soon.
+
+### How to build for AWS F1 FPGA Instances:
+
+1. Clone both this repo and the [AWS FPGA](https://github.com/aws/aws-fpga/tree/master) repo next to one another.
+2. Run the `copy_files.sh` script to copy the design files from `cells`  and the software from `sw` to the AWS FPGA project in this repo.
+3. Run the `copy_files_aws.sh` script to copy the AWS FPGA project from this repo to the AWS FPGA repo. This replaces the `cl_hello_world` project in the AWS FPGA repo.
+4. Build the modified `cl_hello_world` project according to the instructions [here](https://github.com/aws/aws-fpga/blob/master/hdk/README.md).
 
 ### How to help:
 
