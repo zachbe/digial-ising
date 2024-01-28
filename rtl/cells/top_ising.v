@@ -2,8 +2,6 @@
 
 // Our top-level Ising machine block, with both an array of oscillators and
 // a sampler.
-//
-// This block doesn't include any smart interfacing yet.
 
 `timescale 1ns/1ps
 `include "core_matrix.v"
@@ -13,12 +11,12 @@
 module top_ising   #(parameter N = 3,
 	             parameter NUM_WEIGHTS = 5,
 	             parameter WIRE_DELAY = 20,
-		     parameter NUM_LUTS = 2,
-	             parameter COUNTER_DEPTH = 5,
-	             parameter COUNTER_CUTOFF = 16) (
+		     parameter NUM_LUTS = 2) (
 		     input  wire clk,
 		     input  wire rstn,
-		     input  wire [($clog2(NUM_WEIGHTS)*(N*(N-1)/2))-1:0] weights,
+		     input  wire [(NUM_WEIGHTS*(N*(N-1)/2))-1:0] weights,
+		     input  wire [31 :0] counter_max, 
+		     input  wire [31 :0] counter_cutoff, 
 		     output wire [N-1:0] phase
 	            );
 
@@ -35,11 +33,11 @@ module top_ising   #(parameter N = 3,
 		  .outputs_hor(outputs_hor)
     );
 
-    sample #(.N(N),
-             .COUNTER_DEPTH(COUNTER_DEPTH),
-	     .COUNTER_CUTOFF(COUNTER_CUTOFF)) u_sampler (
+    sample #(.N(N)) u_sampler (
 	     .clk(clk),
 	     .rstn(rstn),
+	     .counter_max(counter_max),
+	     .counter_cutoff(counter_cutoff),
 	     .outputs_ver(outputs_ver),
 	     .outputs_hor(outputs_hor),
 	     .phase(phase)
