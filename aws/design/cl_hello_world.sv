@@ -245,27 +245,6 @@ assign arready = !arvalid_q && !rvalid;
 // BEGINNING OF STUFF CHANGED
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
-// Read Response
-always_ff @(posedge clk_main_a0)
-   if (!rst_main_n_sync)
-   begin
-      rvalid <= 0;
-      rdata  <= 0;
-      rresp  <= 0;
-   end
-   else if (rvalid && rready)
-   begin
-      rvalid <= 0;
-      rdata  <= 0;
-      rresp  <= 0;
-   end
-   else if (arvalid_q) 
-   begin
-      rvalid <= 1;
-      rdata  <= (araddr_q == `HELLO_WORLD_REG_ADDR) ? {26'b0, phase}:
-                                                      `UNIMPLEMENTED_REG_VALUE        ;
-      rresp  <= 0;
-   end
 
 //-------------------------------------------------
 // Ising Machine
@@ -273,52 +252,20 @@ always_ff @(posedge clk_main_a0)
 // Create a 6x6 array of coupled cells
 // Cell F is the local field, which is positively coupled with all of the
 // other cells.
-wire [5:0]  phase;
-wire [29:0] weights;
-reg         rstn_ising;
-
-top_ising   #(.N(6),
-              .NUM_WEIGHTS(3),
-	      .WIRE_DELAY(20),
-              .COUNTER_DEPTH(5),
-              .COUNTER_CUTOFF(16)) dut(
-	      .clk(clk_main_a0),
-	      .rstn(rstn_ising),
-	      .weights(weights),
-	      .phase(phase));
-
-assign weights = {10{2'b01}}; // Default to no coupling
-
-// Couple AB, AE, BC, BD, CD, DE negatively
-assign weights[ 1: 0] = 2'b00; // AB
-assign weights[ 7: 6] = 2'b00; // AE
-assign weights[11:10] = 2'b00; // BC
-assign weights[13:12] = 2'b00; // BD
-assign weights[19:18] = 2'b00; // CD
-assign weights[25:24] = 2'b00; // DE
-
-// Couple all of them positively to F
-assign weights[ 9: 8] = 2'b10; // AF
-assign weights[17:16] = 2'b10; // BF
-assign weights[23:22] = 2'b10; // CF
-assign weights[27:26] = 2'b10; // DF
-assign weights[29:28] = 2'b10; // EF
-  
-//-------------------------------------------------
-// Ising start register
-//-------------------------------------------------
-// When read it, returns the byte-flipped value.
-
-always_ff @(posedge clk_main_a0)
-   if (!rst_main_n_sync) begin                    // Reset
-      rstn_ising <= 32'b0;
-   end
-   else if (wready & (wr_addr == `HELLO_WORLD_REG_ADDR)) begin  
-      rstn_ising <= wdata[0];
-   end
-   else begin                                // Hold Value
-      rstn_ising <= rstn_ising;
-   end
+ising_axi   #(.N(6),
+              .NUM_WEIGHTS(31),
+              .WIRE_DELAY(200)) dut(
+              .clk(clk_main_a0),
+              .axi_rstn(rst_main_n_sync),
+              .arvalid_q(arvalid_q),
+              .araddr_q(araddr_q),
+              .rready(rready),
+              .rvalid(rvalid),
+              .rresp(rresp),
+              .rdata(rdata),
+              .wready(wready),
+              .wr_addr(wr_addr),
+              .wdata(wdata));
 
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
