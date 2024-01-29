@@ -78,11 +78,11 @@ module maxcut_tb();
 
         @(posedge clk);
 	waddr = `CTR_CUTOFF_ADDR;
-	wdata = 32'h000000FF;
+	wdata = 32'h00004000;
 
 	@(posedge clk);
 	waddr = `CTR_MAX_ADDR;
-	wdata = 32'h0000FFFF;
+	wdata = 32'h00008000;
 	
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE;         //AB

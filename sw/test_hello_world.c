@@ -240,16 +240,16 @@ int peek_poke_example(uint32_t value, int slot_id, int pf_id, int bar_id) {
     /////////////////////////////////////////////
     
     /* write counter configuration */
-    printf("Writing 0x%08x to CTR_CUTOFF_ADDR register (0x%016lx)\n", 0x0000FFFF, CTR_CUTOFF_ADDR);
-    rc = fpga_pci_poke(pci_bar_handle, CTR_CUTOFF_ADDR, 0x0000FFFF);
+    printf("Writing 0x%08x to CTR_CUTOFF_ADDR register (0x%016lx)\n", 0x40000000, CTR_CUTOFF_ADDR);
+    rc = fpga_pci_poke(pci_bar_handle, CTR_CUTOFF_ADDR, 0x40000000);
     fail_on(rc, out, "Unable to write to the fpga !");
-    
-    printf("Writing 0x%08x to CTR_MAX_ADDR register (0x%016lx)\n", 0xFFFFFFFF, CTR_MAX_ADDR);
-    rc = fpga_pci_poke(pci_bar_handle, CTR_MAX_ADDR, 0xFFFFFFFF);
+
+    printf("Writing 0x%08x to CTR_MAX_ADDR register (0x%016lx)\n", 0x80000000, CTR_MAX_ADDR);
+    rc = fpga_pci_poke(pci_bar_handle, CTR_MAX_ADDR, 0x80000000);
     fail_on(rc, out, "Unable to write to the fpga !");
 
     /* write weights */
-    printf("Writing weights!");
+    printf("Writing weights!\n");
     rc = fpga_pci_poke(pci_bar_handle, WEIGHT_ADDR_BASE        , 0x00000001); //AB
     fail_on(rc, out, "Unable to write AB to the fpga !");
     rc = fpga_pci_poke(pci_bar_handle, WEIGHT_ADDR_BASE +  3*32, 0x00000001); //AE
@@ -270,7 +270,7 @@ int peek_poke_example(uint32_t value, int slot_id, int pf_id, int bar_id) {
     fail_on(rc, out, "Unable to write DE to the fpga !");
     rc = fpga_pci_poke(pci_bar_handle, WEIGHT_ADDR_BASE + 13*32, 0x40000000); //DF
     fail_on(rc, out, "Unable to write DF to the fpga !");
-    
+
     /* write to start ising machine */
     printf("Writing 0x%08x to START_ADDR register (0x%016lx)\n", 1, START_ADDR);
     rc = fpga_pci_poke(pci_bar_handle, START_ADDR, 1);
@@ -293,6 +293,7 @@ int peek_poke_example(uint32_t value, int slot_id, int pf_id, int bar_id) {
     printf("Writing 0x%08x to START_ADDR register (0x%016lx)\n", 0, START_ADDR);
     rc = fpga_pci_poke(pci_bar_handle, START_ADDR, 0);
     fail_on(rc, out, "Unable to write to the fpga !");
+ 
     
     /////////////////////////////////////////////
     /// Done!
