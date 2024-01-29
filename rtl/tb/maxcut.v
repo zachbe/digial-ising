@@ -1,6 +1,6 @@
 
 `define SIM
-`include "../cells/top_ising.v"
+`include "../cells/ising_axi.v"
 
 `timescale 1ns/1ps
 
@@ -26,25 +26,31 @@
 
 module maxcut_tb();
 
-    reg        clk;
-    reg        rstn;
-
-    wire [5:0] phase;
-    
-    reg [29:0] weights;
-
+    reg         clk;
+    reg         rstn;
+    reg  [31:0] raddr;
+    wire [31:0] rdata;
+    reg  [31:0] waddr;
+    reg  [31:0] wdata;
+ 
     // Create a 6x6 array of coupled cells
     // Cell F is the local field, which is positively coupled with all of the
     // other cells.
-    top_ising   #(.N(6),
+    ising_axi   #(.N(6),
 	          .NUM_WEIGHTS(3),
-		  .WIRE_DELAY(20),
-	          .COUNTER_DEPTH(5),
-	          .COUNTER_CUTOFF(16)) dut(
+		  .WIRE_DELAY(20)) dut(
 		  .clk(clk),
-		  .rstn(rstn),
-		  .weights(weights),
-		  .phase(phase));
+		  .axi_rstn(rstn),
+                  .arvalid_q(1'b1),
+		  .araddr_q(raddr),
+		  .rready(1'b0),
+		  .rvalid(),
+		  .rresp(),
+		  .rdata(rdata),
+		  .wready(1'b1),
+		  .wr_addr(waddr),
+		  .wdata(wdata));
+
 
     // Use a clock that's prime to wire delay
     always #51 clk = ~clk;
@@ -55,37 +61,83 @@ module maxcut_tb();
 	$dumpfile("maxcut.vcd");
         $dumpvars(0, maxcut_tb);
 	for (i = 0 ; i < 6; i = i+1) begin
-            $dumpvars(0, dut.u_sampler.phase_counters[i]);
-            $dumpvars(0, dut.u_sampler.phase_counters_nxt[i]);
+            $dumpvars(0, dut.u_top_ising.u_sampler.phase_counters[i]);
+            $dumpvars(0, dut.u_top_ising.u_sampler.phase_counters_nxt[i]);
 	end
 
 	clk = 0;
+	raddr = 32'b0;
+	waddr = 32'b0;
+	wdata = 32'b0;
+        rstn = 1'b0;
 
-        weights = {10{2'b01}}; // Default to no coupling
-
-	// Couple AB, AE, BC, BD, CD, DE negatively
-	weights[ 1: 0] = 2'b00; // AB
-	weights[ 7: 6] = 2'b00; // AE
-	weights[11:10] = 2'b00; // BC
-	weights[13:12] = 2'b00; // BD
-	weights[19:18] = 2'b00; // CD
-	weights[25:24] = 2'b00; // DE
-
-        // Couple all of them positively to F
-	weights[ 9: 8] = 2'b10; // AF
-	weights[17:16] = 2'b10; // BF
-	weights[23:22] = 2'b10; // CF
-	weights[27:26] = 2'b10; // DF
-	weights[29:28] = 2'b10; // EF
-
-        rstn = 1'b0;	
-	#200;
+        @(posedge clk);
+        @(posedge clk);
+        @(posedge clk);
 	rstn = 1'b1;
-	#10000;
+
+        @(posedge clk);
+	waddr = `CTR_CUTOFF_ADDR;
+	wdata = 32'h00004000;
+
+	@(posedge clk);
+	waddr = `CTR_MAX_ADDR;
+	wdata = 32'h00008000;
+	
+	@(posedge clk);
+	waddr = `WEIGHT_ADDR_BASE;         //AB
+	wdata = 32'h00000001;              //001
+	
+	@(posedge clk);
+	waddr = `WEIGHT_ADDR_BASE + 3*32;  //AE
+	wdata = 32'h00000001;              //001
+	
+	@(posedge clk);
+	waddr = `WEIGHT_ADDR_BASE + 4*32;  //AF
+	wdata = 32'h00000004;              //100
+
+	@(posedge clk);
+	waddr = `WEIGHT_ADDR_BASE + 5*32;  //BC
+	wdata = 32'h00000001;              //001
+	
+	@(posedge clk);
+	waddr = `WEIGHT_ADDR_BASE + 6*32;  //BD
+	wdata = 32'h00000001;              //001
+	
+	@(posedge clk);
+	waddr = `WEIGHT_ADDR_BASE + 8*32;  //BF
+	wdata = 32'h00000004;              //100
+
+	@(posedge clk);
+	waddr = `WEIGHT_ADDR_BASE + 9*32;  //CD
+	wdata = 32'h00000001;              //001
+	
+	@(posedge clk);
+	waddr = `WEIGHT_ADDR_BASE + 11*32; //CF
+	wdata = 32'h00000004;              //100
+	
+	@(posedge clk);
+	waddr = `WEIGHT_ADDR_BASE + 12*32; //DE
+	wdata = 32'h00000001;              //001
+	
+	@(posedge clk);
+	waddr = `WEIGHT_ADDR_BASE + 13*32; //DF
+	wdata = 32'h00000004;              //100
+	
+	@(posedge clk);
+	waddr = `START_ADDR;
+	wdata = 32'h00000001;
+
+	#50000;
+	
+	@(posedge clk);
+	raddr = `PHASE_ADDR;
+	
+	@(posedge clk);
        
-	//             FEDCBA
-	if(phase == 6'b101101) $display("--- TEST PASSED ---");
-	else                   $display("!!! TEST FAILED !!!");
+	//                  FEDCBA
+	if(rdata[5:0] == 6'b101101) $display("--- TEST PASSED ---");
+	else                        $display("!!! TEST FAILED !!!");
 
 	$finish();
     end

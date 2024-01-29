@@ -36,7 +36,7 @@ module core_matrix #(parameter N = 3,
 	             parameter WIRE_DELAY = 20,
 	             parameter NUM_LUTS   = 2) (
 		     input  wire rstn,
-		     input  wire [($clog2(NUM_WEIGHTS)*(N*(N-1)/2))-1:0] weights,
+		     input  wire [(NUM_WEIGHTS*(N*(N-1)/2))-1:0] weights,
 		     output wire [N-1:0] outputs_ver,
 		     output wire [N-1:0] outputs_hor
 	            );
@@ -77,12 +77,12 @@ module core_matrix #(parameter N = 3,
 	    // (N-1, N  )
 	    //
 	    // So, weight (i,j) is at index (N*i - (i*(i+1)/2) + j - i - 1)
-            wire [$clog2(NUM_WEIGHTS)-1:0] weight_ij;
+            wire [NUM_WEIGHTS-1:0] weight_ij;
 	    assign weight_ij = weights[((N*i - (i*(i+1)/2) + j - i - 1) 
-	                                 * $clog2(NUM_WEIGHTS)) 
-					 + $clog2(NUM_WEIGHTS) - 1    :
+	                                 * NUM_WEIGHTS) 
+					 + NUM_WEIGHTS - 1    :
 	                                ((N*i - (i*(i+1)/2) + j - i - 1) 
-	                                 * $clog2(NUM_WEIGHTS))];
+	                                 * NUM_WEIGHTS)];
 
 	    // See top of file for wire indexing.
 	    //

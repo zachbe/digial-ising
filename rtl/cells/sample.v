@@ -13,11 +13,11 @@
 
 `timescale 1ns/1ps
 
-module sample #(parameter N = 3,
-                parameter COUNTER_DEPTH = 5,
-	        parameter COUNTER_CUTOFF = 16)(
+module sample #(parameter N = 3)(
 	        input  wire clk,
 	        input  wire rstn,
+                input  wire [31 :0] counter_max,
+		input  wire [31 :0] counter_cutoff,
 	        input  wire [N-1:0] outputs_ver,
 	        input  wire [N-1:0] outputs_hor,
 		// 0 if out-of-phase with local field,
@@ -28,17 +28,17 @@ module sample #(parameter N = 3,
     wire [N-1:0] phase_mismatch;
     assign phase_mismatch = outputs_ver ^ outputs_hor;
 
-    reg  [COUNTER_DEPTH-1:0] phase_counters     [N-1:0];
-    wire [COUNTER_DEPTH-1:0] phase_counters_nxt [N-1:0];
+    reg  [31:0] phase_counters     [N-1:0];
+    wire [31:0] phase_counters_nxt [N-1:0];
 
     wire [N-1:0] overflow;
     wire [N-1:0] underflow;
 
     genvar i;
     generate for (i = 0; i < N ; i = i+1) begin
-        assign phase[i] = (phase_counters[i] >= COUNTER_CUTOFF);
+        assign phase[i] = (phase_counters[i] >= counter_cutoff);
 
-	assign overflow [i] = (phase_counters[i] == {COUNTER_DEPTH{1'b1}});
+	assign overflow [i] = (phase_counters[i] >= counter_max);
 	assign underflow[i] = (phase_counters[i] == 0);
 
         assign phase_counters_nxt[i] = phase_mismatch[i] ? (
@@ -48,7 +48,7 @@ module sample #(parameter N = 3,
 		                                           phase_counters[i] + 1 );
 
         always @(posedge clk or negedge rstn) begin
-	    if (!rstn) begin phase_counters[i] <= 0;                     end
+	    if (!rstn) begin phase_counters[i] <= counter_cutoff;        end
 	    else       begin phase_counters[i] <= phase_counters_nxt[i]; end
 	end
     end endgenerate

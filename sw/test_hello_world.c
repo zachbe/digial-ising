@@ -18,6 +18,7 @@
 #include <stdarg.h>
 #include <assert.h>
 #include <string.h>
+#include <unistd.h>
 
 #ifdef SV_TEST
    #include "fpga_pci_sv.h"
@@ -35,8 +36,11 @@
 /* /aws-fpga/hdk/cl/examples/common/cl_common_defines.vh */
 /* SV_TEST macro should be set if SW/HW co-simulation should be enabled */
 
-#define HELLO_WORLD_REG_ADDR UINT64_C(0x500)
-#define VLED_REG_ADDR	UINT64_C(0x504)
+#define START_ADDR       UINT64_C(0x00000500)
+#define CTR_CUTOFF_ADDR  UINT64_C(0x00000600)
+#define CTR_MAX_ADDR     UINT64_C(0x00000700)
+#define PHASE_ADDR       UINT64_C(0x00000800)
+#define WEIGHT_ADDR_BASE UINT64_C(0x00001000)
 
 /* use the stdout logger for printing debug information  */
 #ifndef SV_TEST
@@ -235,25 +239,61 @@ int peek_poke_example(uint32_t value, int slot_id, int pf_id, int bar_id) {
     /// Interface for Ising machine
     /////////////////////////////////////////////
     
-    /* write to start ising machine */
-    printf("Writing 0x%08x to HELLO_WORLD register (0x%016lx)\n", 1, HELLO_WORLD_REG_ADDR);
-    rc = fpga_pci_poke(pci_bar_handle, HELLO_WORLD_REG_ADDR, 1);
+    /* write counter configuration */
+    printf("Writing 0x%08x to CTR_CUTOFF_ADDR register (0x%016lx)\n", 0x40000000, CTR_CUTOFF_ADDR);
+    rc = fpga_pci_poke(pci_bar_handle, CTR_CUTOFF_ADDR, 0x40000000);
     fail_on(rc, out, "Unable to write to the fpga !");
 
+    printf("Writing 0x%08x to CTR_MAX_ADDR register (0x%016lx)\n", 0x80000000, CTR_MAX_ADDR);
+    rc = fpga_pci_poke(pci_bar_handle, CTR_MAX_ADDR, 0x80000000);
+    fail_on(rc, out, "Unable to write to the fpga !");
+
+    /* write weights */
+    printf("Writing weights!\n");
+    rc = fpga_pci_poke(pci_bar_handle, WEIGHT_ADDR_BASE        , 0x00000001); //AB
+    fail_on(rc, out, "Unable to write AB to the fpga !");
+    rc = fpga_pci_poke(pci_bar_handle, WEIGHT_ADDR_BASE +  3*32, 0x00000001); //AE
+    fail_on(rc, out, "Unable to write AE to the fpga !");
+    rc = fpga_pci_poke(pci_bar_handle, WEIGHT_ADDR_BASE +  4*32, 0x40000000); //AF
+    fail_on(rc, out, "Unable to write AF to the fpga !");
+    rc = fpga_pci_poke(pci_bar_handle, WEIGHT_ADDR_BASE +  5*32, 0x00000001); //BC
+    fail_on(rc, out, "Unable to write BC to the fpga !");
+    rc = fpga_pci_poke(pci_bar_handle, WEIGHT_ADDR_BASE +  6*32, 0x00000001); //BD
+    fail_on(rc, out, "Unable to write BD to the fpga !");
+    rc = fpga_pci_poke(pci_bar_handle, WEIGHT_ADDR_BASE +  8*32, 0x40000000); //BF
+    fail_on(rc, out, "Unable to write BF to the fpga !");
+    rc = fpga_pci_poke(pci_bar_handle, WEIGHT_ADDR_BASE +  9*32, 0x00000001); //CD
+    fail_on(rc, out, "Unable to write CD to the fpga !");
+    rc = fpga_pci_poke(pci_bar_handle, WEIGHT_ADDR_BASE + 11*32, 0x40000000); //CF
+    fail_on(rc, out, "Unable to write CF to the fpga !");
+    rc = fpga_pci_poke(pci_bar_handle, WEIGHT_ADDR_BASE + 12*32, 0x00000001); //DE
+    fail_on(rc, out, "Unable to write DE to the fpga !");
+    rc = fpga_pci_poke(pci_bar_handle, WEIGHT_ADDR_BASE + 13*32, 0x40000000); //DF
+    fail_on(rc, out, "Unable to write DF to the fpga !");
+
+    /* write to start ising machine */
+    printf("Writing 0x%08x to START_ADDR register (0x%016lx)\n", 1, START_ADDR);
+    rc = fpga_pci_poke(pci_bar_handle, START_ADDR, 1);
+    fail_on(rc, out, "Unable to write to the fpga !");
+
+    /* wait a sec */
+    sleep(1);
+
     /* read out ising machine result */
-    rc = fpga_pci_peek(pci_bar_handle, HELLO_WORLD_REG_ADDR, &value);
+    rc = fpga_pci_peek(pci_bar_handle, PHASE_ADDR, &value);
     fail_on(rc, out, "Unable to read read from the fpga !");
     printf("=====  Entering peek_poke_example =====\n");
-    printf("register: 0x%x\n", value);
+    printf("phase   : 0x%x\n", value);
     printf("expected: 0x0000002D\n");
     printf("OR      : 0x00000032\n");
     printf("OR      : 0x00000036\n");
     printf("OR      : 0x00000029\n");
 
     /* write to stop ising machine */
-    printf("Writing 0x%08x to HELLO_WORLD register (0x%016lx)\n", 0, HELLO_WORLD_REG_ADDR);
-    rc = fpga_pci_poke(pci_bar_handle, HELLO_WORLD_REG_ADDR, 0);
+    printf("Writing 0x%08x to START_ADDR register (0x%016lx)\n", 0, START_ADDR);
+    rc = fpga_pci_poke(pci_bar_handle, START_ADDR, 0);
     fail_on(rc, out, "Unable to write to the fpga !");
+ 
     
     /////////////////////////////////////////////
     /// Done!

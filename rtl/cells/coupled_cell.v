@@ -13,9 +13,7 @@
 module coupled_cell #(parameter NUM_WEIGHTS = 5,
                       parameter NUM_LUTS    = 2) (
 		       input  wire rstn,
-		       //TODO: Weight should be programmed via regs
-		       //rather than just wires going everywhere.
-		       input  wire [$clog2(NUM_WEIGHTS)-1:0] weight,
+		       input  wire [NUM_WEIGHTS-1:0] weight,
 	               input  wire sin ,
 		       input  wire din ,
 		       output wire sout,
@@ -44,13 +42,7 @@ module coupled_cell #(parameter NUM_WEIGHTS = 5,
     // TODO: All of this logic also includes delays when synthesized!
     // How can we design the RTL such that these delays are utilized instead
     // of generic buffers?
-
-    // Create a 1-hot array of weights
-    wire [NUM_WEIGHTS-1:0] sel_weights;
-    generate for (i = 0; i < NUM_WEIGHTS; i = i + 1) begin
-	assign sel_weights[i] = (weight == i);
-    end endgenerate
-    
+ 
     // Select our pair of possible delay elements using the weight array
     wire [NUM_WEIGHTS-1:0] s_sel_ma;
     wire [NUM_WEIGHTS-1:0] s_sel_mi;
@@ -58,10 +50,10 @@ module coupled_cell #(parameter NUM_WEIGHTS = 5,
     wire [NUM_WEIGHTS-1:0] d_sel_mi;
 
     generate for (i = 0; i < NUM_WEIGHTS; i = i + 1) begin
-        assign s_sel_ma[i] = sel_weights[NUM_WEIGHTS-1-i] & s_buf[i];
-        assign s_sel_mi[i] = sel_weights[i              ] & s_buf[i];
-        assign d_sel_ma[i] = sel_weights[NUM_WEIGHTS-1-i] & d_buf[i];
-        assign d_sel_mi[i] = sel_weights[i              ] & d_buf[i];
+        assign s_sel_ma[i] = weight[NUM_WEIGHTS-1-i] & s_buf[i];
+        assign s_sel_mi[i] = weight[i              ] & s_buf[i];
+        assign d_sel_ma[i] = weight[NUM_WEIGHTS-1-i] & d_buf[i];
+        assign d_sel_mi[i] = weight[i              ] & d_buf[i];
     end endgenerate
     
     wire s_ma;

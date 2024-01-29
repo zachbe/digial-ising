@@ -7,14 +7,14 @@ module couple_tb();
 
     reg        rstn;
 
-    reg  [2:0] ab_weight;
-    reg  [2:0] bc_weight;
-    reg  [2:0] ac_weight;
+    reg  [4:0] ab_weight;
+    reg  [4:0] bc_weight;
+    reg  [4:0] ac_weight;
 
     wire [2:0] outputs_hor;
     wire [2:0] outputs_ver;
     
-    wire [8:0] weights;
+    wire [14:0] weights;
     assign     weights = {bc_weight, ac_weight, ab_weight};
 
     // Create a 3x3 array of coupled cells
@@ -30,9 +30,9 @@ module couple_tb();
 	$dumpfile("couple.vcd");
         $dumpvars(0, couple_tb);
 
-	ab_weight = 3'b010; // Don't couple A and B
-	bc_weight = 3'b000; // Couple C and B negatively
-	ac_weight = 3'b100; // Couple A and C positively
+	ab_weight = 5'b00100; // Don't couple A and B
+	bc_weight = 5'b00001; // Couple C and B negatively
+	ac_weight = 5'b10000; // Couple A and C positively
 	
         rstn = 1'b0;	
 	#200;
