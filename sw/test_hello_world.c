@@ -241,11 +241,11 @@ int peek_poke_example(uint32_t value, int slot_id, int pf_id, int bar_id) {
     
     /* write counter configuration */
     printf("Writing 0x%08x to CTR_CUTOFF_ADDR register (0x%016lx)\n", 0x0000FFFF, CTR_CUTOFF_ADDR);
-    rc = fpga_pci_poke(pci_bar_handle, CUT_CUTOFF_ADDR, 0x0000FFFF);
+    rc = fpga_pci_poke(pci_bar_handle, CTR_CUTOFF_ADDR, 0x0000FFFF);
     fail_on(rc, out, "Unable to write to the fpga !");
     
     printf("Writing 0x%08x to CTR_MAX_ADDR register (0x%016lx)\n", 0xFFFFFFFF, CTR_MAX_ADDR);
-    rc = fpga_pci_poke(pci_bar_handle, CUT_MAX_ADDR, 0xFFFFFFFF);
+    rc = fpga_pci_poke(pci_bar_handle, CTR_MAX_ADDR, 0xFFFFFFFF);
     fail_on(rc, out, "Unable to write to the fpga !");
 
     /* write weights */
