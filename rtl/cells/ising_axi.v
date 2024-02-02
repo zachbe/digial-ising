@@ -9,7 +9,7 @@
 `define START_ADDR       32'h00000500
 `define CTR_CUTOFF_ADDR  32'h00000600
 `define CTR_MAX_ADDR     32'h00000700
-`define PHASE_ADDR       32'h00000800
+`define PHASE_ADDR_BASE  32'h00000800
 `define WEIGHT_ADDR_BASE 32'h00001000
 
 module ising_axi    #(parameter N = 3,
@@ -33,8 +33,9 @@ module ising_axi    #(parameter N = 3,
 		     input  wire [31:0] wdata
 	            );
 
-    // TODO: Need to be able to still read phase when its larger than 32 bits.
     wire [N-1:0] phase;
+    wire [ 31:0] phase_bit;
+    assign       phase_bit = (araddr_q - `PHASE_ADDR_BASE) >> 5;
 
     // AXI Read Interface
     always @(posedge clk) begin
@@ -50,8 +51,7 @@ module ising_axi    #(parameter N = 3,
         end
 	else if (arvalid_q) begin
             rvalid <= 1;
-	    rdata  <= (araddr_q == `PHASE_ADDR) ? {{(32-N){1'b0}}, phase}:
-                                                  32'hAAAAAAAA  ;
+	    rdata  <= {31'b0, phase[phase_bit]};
             rresp  <= 0;
         end
     end

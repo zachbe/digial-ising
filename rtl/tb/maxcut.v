@@ -131,13 +131,32 @@ module maxcut_tb();
 	#50000;
 	
 	@(posedge clk);
-	raddr = `PHASE_ADDR;
-	
+	raddr = `PHASE_ADDR_BASE;
 	@(posedge clk);
-       
-	//                  FEDCBA
-	if(rdata[5:0] == 6'b101101) $display("--- TEST PASSED ---");
-	else                        $display("!!! TEST FAILED !!!");
+	#1
+	if(rdata[0] != 1) $display("!!! A FAILED !!!"); //A
+	raddr = `PHASE_ADDR_BASE +   32;
+	@(posedge clk);
+	#1
+	if(rdata[0] != 0) $display("!!! B FAILED !!!"); //B
+	raddr = `PHASE_ADDR_BASE + 2*32;
+	@(posedge clk);
+	#1
+	if(rdata[0] != 1) $display("!!! C FAILED !!!"); //C
+	raddr = `PHASE_ADDR_BASE + 3*32;
+	@(posedge clk);
+	#1
+	if(rdata[0] != 1) $display("!!! D FAILED !!!"); //D
+	raddr = `PHASE_ADDR_BASE + 4*32;
+	@(posedge clk);
+	#1
+	if(rdata[0] != 0) $display("!!! E FAILED !!!"); //E
+	raddr = `PHASE_ADDR_BASE + 5*32;
+	@(posedge clk);
+	#1
+	if(rdata[0] != 1) $display("!!! F FAILED !!!"); //F
+        
+        $display("If you got here with no fails, it passed!");	
 
 	$finish();
     end

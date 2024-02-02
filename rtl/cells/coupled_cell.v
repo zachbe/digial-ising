@@ -38,10 +38,6 @@ module coupled_cell #(parameter NUM_WEIGHTS = 5,
     wire [NUM_WEIGHTS-1:0] d_buf;
  
     genvar i;
-
-    // TODO: All of this logic also includes delays when synthesized!
-    // How can we design the RTL such that these delays are utilized instead
-    // of generic buffers?
  
     // Select our pair of possible delay elements using the weight array
     wire [NUM_WEIGHTS-1:0] s_sel_ma;
@@ -66,14 +62,14 @@ module coupled_cell #(parameter NUM_WEIGHTS = 5,
     assign d_ma = |d_sel_ma;
     assign d_mi = |d_sel_mi;
     
-    // Select correct option based on mismatch statis
+    // Select correct option based on mismatch status
     wire sout_pre;
     wire dout_pre;
     assign sout_pre = mismatch_s ? s_mi : s_ma;
     assign dout_pre = mismatch_d ? d_mi : d_ma;
 
     // Prioritize dout over sout
-    // TODO: may need more LUTs to make this not glitch
+    // May need more LUTs to make this not glitch
     buffer #(NUM_LUTS) bufNs(.in(sout_pre), .out(sout_int));
     assign dout_int = dout_pre;
 
