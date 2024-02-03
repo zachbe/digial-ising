@@ -249,12 +249,12 @@ assign arready = !arvalid_q && !rvalid;
 //-------------------------------------------------
 // Ising Machine
 //-------------------------------------------------
-// Create a 6x6 array of coupled cells
+// Create an NxN array of coupled cells
 // Cell F is the local field, which is positively coupled with all of the
 // other cells.
-ising_axi   #(.N(6),
+ising_axi   #(.N(101),
               .NUM_WEIGHTS(31),
-              .WIRE_DELAY(200)) dut(
+              .WIRE_DELAY(32)) dut(
               .clk(clk_main_a0),
               .axi_rstn(rst_main_n_sync),
               .arvalid_q(arvalid_q),
