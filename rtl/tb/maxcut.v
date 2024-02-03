@@ -89,39 +89,39 @@ module maxcut_tb();
 	wdata = 32'h00000001;              //001
 	
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 3*32;  //AE
+	waddr = `WEIGHT_ADDR_BASE + 3*4;  //AE
 	wdata = 32'h00000001;              //001
 	
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 4*32;  //AF
+	waddr = `WEIGHT_ADDR_BASE + 4*4;  //AF
 	wdata = 32'h00000004;              //100
 
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 5*32;  //BC
+	waddr = `WEIGHT_ADDR_BASE + 5*4;  //BC
 	wdata = 32'h00000001;              //001
 	
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 6*32;  //BD
+	waddr = `WEIGHT_ADDR_BASE + 6*4;  //BD
 	wdata = 32'h00000001;              //001
 	
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 8*32;  //BF
+	waddr = `WEIGHT_ADDR_BASE + 8*4;  //BF
 	wdata = 32'h00000004;              //100
 
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 9*32;  //CD
+	waddr = `WEIGHT_ADDR_BASE + 9*4;  //CD
 	wdata = 32'h00000001;              //001
 	
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 11*32; //CF
+	waddr = `WEIGHT_ADDR_BASE + 11*4; //CF
 	wdata = 32'h00000004;              //100
 	
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 12*32; //DE
+	waddr = `WEIGHT_ADDR_BASE + 12*4; //DE
 	wdata = 32'h00000001;              //001
 	
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 13*32; //DF
+	waddr = `WEIGHT_ADDR_BASE + 13*4; //DF
 	wdata = 32'h00000004;              //100
 	
 	@(posedge clk);
@@ -135,23 +135,23 @@ module maxcut_tb();
 	@(posedge clk);
 	#1
 	if(rdata[0] != 1) $display("!!! A FAILED !!!"); //A
-	raddr = `PHASE_ADDR_BASE +   32;
+	raddr = `PHASE_ADDR_BASE +   4;
 	@(posedge clk);
 	#1
 	if(rdata[0] != 0) $display("!!! B FAILED !!!"); //B
-	raddr = `PHASE_ADDR_BASE + 2*32;
+	raddr = `PHASE_ADDR_BASE + 2*4;
 	@(posedge clk);
 	#1
 	if(rdata[0] != 1) $display("!!! C FAILED !!!"); //C
-	raddr = `PHASE_ADDR_BASE + 3*32;
+	raddr = `PHASE_ADDR_BASE + 3*4;
 	@(posedge clk);
 	#1
 	if(rdata[0] != 1) $display("!!! D FAILED !!!"); //D
-	raddr = `PHASE_ADDR_BASE + 4*32;
+	raddr = `PHASE_ADDR_BASE + 4*4;
 	@(posedge clk);
 	#1
 	if(rdata[0] != 0) $display("!!! E FAILED !!!"); //E
-	raddr = `PHASE_ADDR_BASE + 5*32;
+	raddr = `PHASE_ADDR_BASE + 5*4;
 	@(posedge clk);
 	#1
 	if(rdata[0] != 1) $display("!!! F FAILED !!!"); //F

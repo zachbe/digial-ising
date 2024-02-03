@@ -35,7 +35,7 @@ module ising_axi    #(parameter N = 3,
 
     wire [N-1:0] phase;
     wire [ 31:0] phase_bit;
-    assign       phase_bit = (araddr_q - `PHASE_ADDR_BASE) >> 5;
+    assign       phase_bit = (araddr_q - `PHASE_ADDR_BASE) >> 2;
 
     // AXI Read Interface
     always @(posedge clk) begin
@@ -73,7 +73,7 @@ module ising_axi    #(parameter N = 3,
     wire [(NUM_WEIGHTS*(N*(N-1)/2))-1:0] weights_rst;
     genvar i;
     generate for (i = 0 ; i < (N*(N-1)/2) ; i = i+1) begin
-        assign weights_nxt[i*NUM_WEIGHTS +: NUM_WEIGHTS] = (wready & (wr_addr == (`WEIGHT_ADDR_BASE + (32*i)))) ?
+        assign weights_nxt[i*NUM_WEIGHTS +: NUM_WEIGHTS] = (wready & (wr_addr == (`WEIGHT_ADDR_BASE + (4*i)))) ?
 	             	                                    wdata[NUM_WEIGHTS:0] : weights[i*NUM_WEIGHTS +: NUM_WEIGHTS];
         assign weights_rst[i*NUM_WEIGHTS +: NUM_WEIGHTS] = {{(NUM_WEIGHTS/2){1'b0}},1'b1,{(NUM_WEIGHTS/2){1'b0}}}; //NUM_WEIGHTS must be odd.
     end endgenerate
