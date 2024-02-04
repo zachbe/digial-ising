@@ -36,9 +36,14 @@ module core_matrix #(parameter N = 3,
 	             parameter WIRE_DELAY = 20,
 	             parameter NUM_LUTS   = 2) (
 		     input  wire rstn,
-		     input  wire [(NUM_WEIGHTS*(N*(N-1)/2))-1:0] weights,
 		     output wire [N-1:0] outputs_ver,
-		     output wire [N-1:0] outputs_hor
+		     output wire [N-1:0] outputs_hor,
+
+		     input  wire        clk,
+		     input  wire        axi_rstn,
+                     input  wire        wready,
+                     input  wire [31:0] wr_addr,
+                     input  wire [31:0] wdata
 	            );
 
     genvar i;
@@ -77,33 +82,42 @@ module core_matrix #(parameter N = 3,
 	    // (N-1, N  )
 	    //
 	    // So, weight (i,j) is at index (N*i - (i*(i+1)/2) + j - i - 1)
-            wire [NUM_WEIGHTS-1:0] weight_ij;
-	    assign weight_ij = weights[((N*i - (i*(i+1)/2) + j - i - 1) 
-	                                 * NUM_WEIGHTS) 
-					 + NUM_WEIGHTS - 1    :
-	                                ((N*i - (i*(i+1)/2) + j - i - 1) 
-	                                 * NUM_WEIGHTS)];
 
 	    // See top of file for wire indexing.
 	    //
 	    // Right half:
             coupled_cell #(.NUM_WEIGHTS(NUM_WEIGHTS),
-                           .NUM_LUTS   (NUM_LUTS   ))
+                           .NUM_LUTS   (NUM_LUTS   ),
+		           .ADDR       (`WEIGHT_ADDR_BASE + 
+			                4 * ((N*i - (i*(i+1)/2) + j - i - 1))))
 	                 ij_right(.rstn  (rstn),
-				  .weight(weight_ij),
                                   .sin   (osc_ver_in [j][j-i-1]),
                                   .din   (osc_hor_in [i][j-i-1]),
                                   .sout  (osc_ver_out[j][j-i]),
-                                  .dout  (osc_hor_out[i][j-i]));
+                                  .dout  (osc_hor_out[i][j-i]),
+
+			          .clk      (clk),
+                                  .axi_rstn (axi_rstn),
+                                  .wready   (wready),
+                                  .wr_addr  (wr_addr),
+                                  .wdata    (wdata));
+
 	    // Left half:
             coupled_cell #(.NUM_WEIGHTS(NUM_WEIGHTS),
-                           .NUM_LUTS   (NUM_LUTS   ))
+                           .NUM_LUTS   (NUM_LUTS   ),
+		           .ADDR       (`WEIGHT_ADDR_BASE + 
+			                4 * ((N*i - (i*(i+1)/2) + j - i - 1))))
 	                 ij_left (.rstn  (rstn),
-				  .weight(weight_ij),
                                   .sin   (osc_ver_in [i][N-(j-i)-1]),
                                   .din   (osc_hor_in [j][N-(j-i)-1]),
                                   .sout  (osc_ver_out[i][N-(j-i)]),
-                                  .dout  (osc_hor_out[j][N-(j-i)]));
+                                  .dout  (osc_hor_out[j][N-(j-i)]),
+			          
+			          .clk      (clk),
+                                  .axi_rstn (axi_rstn),
+                                  .wready   (wready),
+                                  .wr_addr  (wr_addr),
+                                  .wdata    (wdata));
  
 	end 
     end endgenerate

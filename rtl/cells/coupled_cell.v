@@ -11,17 +11,40 @@
 `include "buffer.v"
 
 module coupled_cell #(parameter NUM_WEIGHTS = 5,
-                      parameter NUM_LUTS    = 2) (
+                      parameter NUM_LUTS    = 2,
+	              parameter ADDR        = 32'b00001000) (
+		       // Oscillator RST
 		       input  wire rstn,
-		       input  wire [NUM_WEIGHTS-1:0] weight,
+
+		       // Asynchronous phase IO
 	               input  wire sin ,
 		       input  wire din ,
 		       output wire sout,
-		       output wire dout
+		       output wire dout,
+
+		       // Synchronous AXI write interface
+		       input  wire        clk,
+		       input  wire        axi_rstn,
+                       input  wire        wready,
+		       input  wire [31:0] wr_addr,
+		       input  wire [31:0] wdata
 	               );
 
-    wire sout_int;
-    wire dout_int;
+    // Local registers for storing weights.
+    // TODO: Weights are currently stored as 1-hot values which is not the
+    // most efficent way to store them. (Issue #7)
+    reg  [NUM_WEIGHTS-1:0] weight;
+    wire [NUM_WEIGHTS-1:0] weight_nxt;
+
+    assign weight_nxt = (wready & (wr_addr == ADDR)) ? wdata[NUM_WEIGHTS-1:0] :
+	                                               weight                 ;
+    always @(posedge clk) begin
+	if (!axi_rstn) begin
+      	    weight <= {{(NUM_WEIGHTS/2){1'b0}},1'b1,{(NUM_WEIGHTS/2){1'b0}}}; //NUM_WEIGHTS must be odd.
+        end else begin
+            weight <= weight_nxt;
+        end
+    end
 
     // If coupling is positive, we want to slow down the destination
     // oscillator when it doesn't match the source oscillator, and speed it up
@@ -70,10 +93,15 @@ module coupled_cell #(parameter NUM_WEIGHTS = 5,
 
     // Prioritize dout over sout
     // May need more LUTs to make this not glitch
+    wire sout_int;
+    wire dout_int;
     buffer #(NUM_LUTS) bufNs(.in(sout_pre), .out(sout_int));
     assign dout_int = dout_pre;
 
     // Array of generic delay buffers
+    // TODO: Potentially replace this with an asynchronous counter and
+    // comparator to allow for greater weight resolution per LUT used.
+    // (Issue #7)
     buffer #(NUM_LUTS) buf0s(.in(sin   ), .out(s_buf[0]));
     buffer #(NUM_LUTS) buf0d(.in(din   ), .out(d_buf[0]));
     generate for (i = 1; i < NUM_WEIGHTS; i = i + 1) begin
