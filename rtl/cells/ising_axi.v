@@ -5,12 +5,7 @@
 
 `timescale 1ns/1ps
 
-`define START_ADDR       32'h00000500
-`define CTR_CUTOFF_ADDR  32'h00000600
-`define CTR_MAX_ADDR     32'h00000700
-`define PHASE_ADDR_BASE  32'h00000800
-`define WEIGHT_ADDR_BASE 32'h00001000
-
+`include "defines.vh"
 `include "top_ising.v"
 
 module ising_axi    #(parameter N = 3,

@@ -28,6 +28,8 @@
 //  
 
 `timescale 1ns/1ps
+
+`include "defines.vh"
 `include "coupled_cell.v"
 `include "shorted_cell.v"
 
@@ -83,41 +85,42 @@ module core_matrix #(parameter N = 3,
 	    //
 	    // So, weight (i,j) is at index (N*i - (i*(i+1)/2) + j - i - 1)
 
+	    wire wr_addr_match;
+	    assign wr_addr_match = (wr_addr == 
+		                    `WEIGHT_ADDR_BASE + 
+				    4 * ((N*i - (i*(i+1)/2) + j - i - 1)));
+
 	    // See top of file for wire indexing.
 	    //
 	    // Right half:
             coupled_cell #(.NUM_WEIGHTS(NUM_WEIGHTS),
-                           .NUM_LUTS   (NUM_LUTS   ),
-		           .ADDR       (`WEIGHT_ADDR_BASE + 
-			                4 * ((N*i - (i*(i+1)/2) + j - i - 1))))
+                           .NUM_LUTS   (NUM_LUTS   ))
 	                 ij_right(.rstn  (rstn),
                                   .sin   (osc_ver_in [j][j-i-1]),
                                   .din   (osc_hor_in [i][j-i-1]),
                                   .sout  (osc_ver_out[j][j-i]),
                                   .dout  (osc_hor_out[i][j-i]),
 
-			          .clk      (clk),
-                                  .axi_rstn (axi_rstn),
-                                  .wready   (wready),
-                                  .wr_addr  (wr_addr),
-                                  .wdata    (wdata));
+			          .clk            (clk),
+                                  .axi_rstn       (axi_rstn),
+                                  .wready         (wready),
+                                  .wr_addr_match  (wr_addr_match),
+                                  .wdata          (wdata));
 
 	    // Left half:
             coupled_cell #(.NUM_WEIGHTS(NUM_WEIGHTS),
-                           .NUM_LUTS   (NUM_LUTS   ),
-		           .ADDR       (`WEIGHT_ADDR_BASE + 
-			                4 * ((N*i - (i*(i+1)/2) + j - i - 1))))
+                           .NUM_LUTS   (NUM_LUTS   ))
 	                 ij_left (.rstn  (rstn),
                                   .sin   (osc_ver_in [i][N-(j-i)-1]),
                                   .din   (osc_hor_in [j][N-(j-i)-1]),
                                   .sout  (osc_ver_out[i][N-(j-i)]),
                                   .dout  (osc_hor_out[j][N-(j-i)]),
 			          
-			          .clk      (clk),
-                                  .axi_rstn (axi_rstn),
-                                  .wready   (wready),
-                                  .wr_addr  (wr_addr),
-                                  .wdata    (wdata));
+			          .clk            (clk),
+                                  .axi_rstn       (axi_rstn),
+                                  .wready         (wready),
+                                  .wr_addr_match  (wr_addr_match),
+                                  .wdata          (wdata));
  
 	end 
     end endgenerate

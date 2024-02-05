@@ -4,9 +4,10 @@
 // a sampler.
 
 `timescale 1ns/1ps
+
+`include "defines.vh"
 `include "core_matrix.v"
 `include "sample.v"
-
 
 module top_ising   #(parameter N = 3,
 	             parameter NUM_WEIGHTS = 5,

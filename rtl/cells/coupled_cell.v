@@ -8,11 +8,12 @@
 // Intended to be instantiated in an NxN array.
 
 `timescale 1ns/1ps
+
+`include "defines.vh"
 `include "buffer.v"
 
-module coupled_cell #(parameter NUM_WEIGHTS = 5,
-                      parameter NUM_LUTS    = 2,
-	              parameter ADDR        = 32'b00001000) (
+module coupled_cell #(parameter NUM_WEIGHTS = 31,
+                      parameter NUM_LUTS    = 2 ) (
 		       // Oscillator RST
 		       input  wire rstn,
 
@@ -26,7 +27,7 @@ module coupled_cell #(parameter NUM_WEIGHTS = 5,
 		       input  wire        clk,
 		       input  wire        axi_rstn,
                        input  wire        wready,
-		       input  wire [31:0] wr_addr,
+		       input  wire        wr_addr_match,
 		       input  wire [31:0] wdata
 	               );
 
@@ -36,8 +37,8 @@ module coupled_cell #(parameter NUM_WEIGHTS = 5,
     reg  [NUM_WEIGHTS-1:0] weight;
     wire [NUM_WEIGHTS-1:0] weight_nxt;
 
-    assign weight_nxt = (wready & (wr_addr == ADDR)) ? wdata[NUM_WEIGHTS-1:0] :
-	                                               weight                 ;
+    assign weight_nxt = (wready & wr_addr_match) ? wdata[NUM_WEIGHTS-1:0] :
+	                                           weight                 ;
     always @(posedge clk) begin
 	if (!axi_rstn) begin
       	    weight <= {{(NUM_WEIGHTS/2){1'b0}},1'b1,{(NUM_WEIGHTS/2){1'b0}}}; //NUM_WEIGHTS must be odd.

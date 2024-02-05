@@ -1,0 +1,11 @@
+
+`ifndef DEFINES
+`define DEFINES
+
+`define START_ADDR       32'h00000500
+`define CTR_CUTOFF_ADDR  32'h00000600
+`define CTR_MAX_ADDR     32'h00000700
+`define PHASE_ADDR_BASE  32'h00000800
+`define WEIGHT_ADDR_BASE 32'h00001000
+
+`endif

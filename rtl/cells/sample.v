@@ -13,6 +13,8 @@
 
 `timescale 1ns/1ps
 
+`include "defines.vh"
+
 module sample #(parameter N = 3)(
 	        input  wire clk,
 	        input  wire rstn,
