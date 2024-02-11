@@ -37,7 +37,7 @@ module core_matrix #(parameter N = 3,
 	             parameter NUM_WEIGHTS = 5,
 	             parameter WIRE_DELAY = 20,
 	             parameter NUM_LUTS   = 2) (
-		     input  wire rstn,
+		     input  wire ising_rstn,
 		     output wire [N-1:0] outputs_ver,
 		     output wire [N-1:0] outputs_hor,
 
@@ -66,7 +66,7 @@ module core_matrix #(parameter N = 3,
     // Create the shorted cells
     generate for (i = 0 ; i < N; i = i + 1) begin
         shorted_cell #(.NUM_LUTS(NUM_LUTS))
-	             i_short(.rstn(rstn),
+	             i_short(.ising_rstn(ising_rstn),
 			     .sin (osc_hor_in[i][N-1]),
 		             .din (osc_ver_in[i][N-1]),
 			     .sout(osc_hor_out[i][0]),
@@ -95,7 +95,7 @@ module core_matrix #(parameter N = 3,
 	    // Right half:
             coupled_cell #(.NUM_WEIGHTS(NUM_WEIGHTS),
                            .NUM_LUTS   (NUM_LUTS   ))
-	                 ij_right(.rstn  (rstn),
+	                 ij_right(.ising_rstn  (ising_rstn),
                                   .sin   (osc_ver_in [j][j-i-1]),
                                   .din   (osc_hor_in [i][j-i-1]),
                                   .sout  (osc_ver_out[j][j-i]),
@@ -110,7 +110,7 @@ module core_matrix #(parameter N = 3,
 	    // Left half:
             coupled_cell #(.NUM_WEIGHTS(NUM_WEIGHTS),
                            .NUM_LUTS   (NUM_LUTS   ))
-	                 ij_left (.rstn  (rstn),
+	                 ij_left (.ising_rstn  (ising_rstn),
                                   .sin   (osc_ver_in [i][N-(j-i)-1]),
                                   .din   (osc_hor_in [j][N-(j-i)-1]),
                                   .sout  (osc_ver_out[i][N-(j-i)]),

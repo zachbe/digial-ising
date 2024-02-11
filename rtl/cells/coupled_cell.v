@@ -15,7 +15,7 @@
 module coupled_cell #(parameter NUM_WEIGHTS = 31,
                       parameter NUM_LUTS    = 2 ) (
 		       // Oscillator RST
-		       input  wire rstn,
+		       input  wire ising_rstn,
 
 		       // Asynchronous phase IO
 	               input  wire sin ,
@@ -113,11 +113,11 @@ module coupled_cell #(parameter NUM_WEIGHTS = 31,
     // Latches here trick the tool into not thinking there's
     // a combinational loop in the design.
     `ifdef SIM
-        assign sout = rstn ? sout_int : 1'b0;
-        assign dout = rstn ? dout_int : 1'b0;
+        assign sout = ising_rstn ? sout_int : 1'b0;
+        assign dout = ising_rstn ? dout_int : 1'b0;
     `else
-        (* dont_touch = "yes" *) LDCE s_latch (.Q(sout), .D(sout_int), .G(rstn), .GE(1'b1), .CLR(1'b0)); 
-        (* dont_touch = "yes" *) LDCE d_latch (.Q(dout), .D(dout_int), .G(rstn), .GE(1'b1), .CLR(1'b0)); 
+        (* dont_touch = "yes" *) LDCE s_latch (.Q(sout), .D(sout_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0)); 
+        (* dont_touch = "yes" *) LDCE d_latch (.Q(dout), .D(dout_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0)); 
     `endif
 
 endmodule

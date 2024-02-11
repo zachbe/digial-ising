@@ -82,7 +82,7 @@ module ising_axi    #(parameter N = 3,
                   .NUM_WEIGHTS(NUM_WEIGHTS),
                   .WIRE_DELAY(WIRE_DELAY)) u_top_ising (
                   .clk(clk),
-                  .rstn(ising_rstn),
+                  .ising_rstn(ising_rstn),
                   .counter_max(counter_max),
                   .counter_cutoff(counter_cutoff),
                   .phase(phase),
