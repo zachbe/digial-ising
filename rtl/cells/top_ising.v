@@ -44,7 +44,7 @@ module top_ising   #(parameter N = 3,
 
     sample #(.N(N)) u_sampler (
 	     .clk(clk),
-	     .rstn(rstn),
+	     .rstn(ising_rstn),
 	     .counter_max(counter_max),
 	     .counter_cutoff(counter_cutoff),
 	     .outputs_ver(outputs_ver),

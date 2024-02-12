@@ -1,39 +1,15 @@
 
 
-// Create an NxN array of coupled cells
-//
-// Example with N = 4:
-//
-//       0|    1|    2|    3|
-//        |     |     |     |
-//    3   |  0  |  1  |  2  |  3
-//  ------S-----C-----C-----C------
-//        |     |     |     |
-//       3|    0|    1|    2|
-//        |     |     |     |
-//    2   |  3  |  0  |  1  |  2
-//  ------C-----S-----C-----C------
-//        |     |     |     |
-//       2|    3|    0|    1|
-//        |     |     |     |
-//    1   |  2  |  3  |  0  |  1
-//  ------C-----C-----S-----C------
-//        |     |     |     |
-//       1|    1|    3|    0|
-//        |     |     |     |
-//    0   |  1  |  2  |  3  |  0
-//  ------C-----C-----C-----S------
-//        |     |     |     |
-//       0|    1|    2|    3|
-//  
+// Create an NxN array of coupled cells.
 
 `timescale 1ns/1ps
 
 `include "defines.vh"
 `include "coupled_cell.v"
 `include "shorted_cell.v"
+`include "recursive_matrix.v"
 
-module core_matrix #(parameter N = 3,
+module core_matrix #(parameter N = 8,
 	             parameter NUM_WEIGHTS = 5,
 	             parameter WIRE_DELAY = 20,
 	             parameter NUM_LUTS   = 2) (
@@ -48,99 +24,54 @@ module core_matrix #(parameter N = 3,
                      input  wire [31:0] wdata
 	            );
 
-    genvar i;
-    genvar j;
-    genvar k;
+    wire [N-1:0] osc_hor_in ;
+    wire [N-1:0] osc_ver_in ;
+    wire [N-1:0] osc_hor_out;
+    wire [N-1:0] osc_ver_out;
+    wire [N-1:0] bot_row;
 
-    wire [N-1:0] osc_hor_in  [N-1:0];
-    wire [N-1:0] osc_ver_in  [N-1:0];
-    wire [N-1:0] osc_hor_out [N-1:0];
-    wire [N-1:0] osc_ver_out [N-1:0];
+    wire wr_match;
+    assign wr_match = (wr_addr & `WEIGHT_ADDR_MASK) == `WEIGHT_ADDR_BASE;
 
     // Get outputs at the bottom of the array
-    generate for (i = 0 ; i < N; i = i + 1) begin
-        assign outputs_ver[i] = osc_ver_out[i][i];
-    end endgenerate
-    assign outputs_hor = osc_hor_out[N-1];
+    assign outputs_ver = bot_row;
+    assign outputs_hor = osc_hor_out;
 
-    // Create the shorted cells
-    generate for (i = 0 ; i < N; i = i + 1) begin
-        shorted_cell #(.NUM_LUTS(NUM_LUTS))
-	             i_short(.ising_rstn(ising_rstn),
-			     .sin (osc_hor_in[i][N-1]),
-		             .din (osc_ver_in[i][N-1]),
-			     .sout(osc_hor_out[i][0]),
-			     .dout(osc_ver_out[i][0]));
-    end endgenerate
+    recursive_matrix #(.N(N),
+                  .NUM_WEIGHTS(NUM_WEIGHTS),
+                  .WIRE_DELAY(WIRE_DELAY),
+                  .NUM_LUTS(NUM_LUTS),
+	          .DIAGONAL(1)) 
+		  u_rec_matrix (
+                  .ising_rstn(ising_rstn),
+                  .inputs_ver(osc_ver_in),
+                  .inputs_hor(osc_hor_in),
+                  .outputs_ver(osc_ver_out),
+                  .outputs_hor(osc_hor_out),
+		  .bot_row(bot_row),
+                  .clk(clk),
+                  .axi_rstn(axi_rstn),
+                  .wready(wready),
+		  .wr_match(wr_match),
+                  .wr_addr(wr_addr),
+                  .wdata(wdata)
+    );
 
-    // Create the coupled cells
-    generate for (i = 0 ; i < N; i = i + 1) begin
-	for (j = i+1 ; j < N; j = j + 1) begin
-	    // Weights are in the order:
-	    // (0  , 1  ) (0  , 2) ... (0, N-1) (0, N)
-	    // (1  , 2  ) (1  , 3) ... (1, N  )
-	    // ...        ...
-	    // (N-2, N-1) (N-2, N)
-	    // (N-1, N  )
-	    //
-	    // So, weight (i,j) is at index (N*i - (i*(i+1)/2) + j - i - 1)
-
-	    wire wr_addr_match;
-	    assign wr_addr_match = (wr_addr == 
-		                    `WEIGHT_ADDR_BASE + 
-				    4 * ((N*i - (i*(i+1)/2) + j - i - 1)));
-
-	    // See top of file for wire indexing.
-	    //
-	    // Right half:
-            coupled_cell #(.NUM_WEIGHTS(NUM_WEIGHTS),
-                           .NUM_LUTS   (NUM_LUTS   ))
-	                 ij_right(.ising_rstn  (ising_rstn),
-                                  .sin   (osc_ver_in [j][j-i-1]),
-                                  .din   (osc_hor_in [i][j-i-1]),
-                                  .sout  (osc_ver_out[j][j-i]),
-                                  .dout  (osc_hor_out[i][j-i]),
-
-			          .clk            (clk),
-                                  .axi_rstn       (axi_rstn),
-                                  .wready         (wready),
-                                  .wr_addr_match  (wr_addr_match),
-                                  .wdata          (wdata));
-
-	    // Left half:
-            coupled_cell #(.NUM_WEIGHTS(NUM_WEIGHTS),
-                           .NUM_LUTS   (NUM_LUTS   ))
-	                 ij_left (.ising_rstn  (ising_rstn),
-                                  .sin   (osc_ver_in [i][N-(j-i)-1]),
-                                  .din   (osc_hor_in [j][N-(j-i)-1]),
-                                  .sout  (osc_ver_out[i][N-(j-i)]),
-                                  .dout  (osc_hor_out[j][N-(j-i)]),
-			          
-			          .clk            (clk),
-                                  .axi_rstn       (axi_rstn),
-                                  .wready         (wready),
-                                  .wr_addr_match  (wr_addr_match),
-                                  .wdata          (wdata));
- 
-	end 
-    end endgenerate
-
-    // Add delays
-    generate for (i = 0 ; i < N; i = i + 1) begin
-	for (j = 0; j < N; j = j + 1) begin
-            wire [WIRE_DELAY-1:0] hor_del;
-            wire [WIRE_DELAY-1:0] ver_del;
-            // Array of generic delay buffers
-            buffer #(NUM_LUTS) buf0h(.in(osc_hor_out[i][j]), .out(hor_del[0]));
-            buffer #(NUM_LUTS) buf0v(.in(osc_ver_out[i][j]), .out(ver_del[0]));
-            for (k = 1; k < WIRE_DELAY; k = k + 1) begin
-                buffer #(NUM_LUTS) bufih(.in(hor_del[k-1]), .out(hor_del[k]));
-                buffer #(NUM_LUTS) bufiv(.in(ver_del[k-1]), .out(ver_del[k]));
-            end
-	    
-	    assign osc_hor_in[i][j] = hor_del[WIRE_DELAY-1];
-	    assign osc_ver_in[i][j] = ver_del[WIRE_DELAY-1];
+    // Add delays that loop around
+    genvar j,k;
+    generate for (j = 0; j < N; j = j + 1) begin
+        wire [WIRE_DELAY-1:0] hor_del;
+        wire [WIRE_DELAY-1:0] ver_del;
+        // Array of generic delay buffers
+        buffer #(NUM_LUTS) buf0h(.in(osc_hor_out[j]), .out(hor_del[0]));
+        buffer #(NUM_LUTS) buf0v(.in(osc_ver_out[j]), .out(ver_del[0]));
+        for (k = 1; k < WIRE_DELAY; k = k + 1) begin
+            buffer #(NUM_LUTS) bufih(.in(hor_del[k-1]), .out(hor_del[k]));
+            buffer #(NUM_LUTS) bufiv(.in(ver_del[k-1]), .out(ver_del[k]));
         end
+
+        assign osc_hor_in[j] = hor_del[WIRE_DELAY-1];
+        assign osc_ver_in[j] = ver_del[WIRE_DELAY-1];
     end endgenerate
 
 endmodule

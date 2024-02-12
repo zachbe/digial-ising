@@ -1,64 +1,211 @@
 [*]
 [*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
-[*] Sun Jan 28 00:49:06 2024
+[*] Mon Feb 12 07:46:00 2024
 [*]
 [dumpfile] "/home/zach/repos/ising/rtl/tb/maxcut.vcd"
-[dumpfile_mtime] "Sun Jan 28 00:47:46 2024"
-[dumpfile_size] 3890836
+[dumpfile_mtime] "Mon Feb 12 07:45:39 2024"
+[dumpfile_size] 50224567
 [savefile] "/home/zach/repos/ising/rtl/tb/maxcut_tb.gtkw"
-[timestart] 0
-[size] 1720 1412
+[timestart] 93853000
+[size] 3440 1412
 [pos] -1 -1
-*-21.093809 2999000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-19.238422 101185000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] maxcut_tb.
 [treeopen] maxcut_tb.dut.
 [treeopen] maxcut_tb.dut.u_top_ising.
 [treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.genblk2[0].
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.genblk2[1].
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.genblk2[2].
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.genblk2[3].
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.genblk2[4].
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.genblk2[5].
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.bot_left.genblk1.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.bot_right.genblk1.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.bot_right.genblk1.bot_right.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.bot_right.genblk1.bot_right.genblk1.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.bot_right.genblk1.bot_right.genblk1.bot_left.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.bot_right.genblk1.bot_right.genblk1.bot_left.genblk6.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.bot_right.genblk1.bot_right.genblk1.bot_right.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.bot_right.genblk1.bot_right.genblk1.bot_right.genblk5.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.bot_right.genblk1.bot_right.genblk1.top_left.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.bot_right.genblk1.bot_right.genblk1.top_left.genblk5.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.bot_right.genblk1.top_left.genblk1.bot_right.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.bot_right.genblk1.top_left.genblk1.bot_right.genblk5.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.bot_right.genblk1.top_left.genblk1.top_left.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.bot_right.genblk1.top_left.genblk1.top_left.genblk5.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.bot_right.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.bot_right.genblk1.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.bot_right.genblk1.bot_right.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.bot_right.genblk1.bot_right.genblk5.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.bot_right.genblk1.top_left.genblk5.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.bot_right.genblk1.top_right.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.bot_right.genblk1.top_right.genblk6.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.top_left.genblk1.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.top_left.genblk1.bot_right.genblk5.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.top_left.genblk1.top_left.genblk5.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.top_left.genblk1.top_right.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.top_left.genblk1.top_right.genblk6.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.top_right.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.top_right.genblk1.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.top_right.genblk1.bot_left.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.top_right.genblk1.bot_left.genblk6.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.top_right.genblk1.bot_right.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.top_right.genblk1.bot_right.genblk6.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_right.genblk1.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_right.genblk1.bot_left.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_right.genblk1.bot_left.genblk1.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_right.genblk1.bot_left.genblk1.bot_left.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_right.genblk1.bot_left.genblk1.bot_left.genblk6.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_right.genblk1.bot_right.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_right.genblk1.bot_right.genblk1.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_right.genblk1.bot_right.genblk1.bot_right.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_right.genblk1.bot_right.genblk1.bot_right.genblk6.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_right.genblk1.bot_right.genblk1.top_right.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_right.genblk1.bot_right.genblk1.top_right.genblk6.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_right.genblk1.top_left.genblk1.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_right.genblk1.top_left.genblk1.top_left.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_right.genblk1.top_left.genblk1.top_left.genblk6.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_right.genblk1.top_right.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_right.genblk1.top_right.genblk1.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_right.genblk1.top_right.genblk1.bot_right.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_right.genblk1.top_right.genblk1.bot_right.genblk6.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_right.genblk1.top_right.genblk1.top_right.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_right.genblk1.top_right.genblk1.top_right.genblk6.
 [sst_width] 447
 [signals_width] 246
 [sst_expanded] 1
-[sst_vpaned_height] 413
+[sst_vpaned_height] 794
 @200
+-### PHASES ###
 -A
 @28
-maxcut_tb.dut.u_top_ising.u_core_matrix.genblk2[0].i_short.din
+maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.top_left.genblk1.top_left.genblk5.i_short.dout
 @200
 -B
 @28
-maxcut_tb.dut.u_top_ising.u_core_matrix.genblk2[1].i_short.din
+maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.top_left.genblk1.bot_right.genblk5.i_short.dout
 @200
 -C
 @28
-maxcut_tb.dut.u_top_ising.u_core_matrix.genblk2[2].i_short.din
+maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.bot_right.genblk1.top_left.genblk5.i_short.dout
 @200
 -D
 @28
-maxcut_tb.dut.u_top_ising.u_core_matrix.genblk2[3].i_short.din
+maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.bot_right.genblk1.bot_right.genblk5.i_short.dout
 @200
 -E
 @28
-maxcut_tb.dut.u_top_ising.u_core_matrix.genblk2[4].i_short.din
+maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.bot_right.genblk1.top_left.genblk1.top_left.genblk5.i_short.dout
 @200
--F (Local Field)
-@29
-maxcut_tb.dut.u_top_ising.u_core_matrix.genblk2[5].i_short.din
+-F
+@28
+maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.bot_right.genblk1.top_left.genblk1.bot_right.genblk5.i_short.dout
+@200
+-G
+@28
+maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.bot_right.genblk1.bot_right.genblk1.top_left.genblk5.i_short.dout
+@200
+-H (Local Field)
+@28
+maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.bot_right.genblk1.bot_right.genblk1.bot_right.genblk5.i_short.dout
 @200
 -Phases
-@c00022
-maxcut_tb.dut.u_top_ising.phase[5:0]
+@800022
+maxcut_tb.dut.u_top_ising.u_sampler.phase[7:0]
 @28
-(0)maxcut_tb.dut.u_top_ising.phase[5:0]
-(1)maxcut_tb.dut.u_top_ising.phase[5:0]
-(2)maxcut_tb.dut.u_top_ising.phase[5:0]
-(3)maxcut_tb.dut.u_top_ising.phase[5:0]
-(4)maxcut_tb.dut.u_top_ising.phase[5:0]
-(5)maxcut_tb.dut.u_top_ising.phase[5:0]
+(0)maxcut_tb.dut.u_top_ising.u_sampler.phase[7:0]
+(1)maxcut_tb.dut.u_top_ising.u_sampler.phase[7:0]
+(2)maxcut_tb.dut.u_top_ising.u_sampler.phase[7:0]
+(3)maxcut_tb.dut.u_top_ising.u_sampler.phase[7:0]
+(4)maxcut_tb.dut.u_top_ising.u_sampler.phase[7:0]
+(5)maxcut_tb.dut.u_top_ising.u_sampler.phase[7:0]
+(6)maxcut_tb.dut.u_top_ising.u_sampler.phase[7:0]
+(7)maxcut_tb.dut.u_top_ising.u_sampler.phase[7:0]
+@1001200
+-group_end
+@200
+-### WEIGHTS ###
+-AB
+@c00028
+maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.top_left.genblk1.top_right.genblk6.ij.weight[2:0]
+@28
+(0)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.top_left.genblk1.top_right.genblk6.ij.weight[2:0]
+(1)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.top_left.genblk1.top_right.genblk6.ij.weight[2:0]
+(2)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.top_left.genblk1.top_right.genblk6.ij.weight[2:0]
+@1401200
+-group_end
+@200
+-AE
+@28
+maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_right.genblk1.top_left.genblk1.top_left.genblk6.ij.weight[2:0]
+@200
+-AH
+@28
+maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_right.genblk1.top_right.genblk1.top_right.genblk6.ij.weight[2:0]
+@200
+-BC
+@28
+maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.top_right.genblk1.bot_left.genblk6.ij.weight[2:0]
+@200
+-BD
+@28
+maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.top_right.genblk1.bot_right.genblk6.ij.weight[2:0]
+@200
+-BH
+@28
+maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_right.genblk1.top_right.genblk1.bot_right.genblk6.ij.weight[2:0]
+@200
+-CD
+@28
+maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_left.genblk1.bot_right.genblk1.top_right.genblk6.ij.weight[2:0]
+@200
+-CH
+@28
+maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_right.genblk1.bot_right.genblk1.top_right.genblk6.ij.weight[2:0]
+@200
+-DE
+@28
+maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_right.genblk1.bot_left.genblk1.bot_left.genblk6.ij.weight[2:0]
+@200
+-DH
+@28
+maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.genblk1.top_right.genblk1.bot_right.genblk1.bot_right.genblk6.ij.weight[2:0]
+@200
+-ADDR
+@c00022
+maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+@28
+(0)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(1)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(2)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(3)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(4)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(5)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(6)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(7)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(8)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(9)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(10)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(11)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(12)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(13)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(14)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(15)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(16)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(17)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(18)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(19)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(20)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(21)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(22)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(23)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(24)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(25)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(26)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(27)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(28)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(29)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(30)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
+(31)maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.wr_addr[31:0]
 @1401200
 -group_end
 [pattern_trace] 1

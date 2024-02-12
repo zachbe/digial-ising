@@ -33,10 +33,10 @@ module maxcut_tb();
     reg  [31:0] waddr;
     reg  [31:0] wdata;
  
-    // Create a 6x6 array of coupled cells
-    // Cell F is the local field, which is positively coupled with all of the
-    // other cells.
-    ising_axi   #(.N(6),
+    // Create an 8x8 array of coupled cells
+    // Cell H is the local field, which is positively coupled with all of the
+    // other active cells.
+    ising_axi   #(.N(8),
 	          .NUM_WEIGHTS(3),
 		  .WIRE_DELAY(20)) dut(
 		  .clk(clk),
@@ -85,50 +85,50 @@ module maxcut_tb();
 	wdata = 32'h00008000;
 	
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE;         //AB
-	wdata = 32'h00000001;              //001
+	waddr = `WEIGHT_ADDR_BASE + 32'b010000; //AB
+	wdata = 32'h00000001;                   //001
 	
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 3*4;  //AE
-	wdata = 32'h00000001;              //001
+	waddr = `WEIGHT_ADDR_BASE + 32'b000001; //AE
+	wdata = 32'h00000001;                   //001
 	
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 4*4;  //AF
-	wdata = 32'h00000004;              //100
+	waddr = `WEIGHT_ADDR_BASE + 32'b010101; //AH
+	wdata = 32'h00000004;                   //100
 
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 5*4;  //BC
-	wdata = 32'h00000001;              //001
+	waddr = `WEIGHT_ADDR_BASE + 32'b110100; //BC
+	wdata = 32'h00000001;                   //001
 	
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 6*4;  //BD
-	wdata = 32'h00000001;              //001
+	waddr = `WEIGHT_ADDR_BASE + 32'b100100; //BD
+	wdata = 32'h00000001;                   //001
 	
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 8*4;  //BF
-	wdata = 32'h00000004;              //100
+	waddr = `WEIGHT_ADDR_BASE + 32'b100101; //BH
+	wdata = 32'h00000004;                   //100
 
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 9*4;  //CD
-	wdata = 32'h00000001;              //001
+	waddr = `WEIGHT_ADDR_BASE + 32'b011000; //CD
+	wdata = 32'h00000001;                   //001
 	
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 11*4; //CF
-	wdata = 32'h00000004;              //100
+	waddr = `WEIGHT_ADDR_BASE + 32'b011001; //CH
+	wdata = 32'h00000004;                   //100
 	
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 12*4; //DE
-	wdata = 32'h00000001;              //001
+	waddr = `WEIGHT_ADDR_BASE + 32'b111101; //DE
+	wdata = 32'h00000001;                   //001
 	
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 13*4; //DF
-	wdata = 32'h00000004;              //100
+	waddr = `WEIGHT_ADDR_BASE + 32'b101001; //DH
+	wdata = 32'h00000004;                   //100
 	
 	@(posedge clk);
 	waddr = `START_ADDR;
 	wdata = 32'h00000001;
 
-	#50000;
+	#100000;
 	
 	@(posedge clk);
 	raddr = `PHASE_ADDR_BASE;
@@ -151,10 +151,10 @@ module maxcut_tb();
 	@(posedge clk);
 	#1
 	if(rdata[0] != 0) $display("!!! E FAILED !!!"); //E
-	raddr = `PHASE_ADDR_BASE + 5*4;
+	raddr = `PHASE_ADDR_BASE + 7*4;
 	@(posedge clk);
 	#1
-	if(rdata[0] != 1) $display("!!! F FAILED !!!"); //F
+	if(rdata[0] != 1) $display("!!! H FAILED !!!"); //F
         
         $display("If you got here with no fails, it passed!");	
 
