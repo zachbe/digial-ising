@@ -12,7 +12,8 @@ module recursive_matrix #(parameter N = 8,
 	             parameter NUM_WEIGHTS = 5,
 	             parameter WIRE_DELAY = 20,
 	             parameter NUM_LUTS   = 2, 
-	             parameter DIAGONAL   = 1) (
+	             parameter DIAGONAL   = 1,
+	             parameter TRANSPOSE  = 0) (
 		     input  wire ising_rstn,
 
 		     input  wire [N-1:0] inputs_ver,
@@ -26,7 +27,8 @@ module recursive_matrix #(parameter N = 8,
 		     input  wire        axi_rstn,
                      input  wire        wready,
 		     input  wire        wr_match,
-                     input  wire [31:0] wr_addr,
+                     input  wire [15:0] s_addr,
+                     input  wire [15:0] d_addr,
                      input  wire [31:0] wdata
 	            );
 
@@ -41,21 +43,15 @@ module recursive_matrix #(parameter N = 8,
         wire [N-1:0] osc_ver_out ;
 
         // Select cell based on addr
-        // 0 1
-        // 2 3
-        wire tl, tr, bl, br;
-        assign tl = wr_match & (wr_addr[1:0] == 2'b00);
-        assign tr = wr_match & (wr_addr[1:0] == 2'b01);
-        assign br = wr_match & (wr_addr[1:0] == 2'b11);
-        assign bl = DIAGONAL ? tr                     :
-		   (wr_match & (wr_addr[1:0] == 2'b10));
+        wire tl, tr, bl, br, tr_m, bl_m;
+        assign tl = wr_match & (~s_addr[15]) & (~d_addr[15]);
+        assign tr = wr_match & (~s_addr[15]) & ( d_addr[15]);
+        assign br = wr_match & ( s_addr[15]) & ( d_addr[15]);
+        assign bl = wr_match & ( s_addr[15]) & (~d_addr[15]);
 
-        // Transpose addr by switching TRs and BLs
-        wire [31:0] tp_addr;
-	for (j = 0; j < 16; j = j + 1) begin : transpose_addr
-            assign tp_addr[j*2 +: 2] = DIAGONAL ? {wr_addr[j*2], wr_addr[j*2 + 1]} :
-		                                   wr_addr[j*2 +: 2];
-	end
+	assign tr_m = TRANSPOSE ? bl : tr;
+	assign bl_m = DIAGONAL  ? tr :
+		      TRANSPOSE ? tr : bl;
 
 	// Get bottom row for phase measurement
 	wire [(N/2)-1:0] bot_row_left ;
@@ -67,11 +63,12 @@ module recursive_matrix #(parameter N = 8,
 		           .NUM_WEIGHTS(NUM_WEIGHTS),
 			   .WIRE_DELAY(WIRE_DELAY),
 			   .NUM_LUTS(NUM_LUTS),
-			   .DIAGONAL(DIAGONAL))
+			   .DIAGONAL(DIAGONAL),
+		           .TRANSPOSE(TRANSPOSE))
 			top_left(.ising_rstn (ising_rstn),
-				 .inputs_ver (inputs_ver [N-1:(N/2)]),
+				 .inputs_ver (osc_ver_in [N-1:(N/2)]),
 				 .inputs_hor (inputs_hor [N-1:(N/2)]),
-				 .outputs_ver(osc_ver_out[N-1:(N/2)]),
+				 .outputs_ver(outputs_ver[N-1:(N/2)]),
 				 .outputs_hor(osc_hor_out[N-1:(N/2)]),
 
 				 .bot_row(),
@@ -80,18 +77,20 @@ module recursive_matrix #(parameter N = 8,
 				 .axi_rstn(axi_rstn),
 				 .wready(wready),
 				 .wr_match(tl),
-				 .wr_addr({2'b0, wr_addr[31:2]}),
+				 .s_addr({s_addr[14:0], 1'b0}),
+				 .d_addr({d_addr[14:0], 1'b0}),
 				 .wdata(wdata));
 	// Top right
         recursive_matrix #(.N(N/2),
 		           .NUM_WEIGHTS(NUM_WEIGHTS),
 			   .WIRE_DELAY(WIRE_DELAY),
 			   .NUM_LUTS(NUM_LUTS),
-			   .DIAGONAL(0))
+			   .DIAGONAL(0),
+		           .TRANSPOSE(TRANSPOSE))
 		       top_right(.ising_rstn (ising_rstn),
-				 .inputs_ver (inputs_ver [(N/2)-1:0]),
+				 .inputs_ver (osc_ver_in [(N/2)-1:0]),
 				 .inputs_hor (osc_hor_in [N-1:(N/2)]),
-				 .outputs_ver(osc_ver_out[(N/2)-1:0]),
+				 .outputs_ver(outputs_ver[(N/2)-1:0]),
 				 .outputs_hor(outputs_hor[N-1:(N/2)]),
 
 				 .bot_row(),
@@ -99,19 +98,21 @@ module recursive_matrix #(parameter N = 8,
 				 .clk(clk),
 				 .axi_rstn(axi_rstn),
 				 .wready(wready),
-				 .wr_match(tr),
-				 .wr_addr({2'b0, wr_addr[31:2]}),
+				 .wr_match(tr_m),
+				 .s_addr({s_addr[14:0], 1'b0}),
+				 .d_addr({d_addr[14:0], 1'b0}),
 				 .wdata(wdata));
 	// Bottom right
         recursive_matrix #(.N(N/2),
 		           .NUM_WEIGHTS(NUM_WEIGHTS),
 			   .WIRE_DELAY(WIRE_DELAY),
 			   .NUM_LUTS(NUM_LUTS),
-			   .DIAGONAL(DIAGONAL))
+			   .DIAGONAL(DIAGONAL),
+		           .TRANSPOSE(TRANSPOSE))
 		       bot_right(.ising_rstn (ising_rstn),
-				 .inputs_ver (osc_ver_in [(N/2)-1:0]),
+				 .inputs_ver (inputs_ver [(N/2)-1:0]),
 				 .inputs_hor (osc_hor_in [(N/2)-1:0]),
-				 .outputs_ver(outputs_ver[(N/2)-1:0]),
+				 .outputs_ver(osc_ver_out[(N/2)-1:0]),
 				 .outputs_hor(outputs_hor[(N/2)-1:0]),
 
 				 .bot_row(bot_row_right),
@@ -120,18 +121,20 @@ module recursive_matrix #(parameter N = 8,
 				 .axi_rstn(axi_rstn),
 				 .wready(wready),
 				 .wr_match(br),
-				 .wr_addr({2'b0, wr_addr[31:2]}),
+				 .s_addr({s_addr[14:0], 1'b0}),
+				 .d_addr({d_addr[14:0], 1'b0}),
 				 .wdata(wdata));
 	// Bottom left
         recursive_matrix #(.N(N/2),
 		           .NUM_WEIGHTS(NUM_WEIGHTS),
 			   .WIRE_DELAY(WIRE_DELAY),
 			   .NUM_LUTS(NUM_LUTS),
-			   .DIAGONAL(0))
+			   .DIAGONAL(0),
+		           .TRANSPOSE(DIAGONAL | TRANSPOSE))
 		        bot_left(.ising_rstn (ising_rstn),
-				 .inputs_ver (osc_ver_in [N-1:(N/2)]),
+				 .inputs_ver (inputs_ver [N-1:(N/2)]),
 				 .inputs_hor (inputs_hor [(N/2)-1:0]),
-				 .outputs_ver(outputs_ver[N-1:(N/2)]),
+				 .outputs_ver(osc_ver_out[N-1:(N/2)]),
 				 .outputs_hor(osc_hor_out[(N/2)-1:0]),
 
 				 .bot_row(bot_row_left),
@@ -139,8 +142,9 @@ module recursive_matrix #(parameter N = 8,
 				 .clk(clk),
 				 .axi_rstn(axi_rstn),
 				 .wready(wready),
-				 .wr_match(bl),
-				 .wr_addr({2'b0, tp_addr[31:2]}),
+				 .wr_match(bl_m),
+				 .s_addr({s_addr[14:0], 1'b0}),
+				 .d_addr({d_addr[14:0], 1'b0}),
 				 .wdata(wdata));
         // Add delays
         for (j = 0; j < N; j = j + 1) begin : rec_delays
@@ -160,7 +164,7 @@ module recursive_matrix #(parameter N = 8,
 
     // Diagonal base case is a shorted cell.
     end else if (DIAGONAL == 1) begin : shorted_cell
-        assign bot_row = outputs_hor;
+        assign bot_row = inputs_hor;
 	shorted_cell #(.NUM_LUTS(NUM_LUTS))
 	             i_short(.ising_rstn(ising_rstn),
 			     .sin (inputs_ver ),
@@ -170,7 +174,7 @@ module recursive_matrix #(parameter N = 8,
 
     // Otherwise, it's a coupled cell.
     end else begin : coupled_cell
-        assign bot_row = outputs_hor;
+        assign bot_row = inputs_hor;
         coupled_cell #(.NUM_WEIGHTS(NUM_WEIGHTS),
                        .NUM_LUTS   (NUM_LUTS   ))
 	             ij   (.ising_rstn  (ising_rstn),

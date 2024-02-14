@@ -34,14 +34,22 @@ module core_matrix #(parameter N = 8,
     assign wr_match = (wr_addr & `WEIGHT_ADDR_MASK) == `WEIGHT_ADDR_BASE;
 
     // Get outputs at the bottom of the array
-    assign outputs_ver = bot_row;
-    assign outputs_hor = osc_hor_out;
+    assign outputs_hor = bot_row;
+    assign outputs_ver = osc_ver_out;
+
+    // Split the address into S and D
+    wire [15:0] s_addr;
+    wire [15:0] d_addr;
+
+    assign s_addr = wr_addr[15:0]          << (16 - $clog2(N));
+    assign d_addr = {1'b0, wr_addr[30:16]} << (16 - $clog2(N));
 
     recursive_matrix #(.N(N),
                   .NUM_WEIGHTS(NUM_WEIGHTS),
                   .WIRE_DELAY(WIRE_DELAY),
                   .NUM_LUTS(NUM_LUTS),
-	          .DIAGONAL(1)) 
+	          .DIAGONAL(1),
+	          .TRANSPOSE(0)) 
 		  u_rec_matrix (
                   .ising_rstn(ising_rstn),
                   .inputs_ver(osc_ver_in),
@@ -53,7 +61,8 @@ module core_matrix #(parameter N = 8,
                   .axi_rstn(axi_rstn),
                   .wready(wready),
 		  .wr_match(wr_match),
-                  .wr_addr(wr_addr),
+                  .s_addr(s_addr),
+		  .d_addr(d_addr),
                   .wdata(wdata)
     );
 

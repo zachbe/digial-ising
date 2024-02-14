@@ -38,7 +38,7 @@ module maxcut_tb();
     // other active cells.
     ising_axi   #(.N(8),
 	          .NUM_WEIGHTS(3),
-		  .WIRE_DELAY(20)) dut(
+		  .WIRE_DELAY(10)) dut(
 		  .clk(clk),
 		  .axi_rstn(rstn),
                   .arvalid_q(1'b1),
@@ -85,50 +85,50 @@ module maxcut_tb();
 	wdata = 32'h00008000;
 	
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 32'b010000; //AB
-	wdata = 32'h00000001;                   //001
+	waddr = `WEIGHT_ADDR_BASE + 32'd0 + (32'd1 << 16); //AB
+	wdata = 32'h00000001;                              //001
 	
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 32'b000001; //AE
-	wdata = 32'h00000001;                   //001
+	waddr = `WEIGHT_ADDR_BASE + 32'd0 + (32'd4 << 16); //AE
+	wdata = 32'h00000001;                              //001
 	
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 32'b010101; //AH
-	wdata = 32'h00000004;                   //100
+	waddr = `WEIGHT_ADDR_BASE + 32'd0 + (32'd7 << 16); //AH
+	wdata = 32'h00000004;                              //100
 
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 32'b110100; //BC
-	wdata = 32'h00000001;                   //001
+	waddr = `WEIGHT_ADDR_BASE + 32'd1 + (32'd2 << 16); //BC
+	wdata = 32'h00000001;                              //001
 	
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 32'b100100; //BD
-	wdata = 32'h00000001;                   //001
+	waddr = `WEIGHT_ADDR_BASE + 32'd1 + (32'd3 << 16); //BD
+	wdata = 32'h00000001;                              //001
 	
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 32'b100101; //BH
-	wdata = 32'h00000004;                   //100
+	waddr = `WEIGHT_ADDR_BASE + 32'd1 + (32'd7 << 16); //BH
+	wdata = 32'h00000004;                              //100
 
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 32'b011000; //CD
-	wdata = 32'h00000001;                   //001
+	waddr = `WEIGHT_ADDR_BASE + 32'd2 + (32'd3 << 16); //CD
+	wdata = 32'h00000001;                              //001
 	
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 32'b011001; //CH
-	wdata = 32'h00000004;                   //100
+	waddr = `WEIGHT_ADDR_BASE + 32'd2 + (32'd7 << 16); //CH
+	wdata = 32'h00000004;                              //100
 	
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 32'b111101; //DE
-	wdata = 32'h00000001;                   //001
+	waddr = `WEIGHT_ADDR_BASE + 32'd3 + (32'd4 << 16); //DE
+	wdata = 32'h00000001;                              //001
 	
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + 32'b101001; //DH
-	wdata = 32'h00000004;                   //100
+	waddr = `WEIGHT_ADDR_BASE + 32'd3 + (32'd7 << 16); //DH
+	wdata = 32'h00000004;                              //100
 	
 	@(posedge clk);
 	waddr = `START_ADDR;
 	wdata = 32'h00000001;
 
-	#100000;
+	#50000;
 	
 	@(posedge clk);
 	raddr = `PHASE_ADDR_BASE;
