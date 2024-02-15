@@ -252,7 +252,7 @@ assign arready = !arvalid_q && !rvalid;
 // Create an NxN array of coupled cells
 // Cell F is the local field, which is positively coupled with all of the
 // other cells.
-ising_axi   #(.N(101),
+ising_axi   #(.N(128),
               .NUM_WEIGHTS(31),
               .WIRE_DELAY(32)) dut(
               .clk(clk_main_a0),
