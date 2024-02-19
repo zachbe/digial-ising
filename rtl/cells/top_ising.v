@@ -6,8 +6,11 @@
 `timescale 1ns/1ps
 
 `include "defines.vh"
-`include "core_matrix.v"
-`include "sample.v"
+
+`ifdef SIM
+    `include "core_matrix.v"
+    `include "sample.v"
+`endif
 
 module top_ising   #(parameter N = 3,
 	             parameter NUM_WEIGHTS = 5,

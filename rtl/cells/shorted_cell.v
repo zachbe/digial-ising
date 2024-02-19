@@ -7,7 +7,10 @@
 `timescale 1ns/1ps
 
 `include "defines.vh"
-`include "buffer.v"
+
+`ifdef SIM
+    `include "buffer.v"
+`endif
 
 module shorted_cell #(parameter NUM_LUTS = 2) (
 	               input  wire ising_rstn,

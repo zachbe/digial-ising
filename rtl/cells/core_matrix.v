@@ -5,9 +5,12 @@
 `timescale 1ns/1ps
 
 `include "defines.vh"
-`include "coupled_cell.v"
-`include "shorted_cell.v"
-`include "recursive_matrix.v"
+
+`ifdef SIM
+    `include "coupled_cell.v"
+    `include "shorted_cell.v"
+    `include "recursive_matrix.v"
+`endif
 
 module core_matrix #(parameter N = 8,
 	             parameter NUM_WEIGHTS = 5,

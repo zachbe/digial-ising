@@ -6,7 +6,10 @@
 `timescale 1ns/1ps
 
 `include "defines.vh"
-`include "top_ising.v"
+
+`ifdef SIM
+    `include "top_ising.v"
+`endif
 
 module ising_axi    #(parameter N = 3,
 	             parameter NUM_WEIGHTS = 5,
