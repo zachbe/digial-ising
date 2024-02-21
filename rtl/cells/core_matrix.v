@@ -44,8 +44,8 @@ module core_matrix #(parameter N = 8,
     wire [15:0] s_addr;
     wire [15:0] d_addr;
 
-    assign s_addr = wr_addr[15:0]          << (16 - $clog2(N));
-    assign d_addr = {1'b0, wr_addr[30:16]} << (16 - $clog2(N));
+    assign s_addr = {4'b0, wr_addr[11: 0]} << (16 - $clog2(N));
+    assign d_addr = {4'b0, wr_addr[23:12]} << (16 - $clog2(N));
 
     recursive_matrix #(.N(N),
                   .NUM_WEIGHTS(NUM_WEIGHTS),
