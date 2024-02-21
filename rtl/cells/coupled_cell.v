@@ -15,7 +15,7 @@
     `include "buffer.v"
 `endif
 
-module coupled_cell #(parameter NUM_WEIGHTS = 31,
+module coupled_cell #(parameter NUM_WEIGHTS = 15,
                       parameter NUM_LUTS    = 2 ) (
 		       // Oscillator RST
 		       input  wire ising_rstn,
