@@ -34,7 +34,7 @@ module ising_axi    #(parameter N = 3,
 
     wire [N-1:0] phase;
     wire [ 31:0] phase_bit;
-    assign       phase_bit  = (araddr_q - `PHASE_ADDR_BASE);
+    assign       phase_bit  = (araddr_q - `PHASE_ADDR_BASE) >> 2;
     assign       phase_sel  = (araddr_q[31:12] == `PHASE_ADDR_MASK );
 
     wire [31:0]  weight_read_val;
