@@ -32,6 +32,7 @@ module maxcut_tb();
     wire [31:0] rdata;
     reg  [31:0] waddr;
     reg  [31:0] wdata;
+    reg         wready;
  
     // Create an 8x8 array of coupled cells
     // Cell H is the local field, which is positively coupled with all of the
@@ -47,7 +48,7 @@ module maxcut_tb();
 		  .rvalid(),
 		  .rresp(),
 		  .rdata(rdata),
-		  .wready(1'b1),
+		  .wready(wready),
 		  .wr_addr(waddr),
 		  .wdata(wdata));
 
@@ -76,6 +77,12 @@ module maxcut_tb();
         @(posedge clk);
 	rstn = 1'b1;
 
+        /////////////////////////////////////////////////////////////
+	// Program counters
+	
+	@(posedge clk);
+	wready = 1'b1;
+
         @(posedge clk);
 	waddr = `CTR_CUTOFF_ADDR;
 	wdata = 32'h00004000;
@@ -83,7 +90,25 @@ module maxcut_tb();
 	@(posedge clk);
 	waddr = `CTR_MAX_ADDR;
 	wdata = 32'h00008000;
+        
+	/////////////////////////////////////////////////////////////
+	// Check weight reset values
 	
+	@(posedge clk);
+	wready = 1'b0;
+	
+	@(posedge clk);
+	raddr = `WEIGHT_ADDR_BASE + 31'd0 + (31'd1 << 12);
+	@(posedge clk);
+	#1
+	if(rdata[2:0] != 3'b010) $display("!!! AB FAILED !!!"); //A
+	
+	/////////////////////////////////////////////////////////////
+	// Program weights
+	
+	@(posedge clk);
+	wready = 1'b1;
+
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + 32'd0 + (32'd1 << 12); //AB
 	wdata = 32'h00000001;                              //001
@@ -124,34 +149,55 @@ module maxcut_tb();
 	waddr = `WEIGHT_ADDR_BASE + 32'd3 + (32'd7 << 12); //DH
 	wdata = 32'h00000004;                              //100
 	
+	/////////////////////////////////////////////////////////////
+	// Check weights
+	
+	@(posedge clk);
+	wready = 1'b0;
+	
+	@(posedge clk);
+	raddr = `WEIGHT_ADDR_BASE + 31'd0 + (31'd1 << 12);
+	@(posedge clk);
+	#1
+	if(rdata[2:0] != 3'b001) $display("!!! AB FAILED !!!"); //A
+	
+	/////////////////////////////////////////////////////////////
+	// Ach, Hans, run!
+	
+	@(posedge clk);
+	wready = 1'b1;
+	
 	@(posedge clk);
 	waddr = `START_ADDR;
 	wdata = 32'h00000001;
 
 	#50000;
 	
+	/////////////////////////////////////////////////////////////
+	// Read phases
+	
 	@(posedge clk);
-	raddr = `PHASE_ADDR_BASE + 7*4;
+	raddr = `PHASE_ADDR_BASE + 7;
 	@(posedge clk);
 	#1
 	if(rdata[0] != 1) $display("!!! A FAILED !!!"); //A
-	raddr = `PHASE_ADDR_BASE + 6*4;
+	raddr = `PHASE_ADDR_BASE + 6;
 	@(posedge clk);
 	#1
 	if(rdata[0] != 0) $display("!!! B FAILED !!!"); //B
-	raddr = `PHASE_ADDR_BASE + 5*4;
+	raddr = `PHASE_ADDR_BASE + 5;
 	@(posedge clk);
 	#1
 	if(rdata[0] != 1) $display("!!! C FAILED !!!"); //C
-	raddr = `PHASE_ADDR_BASE + 4*4;
+	raddr = `PHASE_ADDR_BASE + 4;
 	@(posedge clk);
 	#1
 	if(rdata[0] != 1) $display("!!! D FAILED !!!"); //D
-	raddr = `PHASE_ADDR_BASE + 3*4;
+	raddr = `PHASE_ADDR_BASE + 3;
 	@(posedge clk);
 	#1
 	if(rdata[0] != 0) $display("!!! E FAILED !!!"); //E
-	raddr = `PHASE_ADDR_BASE + 0*4;
+	raddr = `PHASE_ADDR_BASE + 0;
 	@(posedge clk);
 	#1
 	if(rdata[0] != 1) $display("!!! H FAILED !!!"); //F

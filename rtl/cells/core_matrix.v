@@ -24,7 +24,9 @@ module core_matrix #(parameter N = 8,
 		     input  wire        axi_rstn,
                      input  wire        wready,
                      input  wire [31:0] wr_addr,
-                     input  wire [31:0] wdata
+                     input  wire [31:0] wdata,
+		     input  wire [31:0] rd_addr,
+		     output wire [31:0] rdata
 	            );
 
     wire [N-1:0] osc_hor_in ;
@@ -34,7 +36,7 @@ module core_matrix #(parameter N = 8,
     wire [N-1:0] bot_row;
 
     wire wr_match;
-    assign wr_match = (wr_addr & `WEIGHT_ADDR_MASK) == `WEIGHT_ADDR_BASE;
+    assign wr_match = (wr_addr[31:24] == `WEIGHT_ADDR_MASK);
 
     // Get outputs at the bottom of the array
     assign outputs_hor = bot_row;
@@ -44,8 +46,11 @@ module core_matrix #(parameter N = 8,
     wire [15:0] s_addr;
     wire [15:0] d_addr;
 
-    assign s_addr = {4'b0, wr_addr[11: 0]} << (16 - $clog2(N));
-    assign d_addr = {4'b0, wr_addr[23:12]} << (16 - $clog2(N));
+    wire [31:0] addr;
+    assign addr = wready ? wr_addr : rd_addr;
+
+    assign s_addr = {4'b0, addr[11: 0]} << (16 - $clog2(N));
+    assign d_addr = {4'b0, addr[23:12]} << (16 - $clog2(N));
 
     recursive_matrix #(.N(N),
                   .NUM_WEIGHTS(NUM_WEIGHTS),
@@ -66,7 +71,8 @@ module core_matrix #(parameter N = 8,
 		  .wr_match(wr_match),
                   .s_addr(s_addr),
 		  .d_addr(d_addr),
-                  .wdata(wdata)
+                  .wdata(wdata),
+		  .rdata(rdata)
     );
 
     // Add delays that loop around

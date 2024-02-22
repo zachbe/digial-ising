@@ -29,7 +29,8 @@ module recursive_matrix #(parameter N = 8,
 		     input  wire        wr_match,
                      input  wire [15:0] s_addr,
                      input  wire [15:0] d_addr,
-                     input  wire [31:0] wdata
+                     input  wire [31:0] wdata,
+		     output wire [31:0] rdata
 	            );
 
     genvar j,k;
@@ -52,6 +53,12 @@ module recursive_matrix #(parameter N = 8,
 	assign tr_m = TRANSPOSE ? bl : tr;
 	assign bl_m = DIAGONAL  ? tr :
 		      TRANSPOSE ? tr : bl;
+
+	wire [31:0] tl_r, tr_r, bl_r, br_r;
+	assign rdata = tl   ? tl_r :
+		       tr_m ? tr_r :
+		       br   ? br_r :
+		       bl_m ? bl_r : 32'hAAAAAAAA;
 
 	// Get bottom row for phase measurement
 	wire [(N/2)-1:0] bot_row_left ;
@@ -79,7 +86,8 @@ module recursive_matrix #(parameter N = 8,
 				 .wr_match(tl),
 				 .s_addr({s_addr[14:0], 1'b0}),
 				 .d_addr({d_addr[14:0], 1'b0}),
-				 .wdata(wdata));
+				 .wdata(wdata),
+			         .rdata(tl_r));
 	// Top right
         recursive_matrix #(.N(N/2),
 		           .NUM_WEIGHTS(NUM_WEIGHTS),
@@ -101,7 +109,8 @@ module recursive_matrix #(parameter N = 8,
 				 .wr_match(tr_m),
 				 .s_addr({s_addr[14:0], 1'b0}),
 				 .d_addr({d_addr[14:0], 1'b0}),
-				 .wdata(wdata));
+				 .wdata(wdata),
+			         .rdata(tr_r));
 	// Bottom right
         recursive_matrix #(.N(N/2),
 		           .NUM_WEIGHTS(NUM_WEIGHTS),
@@ -123,7 +132,8 @@ module recursive_matrix #(parameter N = 8,
 				 .wr_match(br),
 				 .s_addr({s_addr[14:0], 1'b0}),
 				 .d_addr({d_addr[14:0], 1'b0}),
-				 .wdata(wdata));
+				 .wdata(wdata),
+			         .rdata(br_r));
 	// Bottom left
         recursive_matrix #(.N(N/2),
 		           .NUM_WEIGHTS(NUM_WEIGHTS),
@@ -145,7 +155,8 @@ module recursive_matrix #(parameter N = 8,
 				 .wr_match(bl_m),
 				 .s_addr({s_addr[14:0], 1'b0}),
 				 .d_addr({d_addr[14:0], 1'b0}),
-				 .wdata(wdata));
+				 .wdata(wdata),
+			         .rdata(bl_r));
         // Add delays
         for (j = 0; j < N; j = j + 1) begin : rec_delays
             wire [WIRE_DELAY-1:0] hor_del;
@@ -187,7 +198,8 @@ module recursive_matrix #(parameter N = 8,
                               .axi_rstn       (axi_rstn),
                               .wready         (wready),
                               .wr_addr_match  (wr_match),
-                              .wdata          (wdata));
+                              .wdata          (wdata),
+		              .rdata          (rdata));
     end endgenerate
 
 

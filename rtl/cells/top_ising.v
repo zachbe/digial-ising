@@ -25,7 +25,9 @@ module top_ising   #(parameter N = 3,
 		     input  wire        axi_rstn,
                      input  wire        wready,
                      input  wire [31:0] wr_addr,
-                     input  wire [31:0] wdata
+                     input  wire [31:0] wdata,
+		     input  wire [31:0] rd_addr,
+		     output wire [31:0] rdata
 	            );
 
     wire [N-1:0] outputs_ver;
@@ -42,7 +44,9 @@ module top_ising   #(parameter N = 3,
 	          .axi_rstn(axi_rstn),
 	          .wready(wready),
 	          .wr_addr(wr_addr),
-	          .wdata(wdata)
+	          .wdata(wdata),
+		  .rd_addr(rd_addr),
+		  .rdata(rdata)
     );
 
     sample #(.N(N)) u_sampler (

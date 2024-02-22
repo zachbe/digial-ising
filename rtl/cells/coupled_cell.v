@@ -31,7 +31,8 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
 		       input  wire        axi_rstn,
                        input  wire        wready,
 		       input  wire        wr_addr_match,
-		       input  wire [31:0] wdata
+		       input  wire [31:0] wdata,
+		       output wire [31:0] rdata
 	               );
 
     // Local registers for storing weights.
@@ -39,6 +40,8 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
     // most efficent way to store them. (Issue #7)
     reg  [NUM_WEIGHTS-1:0] weight;
     wire [NUM_WEIGHTS-1:0] weight_nxt;
+
+    assign rdata = weight;
 
     assign weight_nxt = (wready & wr_addr_match) ? wdata[NUM_WEIGHTS-1:0] :
 	                                           weight                 ;
