@@ -43,15 +43,15 @@ module sample #(parameter N = 3)(
 	assign overflow [i] = (phase_counters[i] >= counter_max);
 	assign underflow[i] = (phase_counters[i] == 0);
 
-        assign phase_counters_nxt[i] = phase_mismatch[i] ? (
+        assign phase_counters_nxt[i] = ~rstn             ? counter_cutoff         :   
+		                       phase_mismatch[i] ? (
 		                       underflow         ? phase_counters[i]      :
 				                           phase_counters[i] - 1 ):(
 				       overflow          ? phase_counters[i]      :
 		                                           phase_counters[i] + 1 );
 
-        always @(posedge clk or negedge rstn) begin
-	    if (!rstn) begin phase_counters[i] <= counter_cutoff;        end
-	    else       begin phase_counters[i] <= phase_counters_nxt[i]; end
+        always @(posedge clk) begin
+	    phase_counters[i] <= phase_counters_nxt[i];
 	end
     end endgenerate
 endmodule
