@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
-[*] Mon Feb 26 02:03:20 2024
+[*] Mon Feb 26 06:39:54 2024
 [*]
 [dumpfile] "/home/zach/repos/ising/rtl/tb/maxcut.vcd"
-[dumpfile_mtime] "Mon Feb 26 02:02:15 2024"
-[dumpfile_size] 22223932
+[dumpfile_mtime] "Mon Feb 26 06:38:48 2024"
+[dumpfile_size] 22086518
 [savefile] "/home/zach/repos/ising/rtl/tb/maxcut_tb.gtkw"
-[timestart] 52330500
+[timestart] 430000
 [size] 1720 1412
-[pos] -51 -51
-*-17.402185 35056500 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[pos] -1 -1
+*-21.935381 6201000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] maxcut_tb.
 [treeopen] maxcut_tb.dut.
 [treeopen] maxcut_tb.dut.u_top_ising.
@@ -113,7 +113,7 @@
 [sst_width] 447
 [signals_width] 246
 [sst_expanded] 1
-[sst_vpaned_height] 893
+[sst_vpaned_height] 647
 @200
 -### PHASES ###
 -A
@@ -147,5 +147,17 @@ maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_right.recurse.b
 -H (Local Field)
 @28
 maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_right.recurse.bot_right.recurse.bot_right.shorted_cell.i_short.dout
+@200
+-Phase Counters
+@22
+maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[7][31:0]
+maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[6][31:0]
+maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[5][31:0]
+maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[4][31:0]
+maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[3][31:0]
+maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[2][31:0]
+maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[1][31:0]
+@23
+maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[0][31:0]
 [pattern_trace] 1
 [pattern_trace] 0

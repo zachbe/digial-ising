@@ -61,7 +61,7 @@ module maxcut_tb();
     initial begin
 	$dumpfile("maxcut.vcd");
         $dumpvars(0, maxcut_tb);
-	for (i = 0 ; i < 6; i = i+1) begin
+	for (i = 0 ; i < 8; i = i+1) begin
             $dumpvars(0, dut.u_top_ising.u_sampler.phase_counters[i]);
             $dumpvars(0, dut.u_top_ising.u_sampler.phase_counters_nxt[i]);
 	end
@@ -85,11 +85,11 @@ module maxcut_tb();
 
         @(posedge clk);
 	waddr = `CTR_CUTOFF_ADDR;
-	wdata = 32'h00004000;
+	wdata = 32'h00000004;
 
 	@(posedge clk);
 	waddr = `CTR_MAX_ADDR;
-	wdata = 32'h00008000;
+	wdata = 32'h00000008;
         
 	/////////////////////////////////////////////////////////////
 	// Check weight reset values
@@ -180,27 +180,27 @@ module maxcut_tb();
 	raddr = `PHASE_ADDR_BASE + (7 << 2);
 	@(posedge clk);
 	#1
-	if(rdata < 32'h4000) $display("!!! A FAILED !!!"); //A
+	if(rdata < 32'h4) $display("!!! A FAILED !!!"); //A
 	raddr = `PHASE_ADDR_BASE + (6 << 2);
 	@(posedge clk);
 	#1
-	if(rdata > 32'h4000) $display("!!! B FAILED !!!"); //B
+	if(rdata > 32'h4) $display("!!! B FAILED !!!"); //B
 	raddr = `PHASE_ADDR_BASE + (5 << 2);
 	@(posedge clk);
 	#1
-	if(rdata < 32'h4000) $display("!!! C FAILED !!!"); //C
+	if(rdata < 32'h4) $display("!!! C FAILED !!!"); //C
 	raddr = `PHASE_ADDR_BASE + (4 << 2);
 	@(posedge clk);
 	#1
-	if(rdata < 32'h4000) $display("!!! D FAILED !!!"); //D
+	if(rdata < 32'h4) $display("!!! D FAILED !!!"); //D
 	raddr = `PHASE_ADDR_BASE + (3 << 2);
 	@(posedge clk);
 	#1
-	if(rdata > 32'h4000) $display("!!! E FAILED !!!"); //E
+	if(rdata > 32'h4) $display("!!! E FAILED !!!"); //E
 	raddr = `PHASE_ADDR_BASE + 0;
 	@(posedge clk);
 	#1
-	if(rdata < 32'h4000) $display("!!! H FAILED !!!"); //F
+	if(rdata < 32'h4) $display("!!! H FAILED !!!"); //F
         
         $display("If you got here with no fails, it passed!");	
 
