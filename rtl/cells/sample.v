@@ -7,9 +7,6 @@
 // count of the total samples of each direction we've had. As long as our
 // sampling clock frequency isn't much faster than the oscillation frequency,
 // we'll get a good phase sample.
-//
-// TODO: Get more complex phase measurements than "in or out of phase with the
-// local field".
 
 `timescale 1ns/1ps
 
@@ -45,9 +42,9 @@ module sample #(parameter N = 3)(
 
         assign phase_counters_nxt[i] = ~rstn             ? counter_cutoff         :   
 		                       phase_mismatch[i] ? (
-		                       underflow         ? phase_counters[i]      :
+		                       underflow[i]      ? phase_counters[i]      :
 				                           phase_counters[i] - 1 ):(
-				       overflow          ? phase_counters[i]      :
+				       overflow[i]       ? phase_counters[i]      :
 		                                           phase_counters[i] + 1 );
 
         always @(posedge clk) begin
