@@ -180,27 +180,27 @@ module maxcut_tb();
 	raddr = `PHASE_ADDR_BASE + 7;
 	@(posedge clk);
 	#1
-	if(rdata[0] != 1) $display("!!! A FAILED !!!"); //A
+	if(rdata < 32'h4000) $display("!!! A FAILED !!!"); //A
 	raddr = `PHASE_ADDR_BASE + 6;
 	@(posedge clk);
 	#1
-	if(rdata[0] != 0) $display("!!! B FAILED !!!"); //B
+	if(rdata > 32'h4000) $display("!!! B FAILED !!!"); //B
 	raddr = `PHASE_ADDR_BASE + 5;
 	@(posedge clk);
 	#1
-	if(rdata[0] != 1) $display("!!! C FAILED !!!"); //C
+	if(rdata < 32'h4000) $display("!!! C FAILED !!!"); //C
 	raddr = `PHASE_ADDR_BASE + 4;
 	@(posedge clk);
 	#1
-	if(rdata[0] != 1) $display("!!! D FAILED !!!"); //D
+	if(rdata < 32'h4000) $display("!!! D FAILED !!!"); //D
 	raddr = `PHASE_ADDR_BASE + 3;
 	@(posedge clk);
 	#1
-	if(rdata[0] != 0) $display("!!! E FAILED !!!"); //E
+	if(rdata > 32'h4000) $display("!!! E FAILED !!!"); //E
 	raddr = `PHASE_ADDR_BASE + 0;
 	@(posedge clk);
 	#1
-	if(rdata[0] != 1) $display("!!! H FAILED !!!"); //F
+	if(rdata < 32'h4000) $display("!!! H FAILED !!!"); //F
         
         $display("If you got here with no fails, it passed!");	
 

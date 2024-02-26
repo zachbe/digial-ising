@@ -22,9 +22,8 @@ module sample #(parameter N = 3)(
 		input  wire [31 :0] counter_cutoff,
 	        input  wire [N-1:0] outputs_ver,
 	        input  wire [N-1:0] outputs_hor,
-		// 0 if out-of-phase with local field,
-		// 1 if in-phase with local field.
-		output wire [N-1:0] phase
+		output wire [31:0]  phase,
+		input  wire [31:0]  rd_addr 
 	       );
 
     wire [N-1:0] phase_mismatch;
@@ -36,10 +35,11 @@ module sample #(parameter N = 3)(
     wire [N-1:0] overflow;
     wire [N-1:0] underflow;
 
+    wire [31:0] phase_index = rd_addr - `PHASE_ADDR_BASE;
+    assign phase = phase_counters[phase_index];
+
     genvar i;
     generate for (i = 0; i < N ; i = i+1) begin
-        assign phase[i] = (phase_counters[i] >= counter_cutoff);
-
 	assign overflow [i] = (phase_counters[i] >= counter_max);
 	assign underflow[i] = (phase_counters[i] == 0);
 

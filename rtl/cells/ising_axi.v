@@ -32,9 +32,7 @@ module ising_axi    #(parameter N = 3,
 		     input  wire [31:0] wdata
 	            );
 
-    wire [N-1:0] phase;
-    wire [ 31:0] phase_bit;
-    assign       phase_bit  = (araddr_q - `PHASE_ADDR_BASE);
+    wire [ 31:0] phase_read_val;
     assign       phase_sel  = (araddr_q[31:12] == `PHASE_ADDR_MASK );
 
     wire [31:0]  weight_read_val;
@@ -54,7 +52,7 @@ module ising_axi    #(parameter N = 3,
         end
 	else if (arvalid_q) begin
             rvalid <= 1;
-	    rdata  <= phase_sel  ? {31'b0, phase[phase_bit]} : 
+	    rdata  <= phase_sel  ? phase_read_val            : 
 		      weight_sel ? weight_read_val           :
 		                   32'hAAAAAAAA              ;
             rresp  <= 0;
@@ -94,7 +92,7 @@ module ising_axi    #(parameter N = 3,
                   .ising_rstn(ising_rstn),
                   .counter_max(counter_max),
                   .counter_cutoff(counter_cutoff),
-                  .phase(phase),
+                  .phase(phase_read_val),
 	          .axi_rstn(axi_rstn),
 	          .wready(wready),
 	          .wr_addr(wr_addr),

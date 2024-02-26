@@ -18,9 +18,9 @@ module top_ising   #(parameter N = 3,
 		     parameter NUM_LUTS = 2) (
 		     input  wire clk,
 		     input  wire ising_rstn,
-		     input  wire [31 :0] counter_max, 
-		     input  wire [31 :0] counter_cutoff, 
-		     output wire [N-1:0] phase,
+		     input  wire [31:0] counter_max, 
+		     input  wire [31:0] counter_cutoff, 
+		     output wire [31:0] phase,
 
 		     input  wire        axi_rstn,
                      input  wire        wready,
@@ -56,7 +56,8 @@ module top_ising   #(parameter N = 3,
 	     .counter_cutoff(counter_cutoff),
 	     .outputs_ver(outputs_ver),
 	     .outputs_hor(outputs_hor),
-	     .phase(phase)
+	     .phase(phase),
+             .rd_addr(rd_addr)
      );
 
 endmodule
