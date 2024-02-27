@@ -149,6 +149,10 @@ module maxcut_tb();
 	waddr = `WEIGHT_ADDR_BASE + (32'd3 << 2) + (32'd7 << 13); //DH
 	wdata = 32'h00000004;                                     //100
 	
+	@(posedge clk);
+	waddr = `WEIGHT_ADDR_BASE + (32'd4 << 2) + (32'd7 << 13); //EH
+	wdata = 32'h00000004;                                     //100
+	
 	/////////////////////////////////////////////////////////////
 	// Check weights
 	
