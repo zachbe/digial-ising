@@ -254,7 +254,7 @@ assign arready = !arvalid_q && !rvalid;
 // other cells.
 ising_axi   #(.N(64),
               .NUM_WEIGHTS(15),
-              .WIRE_DELAY(16)) dut(
+              .WIRE_DELAY(1)) dut(
               .clk(clk_main_a0),
               .axi_rstn(rst_main_n_sync),
               .arvalid_q(arvalid_q),

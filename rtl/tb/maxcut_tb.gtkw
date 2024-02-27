@@ -1,20 +1,19 @@
 [*]
 [*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
-[*] Wed Feb 14 06:56:55 2024
+[*] Mon Feb 26 06:39:54 2024
 [*]
 [dumpfile] "/home/zach/repos/ising/rtl/tb/maxcut.vcd"
-[dumpfile_mtime] "Wed Feb 14 06:55:34 2024"
-[dumpfile_size] 22196914
+[dumpfile_mtime] "Mon Feb 26 06:38:48 2024"
+[dumpfile_size] 22086518
 [savefile] "/home/zach/repos/ising/rtl/tb/maxcut_tb.gtkw"
-[timestart] 51412500
+[timestart] 430000
 [size] 1720 1412
 [pos] -1 -1
-*-17.402185 51897400 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-21.935381 6201000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] maxcut_tb.
 [treeopen] maxcut_tb.dut.
 [treeopen] maxcut_tb.dut.u_top_ising.
 [treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.
 [treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.
 [treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_left.recurse.
 [treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_left.recurse.bot_left.
@@ -114,7 +113,7 @@
 [sst_width] 447
 [signals_width] 246
 [sst_expanded] 1
-[sst_vpaned_height] 893
+[sst_vpaned_height] 647
 @200
 -### PHASES ###
 -A
@@ -149,70 +148,16 @@ maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_right.recurse.b
 @28
 maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_right.recurse.bot_right.recurse.bot_right.shorted_cell.i_short.dout
 @200
--Phases
-@c00022
-maxcut_tb.dut.u_top_ising.u_sampler.phase[7:0]
-@28
-(0)maxcut_tb.dut.u_top_ising.u_sampler.phase[7:0]
-(1)maxcut_tb.dut.u_top_ising.u_sampler.phase[7:0]
-(2)maxcut_tb.dut.u_top_ising.u_sampler.phase[7:0]
-(3)maxcut_tb.dut.u_top_ising.u_sampler.phase[7:0]
-(4)maxcut_tb.dut.u_top_ising.u_sampler.phase[7:0]
-(5)maxcut_tb.dut.u_top_ising.u_sampler.phase[7:0]
-(6)maxcut_tb.dut.u_top_ising.u_sampler.phase[7:0]
-(7)maxcut_tb.dut.u_top_ising.u_sampler.phase[7:0]
-@1401200
--group_end
-@200
--### WEIGHTS ###
--AB
-@28
-maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_left.recurse.top_right.coupled_cell.ij.weight[2:0]
-maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_left.recurse.bot_left.coupled_cell.ij.weight[2:0]
-@200
--AE
-@28
-maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_right.recurse.top_left.recurse.top_left.coupled_cell.ij.weight[2:0]
-maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_left.recurse.top_left.recurse.top_left.coupled_cell.ij.weight[2:0]
-@200
--AH
-@28
-maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_right.recurse.top_right.recurse.top_right.coupled_cell.ij.weight[2:0]
-maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_left.recurse.bot_left.recurse.bot_left.coupled_cell.ij.weight[2:0]
-@200
--BC
-@28
-maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_right.recurse.bot_left.coupled_cell.ij.weight[2:0]
-maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.bot_left.recurse.top_right.coupled_cell.ij.weight[2:0]
-@200
--BD
-@28
-maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_right.recurse.bot_right.coupled_cell.ij.weight[2:0]
-maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.bot_left.recurse.bot_right.coupled_cell.ij.weight[2:0]
-@200
--BH
-@28
-maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_right.recurse.top_right.recurse.bot_right.coupled_cell.ij.weight[2:0]
-maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_left.recurse.bot_left.recurse.bot_right.coupled_cell.ij.weight[2:0]
-@200
--CD
-@28
-maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.bot_right.recurse.top_right.coupled_cell.ij.weight[2:0]
-maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.bot_right.recurse.bot_left.coupled_cell.ij.weight[2:0]
-@200
--CH
-@28
-maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_right.recurse.bot_right.recurse.top_right.coupled_cell.ij.weight[2:0]
-maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_left.recurse.bot_right.recurse.bot_left.coupled_cell.ij.weight[2:0]
-@200
--DE
-@28
-maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_right.recurse.bot_left.recurse.bot_left.coupled_cell.ij.weight[2:0]
-maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_left.recurse.top_right.recurse.top_right.coupled_cell.ij.weight[2:0]
-@200
--DH
-@28
-maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_right.recurse.bot_right.recurse.bot_right.coupled_cell.ij.weight[2:0]
-maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_left.recurse.bot_right.recurse.bot_right.coupled_cell.ij.weight[2:0]
+-Phase Counters
+@22
+maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[7][31:0]
+maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[6][31:0]
+maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[5][31:0]
+maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[4][31:0]
+maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[3][31:0]
+maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[2][31:0]
+maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[1][31:0]
+@23
+maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[0][31:0]
 [pattern_trace] 1
 [pattern_trace] 0
