@@ -23,8 +23,17 @@ module sample #(parameter N = 3)(
 		input  wire [31:0]  rd_addr 
 	       );
 
-    wire [N-1:0] phase_mismatch;
-    assign phase_mismatch = outputs_ver ^ outputs_hor;
+    // Synchronizer
+    wire [N-1:0] phase_mismatch_0;
+    reg  [N-1:0] phase_mismatch_1;
+    reg  [N-1:0] phase_mismatch_2;
+    reg  [N-1:0] phase_mismatch_3;
+    assign phase_mismatch_0 = outputs_ver ^ outputs_hor;
+    always @(posedge clk) begin
+        phase_mismatch_1 <= phase_mismatch_0;
+        phase_mismatch_2 <= phase_mismatch_1;
+        phase_mismatch_3 <= phase_mismatch_2;
+    end
 
     reg  [31:0] phase_counters     [N-1:0];
     wire [31:0] phase_counters_nxt [N-1:0];
@@ -40,12 +49,12 @@ module sample #(parameter N = 3)(
 	assign overflow [i] = (phase_counters[i] >= counter_max);
 	assign underflow[i] = (phase_counters[i] == 0);
 
-        assign phase_counters_nxt[i] = ~rstn             ? counter_cutoff         :   
-		                       phase_mismatch[i] ? (
-		                       underflow[i]      ? phase_counters[i]      :
-				                           phase_counters[i] - 1 ):(
-				       overflow[i]       ? phase_counters[i]      :
-		                                           phase_counters[i] + 1 );
+        assign phase_counters_nxt[i] = ~rstn               ? counter_cutoff         :   
+		                       phase_mismatch_3[i] ? (
+		                       underflow[i]        ? phase_counters[i]      :
+				                             phase_counters[i] - 1 ):(
+				       overflow[i]         ? phase_counters[i]      :
+		                                             phase_counters[i] + 1 );
 
         always @(posedge clk) begin
 	    phase_counters[i] <= phase_counters_nxt[i];
