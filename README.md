@@ -16,24 +16,7 @@ There is one testbench provided. The testbench (`maxcut.v`) successfully solves 
 2. Run the `copy_files.sh` script to copy the design files from `cells`  and the software from `sw` to the AWS FPGA project in this repo.
 3. Run the `copy_files_aws.sh` script to copy the AWS FPGA project from this repo to the AWS FPGA repo. This replaces the `cl_hello_world` project in the AWS FPGA repo.
 4. Build the modified `cl_hello_world` project according to the instructions [here](https://github.com/aws/aws-fpga/blob/master/hdk/README.md).
-5. Build and run the test program `test_hello_world.c` in the `sw` directory. The expected output is:
-
-```
-AFI PCI  Vendor ID: 0x1d0f, Device ID 0xf000
-===== Starting with peek_poke_example =====
-Writing 0x40000000 to CTR_CUTOFF_ADDR register (0x0000000000000600)
-Writing 0x80000000 to CTR_MAX_ADDR register (0x0000000000000700)
-Writing weights!
-Writing 0x00000001 to START_ADDR register (0x0000000000000500)
-=====  Entering peek_poke_example =====
-phase   : 0x2d
-expected: 0x0000002D
-OR      : 0x00000032
-OR      : 0x00000036
-OR      : 0x00000029
-Writing 0x00000000 to START_ADDR register (0x0000000000000500)
-
-```
+5. Build and run the test program `test_hello_world.c` in the `sw` directory. The expected and the actual phase values are printed out.
 
 ### How to help:
 
