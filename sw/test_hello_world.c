@@ -39,8 +39,8 @@
 #define START_ADDR       UINT64_C(0x00000500)
 #define CTR_CUTOFF_ADDR  UINT64_C(0x00000600)
 #define CTR_MAX_ADDR     UINT64_C(0x00000700)
-#define PHASE_ADDR       UINT64_C(0x00000800)
-#define WEIGHT_ADDR_BASE UINT64_C(0x00001000)
+#define PHASE_ADDR       UINT64_C(0x00001000)
+#define WEIGHT_ADDR_BASE UINT64_C(0x01000000)
 
 /* use the stdout logger for printing debug information  */
 #ifndef SV_TEST
@@ -250,26 +250,53 @@ int peek_poke_example(uint32_t value, int slot_id, int pf_id, int bar_id) {
 
     /* write weights */
     printf("Writing weights!\n");
-    rc = fpga_pci_poke(pci_bar_handle, WEIGHT_ADDR_BASE        , 0x00000001); //AB
+
+    rc = fpga_pci_poke(pci_bar_handle, 0x01002000, 0x00000001); //AB
     fail_on(rc, out, "Unable to write AB to the fpga !");
-    rc = fpga_pci_poke(pci_bar_handle, WEIGHT_ADDR_BASE +  3*32, 0x00000001); //AE
+    rc = fpga_pci_poke(pci_bar_handle, 0x01008000, 0x00000001); //AE
     fail_on(rc, out, "Unable to write AE to the fpga !");
-    rc = fpga_pci_poke(pci_bar_handle, WEIGHT_ADDR_BASE +  4*32, 0x40000000); //AF
+    rc = fpga_pci_poke(pci_bar_handle, 0x0100E000, 0x00004000); //AF
     fail_on(rc, out, "Unable to write AF to the fpga !");
-    rc = fpga_pci_poke(pci_bar_handle, WEIGHT_ADDR_BASE +  5*32, 0x00000001); //BC
+    rc = fpga_pci_poke(pci_bar_handle, 0x01004004, 0x00000001); //BC
     fail_on(rc, out, "Unable to write BC to the fpga !");
-    rc = fpga_pci_poke(pci_bar_handle, WEIGHT_ADDR_BASE +  6*32, 0x00000001); //BD
+    rc = fpga_pci_poke(pci_bar_handle, 0x01006004, 0x00000001); //BD
     fail_on(rc, out, "Unable to write BD to the fpga !");
-    rc = fpga_pci_poke(pci_bar_handle, WEIGHT_ADDR_BASE +  8*32, 0x40000000); //BF
+    rc = fpga_pci_poke(pci_bar_handle, 0x0100E004, 0x00004000); //BF
     fail_on(rc, out, "Unable to write BF to the fpga !");
-    rc = fpga_pci_poke(pci_bar_handle, WEIGHT_ADDR_BASE +  9*32, 0x00000001); //CD
+    rc = fpga_pci_poke(pci_bar_handle, 0x01006008, 0x00000001); //CD
     fail_on(rc, out, "Unable to write CD to the fpga !");
-    rc = fpga_pci_poke(pci_bar_handle, WEIGHT_ADDR_BASE + 11*32, 0x40000000); //CF
+    rc = fpga_pci_poke(pci_bar_handle, 0x0100E008, 0x00004000); //CF
     fail_on(rc, out, "Unable to write CF to the fpga !");
-    rc = fpga_pci_poke(pci_bar_handle, WEIGHT_ADDR_BASE + 12*32, 0x00000001); //DE
+    rc = fpga_pci_poke(pci_bar_handle, 0x0100800C, 0x00000001); //DE
     fail_on(rc, out, "Unable to write DE to the fpga !");
-    rc = fpga_pci_poke(pci_bar_handle, WEIGHT_ADDR_BASE + 13*32, 0x40000000); //DF
+    rc = fpga_pci_poke(pci_bar_handle, 0x0100E00C, 0x00004000); //DF
     fail_on(rc, out, "Unable to write DF to the fpga !");
+    rc = fpga_pci_poke(pci_bar_handle, 0x0100E010, 0x00004000); //EF
+    fail_on(rc, out, "Unable to write DF to the fpga !");
+
+    printf("Checking weights!\n");
+    rc = fpga_pci_peek(pci_bar_handle, 0x01002000, &value);
+    if(value != 0x00000001) {printf("ERROR: AB: 0x%x\n", value);}
+    rc = fpga_pci_peek(pci_bar_handle, 0x01008000, &value);
+    if(value != 0x00000001) {printf("ERROR: AE: 0x%x\n", value);}
+    rc = fpga_pci_peek(pci_bar_handle, 0x0100E000, &value);
+    if(value != 0x00004000) {printf("ERROR: AF: 0x%x\n", value);}
+    rc = fpga_pci_peek(pci_bar_handle, 0x01004004, &value);
+    if(value != 0x00000001) {printf("ERROR: BC: 0x%x\n", value);}
+    rc = fpga_pci_peek(pci_bar_handle, 0x01006004, &value);
+    if(value != 0x00000001) {printf("ERROR: BD: 0x%x\n", value);}
+    rc = fpga_pci_peek(pci_bar_handle, 0x0100E004, &value);
+    if(value != 0x00004000) {printf("ERROR: BF: 0x%x\n", value);}
+    rc = fpga_pci_peek(pci_bar_handle, 0x01006008, &value);
+    if(value != 0x00000001) {printf("ERROR: CD: 0x%x\n", value);}
+    rc = fpga_pci_peek(pci_bar_handle, 0x0100E008, &value);
+    if(value != 0x00004000) {printf("ERROR: CF: 0x%x\n", value);}
+    rc = fpga_pci_peek(pci_bar_handle, 0x0100800C, &value);
+    if(value != 0x00000001) {printf("ERROR: DE: 0x%x\n", value);}
+    rc = fpga_pci_peek(pci_bar_handle, 0x0100E00C, &value);
+    if(value != 0x00004000) {printf("ERROR: DF: 0x%x\n", value);}
+    rc = fpga_pci_peek(pci_bar_handle, 0x0100E010, &value);
+    if(value != 0x00004000) {printf("ERROR: EF: 0x%x\n", value);}
 
     /* write to start ising machine */
     printf("Writing 0x%08x to START_ADDR register (0x%016lx)\n", 1, START_ADDR);
@@ -279,15 +306,43 @@ int peek_poke_example(uint32_t value, int slot_id, int pf_id, int bar_id) {
     /* wait a sec */
     sleep(1);
 
+    printf("==========\n");
     /* read out ising machine result */
-    rc = fpga_pci_peek(pci_bar_handle, PHASE_ADDR, &value);
+    rc = fpga_pci_peek(pci_bar_handle, PHASE_ADDR + 28, &value);
     fail_on(rc, out, "Unable to read read from the fpga !");
-    printf("=====  Entering peek_poke_example =====\n");
-    printf("phase   : 0x%x\n", value);
-    printf("expected: 0x0000002D\n");
-    printf("OR      : 0x00000032\n");
-    printf("OR      : 0x00000036\n");
-    printf("OR      : 0x00000029\n");
+    printf("-----\n");
+    printf("A : 0x%x\n", value);
+    printf("ex: 0x8000\n");
+
+    rc = fpga_pci_peek(pci_bar_handle, PHASE_ADDR + 24, &value);
+    fail_on(rc, out, "Unable to read read from the fpga !");
+    printf("-----\n");
+    printf("B : 0x%x\n", value);
+    printf("ex: 0x0\n");
+
+    rc = fpga_pci_peek(pci_bar_handle, PHASE_ADDR + 20, &value);
+    fail_on(rc, out, "Unable to read read from the fpga !");
+    printf("-----\n");
+    printf("C : 0x%x\n", value);
+    printf("ex: 0x8000\n");
+
+    rc = fpga_pci_peek(pci_bar_handle, PHASE_ADDR + 16, &value);
+    fail_on(rc, out, "Unable to read read from the fpga !");
+    printf("-----\n");
+    printf("D : 0x%x\n", value);
+    printf("ex: 0x8000\n");
+
+    rc = fpga_pci_peek(pci_bar_handle, PHASE_ADDR + 12, &value);
+    fail_on(rc, out, "Unable to read read from the fpga !");
+    printf("-----\n");
+    printf("E : 0x%x\n", value);
+    printf("ex: 0x0\n");
+
+    rc = fpga_pci_peek(pci_bar_handle, PHASE_ADDR + 0, &value);
+    fail_on(rc, out, "Unable to read read from the fpga !");
+    printf("-----\n");
+    printf("Lo: 0x%x\n", value);
+    printf("ex: 0x1\n");
 
     /* write to stop ising machine */
     printf("Writing 0x%08x to START_ADDR register (0x%016lx)\n", 0, START_ADDR);
