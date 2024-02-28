@@ -39,6 +39,8 @@ file copy -force $CL_DIR/design/sample.v            $TARGET_DIR
 file copy -force $CL_DIR/design/shorted_cell.v             $TARGET_DIR
 file copy -force $CL_DIR/design/top_ising.v             $TARGET_DIR
 file copy -force $CL_DIR/design/ising_axi.v             $TARGET_DIR
+file copy -force $CL_DIR/design/recursive_matrix.v             $TARGET_DIR
+file copy -force $CL_DIR/design/defines.vh             $TARGET_DIR
 
 file copy -force $CL_DIR/design/cl_hello_world_defines.vh             $TARGET_DIR
 file copy -force $CL_DIR/design/cl_id_defines.vh                      $TARGET_DIR

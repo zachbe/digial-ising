@@ -8,7 +8,7 @@ This project is an attempt to create an entirely digital coupled Ising machine. 
 
 Right now, this repo is still very much in a "proof of concept" state. You can build and run the basic coupling testbench by navigating to the `rtl/tb` directory and running `make build` and then `make test_all`. A GTKWave save file is provided to show successful coupling graphically.
 
-There are two testbenches provided. One is a simple proof-of-concept of three coupled oscillators (`couple.v`), while the newer testbench (`maxcut.v`) successfully solves a 5-node max cut problem! More documentation on how this actually works will be written soon.
+There is one testbench provided. The testbench (`maxcut.v`) successfully solves a 5-node max cut problem! More documentation on how this actually works will be written soon.
 
 ### How to build for AWS F1 FPGA Instances:
 
@@ -37,7 +37,7 @@ Writing 0x00000000 to START_ADDR register (0x0000000000000500)
 
 ### How to help:
 
-There are a handful of TODOs in the codebase, including feature requests and bugs to fix. If you want to work on these, go ahead! There will be some more formal policies on how contirbution works as the project matures.
+There are a handful of TODOs in the codebase, including feature requests and bugs to fix. There are also issues filed here on GitHub -- some of the TODOs and issues line up. If you want to work on these, go ahead! There will be some more formal policies on how contirbution works as the project matures.
 
 ## How it Works
 

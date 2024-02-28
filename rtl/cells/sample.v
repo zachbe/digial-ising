@@ -7,11 +7,10 @@
 // count of the total samples of each direction we've had. As long as our
 // sampling clock frequency isn't much faster than the oscillation frequency,
 // we'll get a good phase sample.
-//
-// TODO: Get more complex phase measurements than "in or out of phase with the
-// local field".
 
 `timescale 1ns/1ps
+
+`include "defines.vh"
 
 module sample #(parameter N = 3)(
 	        input  wire clk,
@@ -20,13 +19,21 @@ module sample #(parameter N = 3)(
 		input  wire [31 :0] counter_cutoff,
 	        input  wire [N-1:0] outputs_ver,
 	        input  wire [N-1:0] outputs_hor,
-		// 0 if out-of-phase with local field,
-		// 1 if in-phase with local field.
-		output wire [N-1:0] phase
+		output wire [31:0]  phase,
+		input  wire [31:0]  rd_addr 
 	       );
 
-    wire [N-1:0] phase_mismatch;
-    assign phase_mismatch = outputs_ver ^ outputs_hor;
+    // Synchronizer
+    wire [N-1:0] phase_mismatch_0;
+    reg  [N-1:0] phase_mismatch_1;
+    reg  [N-1:0] phase_mismatch_2;
+    reg  [N-1:0] phase_mismatch_3;
+    assign phase_mismatch_0 = outputs_ver ^ outputs_hor;
+    always @(posedge clk) begin
+        phase_mismatch_1 <= phase_mismatch_0;
+        phase_mismatch_2 <= phase_mismatch_1;
+        phase_mismatch_3 <= phase_mismatch_2;
+    end
 
     reg  [31:0] phase_counters     [N-1:0];
     wire [31:0] phase_counters_nxt [N-1:0];
@@ -34,22 +41,23 @@ module sample #(parameter N = 3)(
     wire [N-1:0] overflow;
     wire [N-1:0] underflow;
 
+    wire [31:0] phase_index = (rd_addr - `PHASE_ADDR_BASE) >> 2;
+    assign phase = phase_counters[phase_index];
+
     genvar i;
     generate for (i = 0; i < N ; i = i+1) begin
-        assign phase[i] = (phase_counters[i] >= counter_cutoff);
-
 	assign overflow [i] = (phase_counters[i] >= counter_max);
 	assign underflow[i] = (phase_counters[i] == 0);
 
-        assign phase_counters_nxt[i] = phase_mismatch[i] ? (
-		                       underflow         ? phase_counters[i]      :
-				                           phase_counters[i] - 1 ):(
-				       overflow          ? phase_counters[i]      :
-		                                           phase_counters[i] + 1 );
+        assign phase_counters_nxt[i] = ~rstn               ? counter_cutoff         :   
+		                       phase_mismatch_3[i] ? (
+		                       underflow[i]        ? phase_counters[i]      :
+				                             phase_counters[i] - 1 ):(
+				       overflow[i]         ? phase_counters[i]      :
+		                                             phase_counters[i] + 1 );
 
-        always @(posedge clk or negedge rstn) begin
-	    if (!rstn) begin phase_counters[i] <= counter_cutoff;        end
-	    else       begin phase_counters[i] <= phase_counters_nxt[i]; end
+        always @(posedge clk) begin
+	    phase_counters[i] <= phase_counters_nxt[i];
 	end
     end endgenerate
 endmodule
