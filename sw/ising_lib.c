@@ -60,11 +60,12 @@ int write_ising(int val, int addr) {
     pci_bar_handle_t pbh;
     pbh = attach();
 
-    int rc;
-    rc = fpga_pci_poke(pbh, val, addr);
+    fpga_pci_poke(pbh, addr, val);
+    uint32_t value;
+    fpga_pci_peek(pbh, addr, &value);
 
     fpga_pci_detach(pbh);
-    return rc;
+    return value;
 }
 
 int read_ising(int addr) {
