@@ -51,26 +51,28 @@ pci_bar_handle_t attach(){
      * other API calls.
      * This function accepts the slot_id, physical function, and bar number
      */
-    rc = fpga_pci_attach(slot_id, FPGA_APP_PF, APP_PF_BAR0, 0, &pci_bar_handle);
+    int slot_id = 0;
+    fpga_pci_attach(slot_id, FPGA_APP_PF, APP_PF_BAR0, 0, &pci_bar_handle);
     return pci_bar_handle;
 }	
 
-int write(int val, int addr) {
+int write_ising(int val, int addr) {
     pci_bar_handle_t pbh;
     pbh = attach();
 
+    int rc;
     rc = fpga_pci_poke(pbh, val, addr);
 
     fpga_pci_detach(pbh);
     return rc;
 }
 
-int read(int addr) {
+int read_ising(int addr) {
     pci_bar_handle_t pbh;
     pbh = attach();
 
     uint32_t value;
-    rc = fpga_pci_peek(pbh, addr, &value);
+    fpga_pci_peek(pbh, addr, &value);
     
     fpga_pci_detach(pbh);
     return value;
