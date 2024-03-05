@@ -33,10 +33,13 @@ all: $(BIN) check_env
 $(BIN): $(OBJ)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
+install:
+	cp $(BIN) /usr/lib64
+
 clean:
 	rm -f *.o $(BIN)
 
 check_env:
 ifndef SDK_DIR
-    $(error SDK_DIR is undefined. Try "source sdk_setup.sh" to set the software environment)
+	$(error SDK_DIR is undefined. Try "source sdk_setup.sh" to set the software environment)
 endif
