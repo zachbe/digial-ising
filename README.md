@@ -13,10 +13,12 @@ There is one testbench provided. The testbench (`maxcut.v`) successfully solves 
 ### How to build for AWS F1 FPGA Instances:
 
 1. Clone both this repo and the [AWS FPGA](https://github.com/aws/aws-fpga/tree/master) repo next to one another.
-2. Run the `copy_files.sh` script to copy the design files from `cells`  and the software from `sw` to the AWS FPGA project in this repo.
+2. Run the `copy_files.sh` script to copy the design files from `cells`  to the AWS FPGA project in this repo.
 3. Run the `copy_files_aws.sh` script to copy the AWS FPGA project from this repo to the AWS FPGA repo. This replaces the `cl_hello_world` project in the AWS FPGA repo.
 4. Build the modified `cl_hello_world` project according to the instructions [here](https://github.com/aws/aws-fpga/blob/master/hdk/README.md).
-5. Build and run the test program `test_hello_world.c` in the `sw` directory. The expected and the actual phase values are printed out.
+5. Load the resulting AFI image onto the AWS FPGA.
+6. Build the `ising_lib.so` C library. From the `sw` directory, run `make` and then `sudo make install`.
+7. You can now run the PyTorch tests in the [modified Simulated Bifurcation submodule!](https://github.com/zbelateche/simulated-bifurcation-ising)
 
 ### How to help:
 
