@@ -1,0 +1,3 @@
+[submodule "sw/simulated-bifurcation-ising"]
+	path = sw/simulated-bifurcation-ising
+	url = git@github.com:zbelateche/simulated-bifurcation-ising.git
