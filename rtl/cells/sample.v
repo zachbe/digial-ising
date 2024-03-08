@@ -44,12 +44,20 @@ module sample #(parameter N = 3)(
     wire [31:0] phase_index = (rd_addr - `PHASE_ADDR_BASE) >> 2;
     assign phase = phase_counters[phase_index];
 
+    // Reset the counters on the rising edge of the start signal.
+    reg rstn_old;
+    always @(posedge clk) begin
+        rstn_old <= rstn;
+    end
+    wire rst_start = rstn & ~rstn_old;
+
     genvar i;
     generate for (i = 0; i < N ; i = i+1) begin
 	assign overflow [i] = (phase_counters[i] >= counter_max);
 	assign underflow[i] = (phase_counters[i] == 0);
 
-        assign phase_counters_nxt[i] = ~rstn               ? counter_cutoff         :   
+        assign phase_counters_nxt[i] = rst_start           ? counter_cutoff         :  
+	                               ~rstn               ? phase_counters[i]      :	
 		                       phase_mismatch_3[i] ? (
 		                       underflow[i]        ? phase_counters[i]      :
 				                             phase_counters[i] - 1 ):(

@@ -177,6 +177,10 @@ module maxcut_tb();
 
 	#50000;
 	
+	@(posedge clk);
+	waddr = `START_ADDR;
+	wdata = 32'h00000000;
+	
 	/////////////////////////////////////////////////////////////
 	// Read phases
 	
