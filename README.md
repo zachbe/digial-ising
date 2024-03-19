@@ -1,6 +1,6 @@
 # DIMPLE: Digital Ising Machines from Programmable Logic, Easily!
 
-[Ising machines](https://www.nature.com/articles/s42254-022-00440-8) are very powerful tools for solving optimization problems. There has been a lot of exciting research into ways to build Ising machines in the past few years, with techniques ranging from probabilistic bits using novel materials to coupled ring oscillators. Unfortunately, nearly all of these designs require dedicated mixed-signal hardware. This means that it’s difficult to scale these designs down to advanced process nodes, making it hard for them to compete with conventional digital solvers. It also makes them much more expensive to deploy, as FPGA implementatins are impossible.
+[Ising machines](https://www.nature.com/articles/s42254-022-00440-8) are very powerful tools for solving optimization problems. There has been a lot of exciting research into ways to build Ising machines in the past few years, with techniques ranging from probabilistic bits using novel materials to coupled ring oscillators. Unfortunately, nearly all of these designs require dedicated mixed-signal hardware. This means that it’s difficult to scale these designs down to advanced process nodes, making it hard for them to compete with conventional digital solvers. It also makes them much more expensive to deploy, as FPGA implementations are impossible.
 
 This project is an attempt to create an entirely digital coupled Ising machine. Instead of using voltage-based coupling, this project leverages a phase-based coupling method where different oscillators control configurable delay cells in each others' oscillation path. Hopefully this can allow us to create an Ising machine that can be deployed on an FPGA, and ultimately manufactured in an advanced process node.
 
@@ -22,11 +22,11 @@ There is one testbench provided. The testbench (`maxcut.v`) successfully solves 
 
 ### How to help:
 
-There are a handful of TODOs in the codebase, including feature requests and bugs to fix. There are also issues filed here on GitHub -- some of the TODOs and issues line up. If you want to work on these, go ahead! There will be some more formal policies on how contirbution works as the project matures.
+There are a handful of TODOs in the codebase, including feature requests and bugs to fix. There are also issues filed here on GitHub -- some of the TODOs and issues line up. If you want to work on these, go ahead! There will be some more formal policies on how contribution works as the project matures.
 
 ## How it Works
 
-To start off, to understand the theory behind coupled-oscillator Ising machines, I'd highly reccomend reading [Moy et. al.'s paper in Nature](https://www.nature.com/articles/s41928-022-00749-3). To get an overview of what an all-to-all coupling architecture looks like, I'd also reccomend reading [Lo et. al.'s paper in Nature](https://www.nature.com/articles/s41928-023-01021-y). This README mostly covers how we achieve similar coupling behavior using configurable delay cells, rather than the theory of Ising machines or coupled ring oscillators in general.
+To start off, to understand the theory behind coupled-oscillator Ising machines, I'd highly recommend reading [Moy et. al.'s paper in Nature](https://www.nature.com/articles/s41928-022-00749-3). To get an overview of what an all-to-all coupling architecture looks like, I'd also recommend reading [Lo et. al.'s paper in Nature](https://www.nature.com/articles/s41928-023-01021-y). This README mostly covers how we achieve similar coupling behavior using configurable delay cells, rather than the theory of Ising machines or coupled ring oscillators in general.
 
 ### Modeling resistive coupling:
 
@@ -34,7 +34,7 @@ The transmission gates in both Moy et. al. and Ho et. al. act as resistors tying
 
 Assume we are positively coupling two oscillators, A and B. As shown, node n of oscillator A is at 1V, and node n of oscillator B is at 0V. Because of the resistor tying B[n] to 1V, B[n] rises from 0 to 1 faster than a non-coupled node of the circuit might (in this diagram, B[n-1]). If A[n] was 0, the resistor would instead slow the rise time of B[n].
 
-![An oscilaltor labeled A coupled to an oscillator labeled B using a resistor. Positive coupling causes the rising egde of B to rise faster when it matches A.](./docs/res_coup.drawio.png)
+![An oscillator labeled A coupled to an oscillator labeled B using a resistor. Positive coupling causes the rising egde of B to rise faster when it matches A.](./docs/res_coup.drawio.png)
 
 We observe that when oscillators A and B are positively coupled, incoming signals that will cause the oscillators to go into a matched state are sped up by the resistor, incoming signals that will cause the oscillators to go into a mismatched state are slowed down.
 
