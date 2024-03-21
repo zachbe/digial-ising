@@ -1,7 +1,4 @@
 
-// A coupled RO cell, taken from:
-// https://www.nature.com/articles/s41928-023-01021-y
-//
 // Mismatches are measured at different points, and affect the
 // propagation delay from that point.
 //
