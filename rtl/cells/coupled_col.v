@@ -30,6 +30,8 @@ module coupled_col      #(parameter N           = 8,
 
     genvar i,j,k;
     wire [N-1:0] out_wires_pre;
+
+    // TODO: address decoding!
     
     // Even columns
     generate if (K % 2 = 0) begin : even_col

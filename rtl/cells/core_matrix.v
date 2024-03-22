@@ -52,31 +52,34 @@ module core_matrix #(parameter N = 8,
     assign s_addr = {5'b0, addr[12: 2]} << (16 - $clog2(N));
     assign d_addr = {5'b0, addr[23:13]} << (16 - $clog2(N));
 
-    recursive_matrix #(.N(N),
-                  .NUM_WEIGHTS(NUM_WEIGHTS),
-                  .WIRE_DELAY(WIRE_DELAY),
-                  .NUM_LUTS(NUM_LUTS),
-	          .DIAGONAL(1),
-	          .TRANSPOSE(0)) 
-		  u_rec_matrix (
-                  .ising_rstn(ising_rstn),
-                  .inputs_ver(osc_ver_in),
-                  .inputs_hor(osc_hor_in),
-                  .outputs_ver(osc_ver_out),
-                  .outputs_hor(osc_hor_out),
-		  .bot_row(bot_row),
-                  .clk(clk),
-                  .axi_rstn(axi_rstn),
-                  .wready(wready),
-		  .wr_match(wr_match),
-                  .s_addr(s_addr),
-		  .d_addr(d_addr),
-                  .wdata(wdata),
-		  .rdata(rdata)
-    );
+    // Create columns
+    genvar i,j,k;
+    generate for (i = 0; i < N; i++) begin : column_loop
+        wire [N-1:0] column_out;
+	if (i == 0) begin: start_column_loop
+            assign column_out = osc_in;
+	end else begin: main_column_loop
+            coupled_col #(.N(N),
+		          .K(i-1),
+			  .NUM_WEIGHTS(NUM_WEIGHTS),
+			  .WIRE_DELAY(WIRE_DELAY),
+			  .NUM_LUTS(NUM_LUTS))
+		    col_k.(.ising_rstn  (ising_rstn),
+			   .in_wires    (column_loop[i-1].column_out).
+			   .out_wires   (column_out),
+
+			   // TODO: address decoding!
+			   .clk         (clk),
+			   .axi_rstn    (axi_rstn),
+			   .wready      (wready),
+			   .wr_match    (wr_match),
+			   .s_addr      (),
+			   .d_addr      (),
+			   .wdata       (),
+			   .rdata       ());
+    end endgenerate
 
     // Add delays that loop around
-    genvar j,k;
     generate for (j = 0; j < N; j = j + 1) begin
         wire [WIRE_DELAY-1:0] hor_del;
         wire [WIRE_DELAY-1:0] ver_del;
