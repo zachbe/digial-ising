@@ -4,8 +4,11 @@
 
 `timescale 1ns/1ps
 
-// Includes are handled in the wrapper for this module.
 `include "defines.vh"
+
+`ifdef SIM
+    `include "coupled_cell.v"
+`endif
 
 module coupled_col      #(parameter N           = 8,
 	                  parameter K           = 0,
