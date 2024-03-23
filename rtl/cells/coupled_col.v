@@ -30,13 +30,14 @@ module coupled_col      #(parameter N           = 8,
 
     genvar i,j,k;
     wire [N-1:0] out_wires_pre;
-
-    // TODO: address decoding!
     
     // Even columns
     generate if (K % 2 = 0) begin : even_col
-        for (i = 0; i < (N/2); i+=2) begin : coupled_loop
+        for (i = 0; i < N; i+=2) begin : coupled_loop
             // Couple even wires with odd wires
+	    wire   rdata_even;
+	    wire   wr_match_even;
+	    assign wr_match_even = wr_match & ((s_addr == i) | (d_addr == i));
             coupled_cell #(.NUM_WEIGHTS(NUM_WEIGHTS),
                            .NUM_LUTS   (NUM_LUTS   ))
     	                ij(.ising_rstn  (ising_rstn),
@@ -48,13 +49,25 @@ module coupled_col      #(parameter N           = 8,
     	    	           .clk            (clk),
                            .axi_rstn       (axi_rstn),
                            .wready         (wready),
-                           .wr_addr_match  (wr_match),
+                           .wr_addr_match  (wr_match_even),
                            .wdata          (wdata),
-    		           .rdata          (rdata));
+    		           .rdata          (rdata_even));
+	    wire   rdata_out;
+	    if (i == 0) begin
+                assign rdata_out = wr_match_even ? rdata_even                 : 
+			                           32'hAAAAAAAA               ;
+	    end else begin
+                assign rdata_out = wr_match_even ? rdata_even                 : 
+			                           even_col.coupled_loop[i-2] ;
+            end
 	end
+	assign rdata = even_col.coupled_loop[N-2].rdata_out;
     end else begin: odd_col	
-        for (i = 0; i < (N/2); i+=4) begin : coupled_loop
+        for (i = 0; i < N; i+=4) begin : coupled_loop
             // Couple even wires with even wires
+	    wire   rdata_even;
+	    wire   wr_match_even;
+	    assign wr_match_even = wr_match & ((s_addr == i) | (d_addr == i));
             coupled_cell #(.NUM_WEIGHTS(NUM_WEIGHTS),
                            .NUM_LUTS   (NUM_LUTS   ))
     	           ij_even(.ising_rstn  (ising_rstn),
@@ -66,10 +79,13 @@ module coupled_col      #(parameter N           = 8,
     	    	           .clk            (clk),
                            .axi_rstn       (axi_rstn),
                            .wready         (wready),
-                           .wr_addr_match  (wr_match),
+                           .wr_addr_match  (wr_match_even),
                            .wdata          (wdata),
-    		           .rdata          (rdata));
+    		           .rdata          (rdata_even));
 	    // and odd wires with odd wires
+	    wire   rdata_odd;
+	    wire   wr_match_odd;
+	    assign wr_match_odd = wr_match & ((s_addr == (i+1)) | (d_addr == (i+1)));
             coupled_cell #(.NUM_WEIGHTS(NUM_WEIGHTS),
                            .NUM_LUTS   (NUM_LUTS   ))
     	            ij_odd(.ising_rstn  (ising_rstn),
@@ -81,10 +97,20 @@ module coupled_col      #(parameter N           = 8,
     	    	           .clk            (clk),
                            .axi_rstn       (axi_rstn),
                            .wready         (wready),
-                           .wr_addr_match  (wr_match),
+                           .wr_addr_match  (wr_match_odd),
                            .wdata          (wdata),
-    		           .rdata          (rdata));
+    		           .rdata          (rdata_odd));
+	    if (i == 0) begin
+                assign rdata_out = wr_match_even ? rdata_even                 : 
+                                   wr_match_odd  ? rdata_odd                  : 
+			                           32'hAAAAAAAA               ;
+	    end else begin
+                assign rdata_out = wr_match_even ? rdata_even                 : 
+                                   wr_match_odd  ? rdata_odd                  : 
+			                           even_col.coupled_loop[i-2] ;
+            end
 	end
+	assign rdata = even_col.coupled_loop[N-4].rdata_out;
     end endgenerate
 
     // Add delays

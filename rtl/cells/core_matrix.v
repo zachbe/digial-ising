@@ -38,10 +38,6 @@ module core_matrix #(parameter N = 8,
     wire wr_match;
     assign wr_match = (wr_addr[31:24] == `WEIGHT_ADDR_MASK);
 
-    // Get outputs at the bottom of the array
-    assign outputs_hor = bot_row;
-    assign outputs_ver = osc_ver_out;
-
     // Split the address into S and D
     wire [15:0] s_addr;
     wire [15:0] d_addr;
@@ -59,6 +55,12 @@ module core_matrix #(parameter N = 8,
 	if (i == 0) begin: start_column_loop
             assign column_out = osc_in;
 	end else begin: main_column_loop
+	    // The Nth column has a coupling distance of N.
+	    wire [15:0] sd_dist;
+	    assign sd_dist = (s_addr > d_addr) ? (s_addr - d_addr) :
+		                                 (d_addr - s_addr) ;
+	    wire wr_match;
+	    assign wr_match = (sd_dist == i);
             coupled_col #(.N(N),
 		          .K(i-1),
 			  .NUM_WEIGHTS(NUM_WEIGHTS),
@@ -68,15 +70,14 @@ module core_matrix #(parameter N = 8,
 			   .in_wires    (column_loop[i-1].column_out).
 			   .out_wires   (column_out),
 
-			   // TODO: address decoding!
 			   .clk         (clk),
 			   .axi_rstn    (axi_rstn),
 			   .wready      (wready),
 			   .wr_match    (wr_match),
-			   .s_addr      (),
-			   .d_addr      (),
-			   .wdata       (),
-			   .rdata       ());
+			   .s_addr      (s_addr),
+			   .d_addr      (d_addr),
+			   .wdata       (wdata),
+			   .rdata       (rdata));
     end endgenerate
 
     // Add delays that loop around
