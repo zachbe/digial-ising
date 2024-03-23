@@ -48,7 +48,7 @@ module core_matrix #(parameter N = 8,
 
     // Create columns
     genvar i,j,k;
-    generate for (i = 0; i < N; i++) begin : column_loop
+    generate for (i = 0; i < N; i = i + 1) begin : column_loop
         wire [N-1:0] column_out;
 	wire [31 :0] rdata_out ;
 	if (i == 0) begin: start_column_loop
@@ -65,7 +65,7 @@ module core_matrix #(parameter N = 8,
 			  .WIRE_DELAY(WIRE_DELAY),
 			  .NUM_LUTS(NUM_LUTS))
 		     col_k(.ising_rstn  (ising_rstn),
-			   .in_wires    (column_loop[i-1].column_out).
+			   .in_wires    (column_loop[i-1].column_out),
 			   .out_wires   (column_out),
 
 			   .clk         (clk),
@@ -78,13 +78,14 @@ module core_matrix #(parameter N = 8,
 			   .rdata       (rdata_col));
 	    assign rdata_out = wr_match ? rdata_col                 :
 		                          column_loop[i-1].rdata_out;
+	end
     end endgenerate
 
     // Get read data
     assign rdata = column_loop[N-1].rdata_out;
 
     // Create shorted cells
-    generate for (i = 0; i < N; i++) begin: shorted_cell_loop
+    generate for (i = 0; i < N; i = i + 1) begin: shorted_cell_loop
         shorted_cell #(.NUM_LUTS(NUM_LUTS))
 	       short_i(.ising_rstn(ising_rstn),
 		       .sin       (column_loop[N-1].column_out[i]),
