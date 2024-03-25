@@ -118,80 +118,80 @@ module maxcut_tb();
 
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd0 << 2) + (32'd1 << 13); //AB
-	wdata = 32'h00000001;                                     //001
+	wdata = 32'h00000000;                                     //-1
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd1 << 2) + (32'd0 << 13); //AB
-	wdata = 32'h00000001;                                     //001
+	wdata = 32'h00000000;                                     //-1
 	
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd0 << 2) + (32'd4 << 13); //AE
-	wdata = 32'h00000001;                                     //001
+	wdata = 32'h00000000;                                     //-1
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd4 << 2) + (32'd0 << 13); //AE
-	wdata = 32'h00000001;                                     //001
+	wdata = 32'h00000000;                                     //-1
 	
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd0 << 2) + (32'd7 << 13); //AH
-	wdata = 32'h00000004;                                     //100
+	wdata = 32'h00000002;                                     //1
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd7 << 2) + (32'd0 << 13); //AH
-	wdata = 32'h00000004;                                     //100
+	wdata = 32'h00000002;                                     //1
 
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd1 << 2) + (32'd2 << 13); //BC
-	wdata = 32'h00000001;                                     //001
+	wdata = 32'h00000000;                                     //-1
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd2 << 2) + (32'd1 << 13); //BC
-	wdata = 32'h00000001;                                     //001
+	wdata = 32'h00000000;                                     //-1
 	
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd1 << 2) + (32'd3 << 13); //BD
-	wdata = 32'h00000001;                                     //001
+	wdata = 32'h00000000;                                     //-1
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd3 << 2) + (32'd1 << 13); //BD
-	wdata = 32'h00000001;                                     //001
+	wdata = 32'h00000000;                                     //-1
 	
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd1 << 2) + (32'd7 << 13); //BH
-	wdata = 32'h00000004;                                     //100
+	wdata = 32'h00000002;                                     //1
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd7 << 2) + (32'd1 << 13); //BH
-	wdata = 32'h00000004;                                     //100
+	wdata = 32'h00000002;                                     //1
 
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd2 << 2) + (32'd3 << 13); //CD
-	wdata = 32'h00000001;                                     //001
+	wdata = 32'h00000000;                                     //-1
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd3 << 2) + (32'd2 << 13); //CD
-	wdata = 32'h00000001;                                     //001
+	wdata = 32'h00000000;                                     //-1
 	
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd2 << 2) + (32'd7 << 13); //CH
-	wdata = 32'h00000004;                                     //100
+	wdata = 32'h00000002;                                     //1
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd7 << 2) + (32'd2 << 13); //CH
-	wdata = 32'h00000004;                                     //100
+	wdata = 32'h00000002;                                     //1
 	
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd3 << 2) + (32'd4 << 13); //DE
-	wdata = 32'h00000001;                                     //001
+	wdata = 32'h00000000;                                     //-1
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd4 << 2) + (32'd3 << 13); //DE
-	wdata = 32'h00000001;                                     //001
+	wdata = 32'h00000000;                                     //-1
 	
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd3 << 2) + (32'd7 << 13); //DH
-	wdata = 32'h00000004;                                     //100
+	wdata = 32'h00000002;                                     //1
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd7 << 2) + (32'd3 << 13); //DH
-	wdata = 32'h00000004;                                     //100
+	wdata = 32'h00000002;                                     //1
 	
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd4 << 2) + (32'd7 << 13); //EH
-	wdata = 32'h00000004;                                     //100
+	wdata = 32'h00000002;                                     //1
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd7 << 2) + (32'd4 << 13); //EH
-	wdata = 32'h00000004;                                     //100
+	wdata = 32'h00000002;                                     //1
 	
 	/////////////////////////////////////////////////////////////
 	// Check weights
@@ -203,7 +203,7 @@ module maxcut_tb();
 	raddr = `WEIGHT_ADDR_BASE + (31'd0 << 2) + (31'd1 << 13);
 	@(posedge clk);
 	#1
-	if(rdata[2:0] != 3'b001) $display("!!! AB FAILED !!!"); //A
+	if(rdata[2:0] != 3'b000) $display("!!! AB FAILED !!!"); //A
 	
 	/////////////////////////////////////////////////////////////
 	// Ach, Hans, run!
