@@ -62,27 +62,31 @@ module ising_axi    #(parameter N = 3,
     // AXI Write Interface
     reg [31:0] counter_cutoff;
     reg [31:0] counter_max;
-    reg        ising_rstn;
+    reg [31:0] ising_rstn_cnt;
     
     wire [31:0] counter_cutoff_nxt = (wready & (wr_addr == `CTR_CUTOFF_ADDR)) ?
 	                             wdata : counter_cutoff; 
     wire [31:0] counter_max_nxt    = (wready & (wr_addr == `CTR_MAX_ADDR)) ?
 	                             wdata : counter_max; 
-    wire        ising_rstn_nxt     = (wready & (wr_addr == `START_ADDR)) ?
-	                             wdata[0] : ising_rstn; 
+    wire [31:0] ising_rstn_nxt     = (wready & (wr_addr == `START_ADDR)) ?
+	                             wdata : (
+				     ising_rstn_cnt != 0 ? ising_rstn_cnt - 1 :
+				                           ising_rstn_cnt    ); 
     
     always @(posedge clk) begin
         if (!axi_rstn) begin
             counter_cutoff <= 32'b0;
 	    counter_max <= 32'b0;
-            ising_rstn <= 1'b0;
+            ising_rstn_cnt <= 32'b0;
         end
         else begin
             counter_cutoff <= counter_cutoff_nxt;
             counter_max <= counter_max_nxt;
-            ising_rstn <= ising_rstn_nxt;
+            ising_rstn_cnt <= ising_rstn_nxt;
         end
     end
+
+    wire ising_rstn = (ising_rstn_cnt > 0);
 
     top_ising   #(.N(N),
 	          .NUM_LUTS(NUM_LUTS),

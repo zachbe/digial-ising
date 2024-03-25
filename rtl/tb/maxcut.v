@@ -213,24 +213,25 @@ module maxcut_tb();
 	
 	@(posedge clk);
 	waddr = `START_ADDR;
-	wdata = 32'h00000001;
+	wdata = 32'h00000010;
+	
+	@(posedge clk);
+	wready = 1'b0;
 
 	#10000;
 	
 	@(posedge clk);
-	waddr = `START_ADDR;
-	wdata = 32'h00000000;
+	wready = 1'b1;
 	
 	// Test resetting
 	@(posedge clk);
 	waddr = `START_ADDR;
-	wdata = 32'h00000001;
-
-	#50000;
+	wdata = 32'h00000100;
 	
 	@(posedge clk);
-	waddr = `START_ADDR;
-	wdata = 32'h00000000;
+	wready = 1'b0;
+
+	#50000;
 	
 	/////////////////////////////////////////////////////////////
 	// Read phases
