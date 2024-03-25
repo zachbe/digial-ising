@@ -196,27 +196,27 @@ module maxcut_tb();
 	// Read phases
 	
 	@(posedge clk);
-	raddr = `PHASE_ADDR_BASE + (7 << 2);
+	raddr = `PHASE_ADDR_BASE + (0 << 2);
 	@(posedge clk);
 	#1
 	if(rdata < 32'h4) $display("!!! A FAILED !!!"); //A
-	raddr = `PHASE_ADDR_BASE + (6 << 2);
+	raddr = `PHASE_ADDR_BASE + (1 << 2);
 	@(posedge clk);
 	#1
 	if(rdata > 32'h4) $display("!!! B FAILED !!!"); //B
-	raddr = `PHASE_ADDR_BASE + (5 << 2);
+	raddr = `PHASE_ADDR_BASE + (2 << 2);
 	@(posedge clk);
 	#1
 	if(rdata < 32'h4) $display("!!! C FAILED !!!"); //C
-	raddr = `PHASE_ADDR_BASE + (4 << 2);
-	@(posedge clk);
-	#1
-	if(rdata < 32'h4) $display("!!! D FAILED !!!"); //D
 	raddr = `PHASE_ADDR_BASE + (3 << 2);
 	@(posedge clk);
 	#1
+	if(rdata < 32'h4) $display("!!! D FAILED !!!"); //D
+	raddr = `PHASE_ADDR_BASE + (4 << 2);
+	@(posedge clk);
+	#1
 	if(rdata > 32'h4) $display("!!! E FAILED !!!"); //E
-	raddr = `PHASE_ADDR_BASE + 0;
+	raddr = `PHASE_ADDR_BASE + (7 << 2);
 	@(posedge clk);
 	#1
 	if(rdata < 32'h4) $display("!!! H FAILED !!!"); //F

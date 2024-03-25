@@ -34,88 +34,35 @@ module coupled_col      #(parameter N           = 8,
     genvar i,j,k;
     wire [N-1:0] out_wires_pre;
     
-    // Even columns
-    generate if (K % 2 == 0) begin : even_col
-        for (i = 0; i < N; i = i + 2) begin : coupled_loop
-            // Couple even wires with odd wires
-	    wire [31:0] rdata_even;
-	    wire   wr_match_even;
-	    assign wr_match_even = wr_match & ((s_addr == i) | (d_addr == i));
-            coupled_cell #(.NUM_WEIGHTS(NUM_WEIGHTS),
-                           .NUM_LUTS   (NUM_LUTS   ))
-    	                ij(.ising_rstn  (ising_rstn),
-                           .sin   (in_wires[i]),
-                           .din   (in_wires[(i+K+1)%N]),
-                           .sout  (out_wires_pre[i]),
-                           .dout  (out_wires_pre[(i+K+1)%N]),
+    generate for (i = 0; i < N; i = i + 1) begin : coupled_loop
+        // Couple i to (i+K+1)%N
+	// This is an asymmetric coupling
+	wire [31:0] rdata_loop;
+	wire   wr_match_loop;
+	assign wr_match_loop = wr_match & ((s_addr == i) | (d_addr == i)); // TODO: make asymmetric
+        coupled_cell #(.NUM_WEIGHTS(NUM_WEIGHTS),
+                       .NUM_LUTS   (NUM_LUTS   ))
+    	            ij(.ising_rstn  (ising_rstn),
+                       .sout  (out_wires_pre[(i+K+1)%N]),
+                       .din   (in_wires[i]),
+                       .dout  (out_wires_pre[i]),
 
-    	    	           .clk            (clk),
-                           .axi_rstn       (axi_rstn),
-                           .wready         (wready),
-                           .wr_addr_match  (wr_match_even),
-                           .wdata          (wdata),
-    		           .rdata          (rdata_even));
-	    wire [31:0] rdata_out;
-	    if (i == 0) begin
-                assign rdata_out = wr_match_even ? rdata_even   : 
-			                           32'hAAAAAAAA ;
-	    end else begin
-                assign rdata_out = wr_match_even ? rdata_even                           : 
-			                           even_col.coupled_loop[i-2].rdata_out ;
-            end
-	end
-	assign rdata = even_col.coupled_loop[N-2].rdata_out;
-    end else begin: odd_col	
-        for (i = 0; i < N; i = i + 4) begin : coupled_loop
-            // Couple even wires with even wires
-	    wire [31:0] rdata_even;
-	    wire   wr_match_even;
-	    assign wr_match_even = wr_match & ((s_addr == i) | (d_addr == i));
-            coupled_cell #(.NUM_WEIGHTS(NUM_WEIGHTS),
-                           .NUM_LUTS   (NUM_LUTS   ))
-    	           ij_even(.ising_rstn  (ising_rstn),
-                           .sin   (in_wires[i]),
-                           .din   (in_wires[(i+K+1)%N]),
-                           .sout  (out_wires_pre[i]),
-                           .dout  (out_wires_pre[(i+K+1)%N]),
-
-    	    	           .clk            (clk),
-                           .axi_rstn       (axi_rstn),
-                           .wready         (wready),
-                           .wr_addr_match  (wr_match_even),
-                           .wdata          (wdata),
-    		           .rdata          (rdata_even));
-	    // and odd wires with odd wires
-	    wire [31:0] rdata_odd;
-	    wire   wr_match_odd;
-	    assign wr_match_odd = wr_match & ((s_addr == (i+1)) | (d_addr == (i+1)));
-            coupled_cell #(.NUM_WEIGHTS(NUM_WEIGHTS),
-                           .NUM_LUTS   (NUM_LUTS   ))
-    	            ij_odd(.ising_rstn  (ising_rstn),
-                           .sin   (in_wires[i+1]),
-                           .din   (in_wires[(i+K+2)%N]),
-                           .sout  (out_wires_pre[i+1]),
-                           .dout  (out_wires_pre[(i+K+2)%N]),
-
-    	    	           .clk            (clk),
-                           .axi_rstn       (axi_rstn),
-                           .wready         (wready),
-                           .wr_addr_match  (wr_match_odd),
-                           .wdata          (wdata),
-    		           .rdata          (rdata_odd));
-	    wire [31:0] rdata_out;
-	    if (i == 0) begin
-                assign rdata_out = wr_match_even ? rdata_even   : 
-                                   wr_match_odd  ? rdata_odd    : 
-			                           32'hAAAAAAAA ;
-	    end else begin
-                assign rdata_out = wr_match_even ? rdata_even                          : 
-                                   wr_match_odd  ? rdata_odd                           : 
-			                           odd_col.coupled_loop[i-4].rdata_out ;
-            end
-	end
-	assign rdata = odd_col.coupled_loop[N-4].rdata_out;
+    		       .clk            (clk),
+                       .axi_rstn       (axi_rstn),
+                       .wready         (wready),
+                       .wr_addr_match  (wr_match_loop),
+                       .wdata          (wdata),
+    	               .rdata          (rdata_loop));
+	wire [31:0] rdata_out;
+	if (i == 0) begin
+            assign rdata_out = wr_match_loop ? rdata_loop   : 
+	    	                               32'hAAAAAAAA ;
+	end else begin
+            assign rdata_out = wr_match_loop ? rdata_loop                  : 
+	    	                               coupled_loop[i-1].rdata_out ;
+        end
     end endgenerate
+    assign rdata = coupled_loop[N-1].rdata_out;
 
     // Add delays
     for (j = 0; j < N; j = j + 1) begin : rec_delays

@@ -30,6 +30,7 @@ module core_matrix #(parameter N = 8,
 
     wire [N-1:0] osc_in  ;
     wire [N-1:0] osc_out ;
+    assign outputs = osc_out;
 
     wire wr_match;
     assign wr_match = (wr_addr[31:24] == `WEIGHT_ADDR_MASK);
@@ -41,8 +42,8 @@ module core_matrix #(parameter N = 8,
     wire [31:0] addr;
 
     assign addr = wready ? wr_addr : rd_addr;
-    assign s_addr = {5'b0, addr[12: 2]} << (16 - $clog2(N));
-    assign d_addr = {5'b0, addr[23:13]} << (16 - $clog2(N));
+    assign s_addr = {5'b0, addr[12: 2]} ;
+    assign d_addr = {5'b0, addr[23:13]} ;
     assign sd_dist = (s_addr > d_addr) ? (s_addr - d_addr) :
                                          (d_addr - s_addr) ;
 
