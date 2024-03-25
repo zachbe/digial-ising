@@ -63,12 +63,16 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
    
     // This sampling removes the "combinational loop" and also prevents
     // ringing. 
-    reg sout_samp;
-    always @(posedge din or negedge din) begin
-        sout_samp <= sout;
+    reg sout_samp_pos;
+    reg sout_samp_neg;
+    always @(posedge din) begin
+        sout_samp_pos <= sout;
+    end
+    always @(negedge din) begin
+        sout_samp_neg <= sout;
     end
 
-    assign mismatch_d  = (din ^ sout_samp);
+    assign mismatch_d  = din ? ~sout_samp_pos : sout_samp_neg;
     
     wire [NUM_WEIGHTS-1:0] d_buf;
   
@@ -89,7 +93,7 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
     
     // Select correct option based on mismatch status
     wire dout_int;
-    assign dout_int = mismatch_d ? d_mi : d_ma;
+    assign dout_int = mismatch_d ? d_mi : d_ma; 
     assign dout = dout_int;
 
     // Array of generic delay buffers
