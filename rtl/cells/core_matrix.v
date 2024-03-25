@@ -44,8 +44,6 @@ module core_matrix #(parameter N = 8,
     assign addr = wready ? wr_addr : rd_addr;
     assign s_addr = {5'b0, addr[12: 2]} ;
     assign d_addr = {5'b0, addr[23:13]} ;
-    assign sd_dist = (s_addr > d_addr) ? (s_addr - d_addr) :
-                                         (d_addr - s_addr) ;
 
     // Create columns
     genvar i,j,k;
@@ -57,8 +55,9 @@ module core_matrix #(parameter N = 8,
 	    assign rdata_out  = 32'hAAAAAAAA;
 	end else begin: main_column_loop
 	    // The Nth column has a coupling distance of N.
-	    wire wr_match;
-	    assign wr_match = (sd_dist == i);
+	    wire [15:0] s_exp = (d_addr + i) % N;
+	    wire wr_match_col;
+	    assign wr_match_col = wr_match & (s_addr == s_exp);
 	    wire [31:0] rdata_col;
             coupled_col #(.N(N),
 		          .K(i-1),
@@ -72,13 +71,13 @@ module core_matrix #(parameter N = 8,
 			   .clk         (clk),
 			   .axi_rstn    (axi_rstn),
 			   .wready      (wready),
-			   .wr_match    (wr_match),
+			   .wr_match    (wr_match_col),
 			   .s_addr      (s_addr),
 			   .d_addr      (d_addr),
 			   .wdata       (wdata),
 			   .rdata       (rdata_col));
-	    assign rdata_out = wr_match ? rdata_col                 :
-		                          column_loop[i-1].rdata_out;
+	    assign rdata_out = wr_match_col ? rdata_col                 :
+		                              column_loop[i-1].rdata_out;
 	end
     end endgenerate
 
@@ -87,10 +86,19 @@ module core_matrix #(parameter N = 8,
 
     // Create shorted cells
     generate for (i = 0; i < N; i = i + 1) begin: shorted_cell_loop
+	wire wr_match_sh;
+	assign wr_match_sh = wr_match & (s_addr == d_addr) & (s_addr == i) ;
         shorted_cell #(.NUM_LUTS(NUM_LUTS))
 	       short_i(.ising_rstn(ising_rstn),
 		       .sin       (column_loop[N-1].column_out[i]),
-		       .dout      (osc_out[i]));
+		       .dout      (osc_out[i]),
+
+	               .clk           (clk),
+                       .axi_rstn      (axi_rstn),
+                       .wready        (wready),
+                       .wr_addr_match (wr_match_sh),
+                       .wdata         (wdata),
+                       .rdata         (/*TODO: Add spin reading */));
     end endgenerate
 
     // Add delays that loop around

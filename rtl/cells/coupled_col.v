@@ -39,7 +39,7 @@ module coupled_col      #(parameter N           = 8,
 	// This is an asymmetric coupling
 	wire [31:0] rdata_loop;
 	wire   wr_match_loop;
-	assign wr_match_loop = wr_match & ((s_addr == i) | (d_addr == i)); // TODO: make asymmetric
+	assign wr_match_loop = wr_match & (d_addr == i);
         coupled_cell #(.NUM_WEIGHTS(NUM_WEIGHTS),
                        .NUM_LUTS   (NUM_LUTS   ))
     	            ij(.ising_rstn  (ising_rstn),

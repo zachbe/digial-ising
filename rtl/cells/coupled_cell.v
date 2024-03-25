@@ -56,7 +56,9 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
     // If coupling is negative, we want to slow down the destination
     // oscillator when it does match the source oscillator, and speed it up
     // otherwise.
-    
+   
+    // This sampling removes the "combinational loop" and also prevents
+    // ringing. 
     reg sout_samp;
     always @(posedge din or negedge din) begin
         sout_samp <= sout;
@@ -86,7 +88,8 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
     // Select correct option based on mismatch status
     wire dout_int;
     assign dout_int = mismatch_d ? d_mi : d_ma;
-    
+    assign dout = dout_int;
+
     // Array of generic delay buffers
     // TODO: Potentially replace this with an asynchronous counter and
     // comparator to allow for greater weight resolution per LUT used.
@@ -94,13 +97,5 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
     generate for (i = 1; i < NUM_WEIGHTS; i = i + 1) begin
         buffer #(NUM_LUTS) bufid(.in(d_buf[i-1]), .out(d_buf[i]));
     end endgenerate
-    
-    // Latches here trick the tool into not thinking there's
-    // a combinational loop in the design.
-    `ifdef SIM
-        assign dout = ising_rstn ? dout_int : 1'b0;
-    `else
-        (* dont_touch = "yes" *) LDCE d_latch (.Q(dout), .D(dout_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0)); 
-    `endif
 
 endmodule
