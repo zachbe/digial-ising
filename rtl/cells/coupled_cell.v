@@ -65,12 +65,17 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
     // ringing. 
     reg sout_samp_pos;
     reg sout_samp_neg;
+    `ifdef SIM
     always @(posedge din) begin
         sout_samp_pos <= sout;
     end
     always @(negedge din) begin
         sout_samp_neg <= sout;
     end
+    `else 
+        (* dont_touch = "yes" *) LDCE d_neg_latch (.Q(sout_samp_neg), .D(sout), .C(~din), .CE(1'b1), .PRE(1'b0)); 
+        (* dont_touch = "yes" *) LDCE d_pos_latch (.Q(sout_samp_pos), .D(sout), .C( din), .CE(1'b1), .PRE(1'b0)); 
+    `endif
 
     assign mismatch_d  = din ? ~sout_samp_pos : sout_samp_neg;
     
