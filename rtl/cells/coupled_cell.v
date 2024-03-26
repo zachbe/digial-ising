@@ -63,9 +63,9 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
    
     // This sampling removes the "combinational loop" and also prevents
     // ringing. 
+    `ifdef SIM
     reg sout_samp_pos;
     reg sout_samp_neg;
-    `ifdef SIM
     always @(posedge din) begin
         sout_samp_pos <= sout;
     end
@@ -73,6 +73,8 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
         sout_samp_neg <= sout;
     end
     `else 
+    wire sout_samp_pos;
+    wire sout_samp_neg;
         (* dont_touch = "yes" *) FDPE d_neg_latch (.Q(sout_samp_neg), .D(sout), .C(~din), .CE(1'b1), .PRE(1'b0)); 
         (* dont_touch = "yes" *) FDPE d_pos_latch (.Q(sout_samp_pos), .D(sout), .C( din), .CE(1'b1), .PRE(1'b0)); 
     `endif
