@@ -102,56 +102,96 @@ module maxcut_tb();
 	@(posedge clk);
 	#1
 	if(rdata[2:0] != 3'b010) $display("!!! AB FAILED !!!"); //A
+
+	/////////////////////////////////////////////////////////////
+	// Program initial spins
+	
+	@(posedge clk);
+	waddr = `WEIGHT_ADDR_BASE + (32'd1 << 2) + (32'd1 << 13); //B
+	wdata = 32'h00000001;                                     //000
 	
 	/////////////////////////////////////////////////////////////
-	// Program weights
+	// Program (asymmetric) weights
 	
 	@(posedge clk);
 	wready = 1'b1;
 
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd0 << 2) + (32'd1 << 13); //AB
-	wdata = 32'h00000001;                                     //001
+	wdata = 32'h00000000;                                     //-1
+	@(posedge clk);
+	waddr = `WEIGHT_ADDR_BASE + (32'd1 << 2) + (32'd0 << 13); //AB
+	wdata = 32'h00000000;                                     //-1
 	
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd0 << 2) + (32'd4 << 13); //AE
-	wdata = 32'h00000001;                                     //001
+	wdata = 32'h00000000;                                     //-1
+	@(posedge clk);
+	waddr = `WEIGHT_ADDR_BASE + (32'd4 << 2) + (32'd0 << 13); //AE
+	wdata = 32'h00000000;                                     //-1
 	
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd0 << 2) + (32'd7 << 13); //AH
-	wdata = 32'h00000004;                                     //100
+	wdata = 32'h00000002;                                     //1
+	@(posedge clk);
+	waddr = `WEIGHT_ADDR_BASE + (32'd7 << 2) + (32'd0 << 13); //AH
+	wdata = 32'h00000002;                                     //1
 
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd1 << 2) + (32'd2 << 13); //BC
-	wdata = 32'h00000001;                                     //001
+	wdata = 32'h00000000;                                     //-1
+	@(posedge clk);
+	waddr = `WEIGHT_ADDR_BASE + (32'd2 << 2) + (32'd1 << 13); //BC
+	wdata = 32'h00000000;                                     //-1
 	
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd1 << 2) + (32'd3 << 13); //BD
-	wdata = 32'h00000001;                                     //001
+	wdata = 32'h00000000;                                     //-1
+	@(posedge clk);
+	waddr = `WEIGHT_ADDR_BASE + (32'd3 << 2) + (32'd1 << 13); //BD
+	wdata = 32'h00000000;                                     //-1
 	
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd1 << 2) + (32'd7 << 13); //BH
-	wdata = 32'h00000004;                                     //100
+	wdata = 32'h00000002;                                     //1
+	@(posedge clk);
+	waddr = `WEIGHT_ADDR_BASE + (32'd7 << 2) + (32'd1 << 13); //BH
+	wdata = 32'h00000002;                                     //1
 
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd2 << 2) + (32'd3 << 13); //CD
-	wdata = 32'h00000001;                                     //001
+	wdata = 32'h00000000;                                     //-1
+	@(posedge clk);
+	waddr = `WEIGHT_ADDR_BASE + (32'd3 << 2) + (32'd2 << 13); //CD
+	wdata = 32'h00000000;                                     //-1
 	
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd2 << 2) + (32'd7 << 13); //CH
-	wdata = 32'h00000004;                                     //100
+	wdata = 32'h00000002;                                     //1
+	@(posedge clk);
+	waddr = `WEIGHT_ADDR_BASE + (32'd7 << 2) + (32'd2 << 13); //CH
+	wdata = 32'h00000002;                                     //1
 	
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd3 << 2) + (32'd4 << 13); //DE
-	wdata = 32'h00000001;                                     //001
+	wdata = 32'h00000000;                                     //-1
+	@(posedge clk);
+	waddr = `WEIGHT_ADDR_BASE + (32'd4 << 2) + (32'd3 << 13); //DE
+	wdata = 32'h00000000;                                     //-1
 	
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd3 << 2) + (32'd7 << 13); //DH
-	wdata = 32'h00000004;                                     //100
+	wdata = 32'h00000002;                                     //1
+	@(posedge clk);
+	waddr = `WEIGHT_ADDR_BASE + (32'd7 << 2) + (32'd3 << 13); //DH
+	wdata = 32'h00000002;                                     //1
 	
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd4 << 2) + (32'd7 << 13); //EH
-	wdata = 32'h00000004;                                     //100
+	wdata = 32'h00000002;                                     //1
+	@(posedge clk);
+	waddr = `WEIGHT_ADDR_BASE + (32'd7 << 2) + (32'd4 << 13); //EH
+	wdata = 32'h00000002;                                     //1
 	
 	/////////////////////////////////////////////////////////////
 	// Check weights
@@ -163,7 +203,7 @@ module maxcut_tb();
 	raddr = `WEIGHT_ADDR_BASE + (31'd0 << 2) + (31'd1 << 13);
 	@(posedge clk);
 	#1
-	if(rdata[2:0] != 3'b001) $display("!!! AB FAILED !!!"); //A
+	if(rdata[2:0] != 3'b000) $display("!!! AB FAILED !!!"); //A
 	
 	/////////////////////////////////////////////////////////////
 	// Ach, Hans, run!
@@ -173,50 +213,51 @@ module maxcut_tb();
 	
 	@(posedge clk);
 	waddr = `START_ADDR;
-	wdata = 32'h00000001;
+	wdata = 32'h00000010;
+	
+	@(posedge clk);
+	wready = 1'b0;
 
 	#10000;
 	
 	@(posedge clk);
-	waddr = `START_ADDR;
-	wdata = 32'h00000000;
+	wready = 1'b1;
 	
 	// Test resetting
 	@(posedge clk);
 	waddr = `START_ADDR;
-	wdata = 32'h00000001;
-
-	#50000;
+	wdata = 32'h00000100;
 	
 	@(posedge clk);
-	waddr = `START_ADDR;
-	wdata = 32'h00000000;
+	wready = 1'b0;
+
+	#50000;
 	
 	/////////////////////////////////////////////////////////////
 	// Read phases
 	
 	@(posedge clk);
-	raddr = `PHASE_ADDR_BASE + (7 << 2);
+	raddr = `PHASE_ADDR_BASE + (0 << 2);
 	@(posedge clk);
 	#1
 	if(rdata < 32'h4) $display("!!! A FAILED !!!"); //A
-	raddr = `PHASE_ADDR_BASE + (6 << 2);
+	raddr = `PHASE_ADDR_BASE + (1 << 2);
 	@(posedge clk);
 	#1
 	if(rdata > 32'h4) $display("!!! B FAILED !!!"); //B
-	raddr = `PHASE_ADDR_BASE + (5 << 2);
+	raddr = `PHASE_ADDR_BASE + (2 << 2);
 	@(posedge clk);
 	#1
 	if(rdata < 32'h4) $display("!!! C FAILED !!!"); //C
-	raddr = `PHASE_ADDR_BASE + (4 << 2);
-	@(posedge clk);
-	#1
-	if(rdata < 32'h4) $display("!!! D FAILED !!!"); //D
 	raddr = `PHASE_ADDR_BASE + (3 << 2);
 	@(posedge clk);
 	#1
+	if(rdata < 32'h4) $display("!!! D FAILED !!!"); //D
+	raddr = `PHASE_ADDR_BASE + (4 << 2);
+	@(posedge clk);
+	#1
 	if(rdata > 32'h4) $display("!!! E FAILED !!!"); //E
-	raddr = `PHASE_ADDR_BASE + 0;
+	raddr = `PHASE_ADDR_BASE + (7 << 2);
 	@(posedge clk);
 	#1
 	if(rdata < 32'h4) $display("!!! H FAILED !!!"); //F

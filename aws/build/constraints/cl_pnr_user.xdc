@@ -10,4 +10,5 @@ set_clock_groups -name TIG_SRAI_3 -asynchronous -group [get_clocks -of_objects [
 
 # False pathsfor the Ising machine loops
 set_false_path -through [get_pins -hierarchical s_latch/D]
-set_false_path -through [get_pins -hierarchical d_latch/D]
+set_false_path -through [get_pins -hierarchical d_neg_latch/D]
+set_false_path -through [get_pins -hierarchical d_pos_latch/D]
