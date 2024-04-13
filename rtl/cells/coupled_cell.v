@@ -75,13 +75,13 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
 
     // Build our delayed signals
     wire [$clog2(NUM_WEIGHTS)-1:0] l_buf_ma;
-    wire [$clog2(NUM_WEIGHTS)-2:0] l_buf_mi;
+    wire [$clog2(NUM_WEIGHTS)-1:0] l_buf_mi;
     wire [$clog2(NUM_WEIGHTS)-1:0] b_buf_ma;
-    wire [$clog2(NUM_WEIGHTS)-2:0] b_buf_mi;
+    wire [$clog2(NUM_WEIGHTS)-1:0] b_buf_mi;
     wire [$clog2(NUM_WEIGHTS)-1:0] r_buf_ma;
-    wire [$clog2(NUM_WEIGHTS)-2:0] r_buf_mi;
+    wire [$clog2(NUM_WEIGHTS)-1:0] r_buf_mi;
     wire [$clog2(NUM_WEIGHTS)-1:0] t_buf_ma;
-    wire [$clog2(NUM_WEIGHTS)-2:0] t_buf_mi;
+    wire [$clog2(NUM_WEIGHTS)-1:0] t_buf_mi;
 
     // Depending on the weight bit, either add a delay or don't
     generate for (i = 0; i < $clog2(NUM_WEIGHTS); i = i + 1) begin
@@ -109,11 +109,6 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
 	    assign t_buf_ma_in = t_buf_ma[i-1];
 	    assign t_buf_mi_in = t_buf_mi[i-1];
         end
-
-	wire l_buf_ma_out, l_buf_mi_out;
-	wire b_buf_ma_out, b_buf_mi_out;
-	wire r_buf_ma_out, r_buf_mi_out;
-	wire t_buf_ma_out, t_buf_mi_out;
 
 	//------------------------------------------------------------------
         // Delay line structure:
@@ -162,17 +157,32 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
 	// line consumes O(n log(n)) hardware resources.
 	// It also inserts less unecessary logic in the delay line.
 	//------------------------------------------------------------------
+	
+	wire l_buf_ma_out, l_buf_mi_out;
+	wire b_buf_ma_out, b_buf_mi_out;
+	wire r_buf_ma_out, r_buf_mi_out;
+	wire t_buf_ma_out, t_buf_mi_out;
 
 	if (i == 0) begin
-	    assign l_buf_mi_out = l_buf_mi_in; // Hopefully these get optimzied out
-	    assign b_buf_mi_out = b_buf_mi_in;
-	    assign r_buf_mi_out = r_buf_mi_in;
-	    assign t_buf_mi_out = t_buf_mi_in;
+	    // Use a buffer for our skipped slice to factor in the mux delay
+            buffer #(1) buf_l_mi(.in(l_buf_mi_in), .out(l_buf_mi[i]));
+            buffer #(1) buf_b_mi(.in(b_buf_mi_in), .out(b_buf_mi[i]));
+	    // Only 3 delays per coupling for our first slice
+            buffer #(NUM_LUTS) buf_r_mi(.in(r_buf_mi_in), .out(r_buf_mi_out));
+            buffer #(NUM_LUTS) buf_t_mi(.in(t_buf_mi_in), .out(t_buf_mi_out));
             buffer #(NUM_LUTS) buf_l_ma(.in(l_buf_ma_in), .out(l_buf_ma_out));
             buffer #(NUM_LUTS) buf_b_ma(.in(b_buf_ma_in), .out(b_buf_ma_out));
             buffer #(NUM_LUTS) buf_r_ma(.in(r_buf_ma_in), .out(r_buf_ma_out));
             buffer #(NUM_LUTS) buf_t_ma(.in(t_buf_ma_in), .out(t_buf_ma_out));
+	    // TODO: Should these be built using LUTs manually?
+	    assign r_buf_mi[i] = ~weight_vh[0] ? r_buf_mi_out : r_buf_mi_in;
+	    assign t_buf_mi[i] = ~weight_hv[0] ? t_buf_mi_out : t_buf_mi_in;
+	    assign l_buf_ma[i] =  weight_vh[1] ? l_buf_ma_out : l_buf_ma_in;
+	    assign b_buf_ma[i] =  weight_hv[1] ? b_buf_ma_out : b_buf_ma_in;
+	    assign r_buf_ma[i] =  weight_vh[1] ? r_buf_ma_out : r_buf_ma_in;
+	    assign t_buf_ma[i] =  weight_hv[1] ? t_buf_ma_out : t_buf_ma_in;
 	end else begin
+	    // 4 delays per coupling for future slices
             buffer #(NUM_LUTS * (2^(i-1))) buf_l_mi(.in(l_buf_mi_in), .out(l_buf_mi_out));
             buffer #(NUM_LUTS * (2^(i-1))) buf_b_mi(.in(b_buf_mi_in), .out(b_buf_mi_out));
             buffer #(NUM_LUTS * (2^(i-1))) buf_r_mi(.in(r_buf_mi_in), .out(r_buf_mi_out));
@@ -181,16 +191,17 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
             buffer #(NUM_LUTS * (2^(i-1))) buf_b_ma(.in(b_buf_ma_in), .out(b_buf_ma_out));
             buffer #(NUM_LUTS * (2^(i-1))) buf_r_ma(.in(r_buf_ma_in), .out(r_buf_ma_out));
             buffer #(NUM_LUTS * (2^(i-1))) buf_t_ma(.in(t_buf_ma_in), .out(t_buf_ma_out));
+	    // TODO: Should these be built using LUTs manually?
+	    assign l_buf_mi[i] = ~weight_vh[i+1] ? l_buf_mi_out : l_buf_mi_in;
+	    assign b_buf_mi[i] = ~weight_hv[i+1] ? b_buf_mi_out : b_buf_mi_in;
+	    assign r_buf_mi[i] = ~weight_vh[i+1] ? r_buf_mi_out : r_buf_mi_in;
+	    assign t_buf_mi[i] = ~weight_hv[i+1] ? t_buf_mi_out : t_buf_mi_in;
+	    assign l_buf_ma[i] =  weight_vh[i+1] ? l_buf_ma_out : l_buf_ma_in;
+	    assign b_buf_ma[i] =  weight_hv[i+1] ? b_buf_ma_out : b_buf_ma_in;
+	    assign r_buf_ma[i] =  weight_vh[i+1] ? r_buf_ma_out : r_buf_ma_in;
+	    assign t_buf_ma[i] =  weight_hv[i+1] ? t_buf_ma_out : t_buf_ma_in;
 	end
         
-	assign l_buf_ma[i] =  weight_vh[i] ? l_buf_ma_out : l_buf_ma_in;
-	assign l_buf_mi[i] = ~weight_vh[i] ? l_buf_mi_out : l_buf_mi_in;
-	assign b_buf_ma[i] =  weight_hv[i] ? b_buf_ma_out : b_buf_ma_in;
-	assign b_buf_mi[i] = ~weight_hv[i] ? b_buf_mi_out : b_buf_mi_in;
-	assign r_buf_ma[i] =  weight_vh[i] ? r_buf_ma_out : r_buf_ma_in;
-	assign r_buf_mi[i] = ~weight_vh[i] ? r_buf_mi_out : r_buf_mi_in;
-	assign t_buf_ma[i] =  weight_hv[i] ? t_buf_ma_out : t_buf_ma_in;
-	assign t_buf_mi[i] = ~weight_hv[i] ? t_buf_mi_out : t_buf_mi_in;
     end endgenerate
 
     // Select output based on mismatch status
