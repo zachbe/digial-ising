@@ -120,21 +120,42 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
 	// ---------------------
 	//
 	// Each weight bit corresponds to one verical slice of delay cells.
+	// The total weight is divided between the two couplings in each cell.
 	//
-	// For example, if weight = 7 = 4'b0111, the top delay line would
-	// have delay 4, and so would the bottom.
+	// For example, if weight = 7 = 4'b0111, delay line A, B, C, and D
+	// would all have delay 2.
 	//
-	// If weight = 14 = 4'b1110, the top delay line would have delay 7,
-	// while the bottom would have delay 0.
+	// If weight = 14 = 4'b1110, delay line A would have delay 4, while delay
+	// line B would have delay 0. Also, delay line C would have delay 4,
+	// while delay like D would have delay 1. This corresponds to a total
+	// delay of +7.
 	//
-	//   bit:  0   1   2   3
-        //        ┌─┐ ┌─┐ ┌─┐ ┌─┐
-        //     ┌──┤1├─┤1├─┤2├─┤4├──┐ ┌─┐
-        //     │  └─┘ └─┘ └─┘ └─┘  └─┤ └─┐
-        //  in─┤                     │mux├──
-        //     │      ┌─┐ ┌─┐ ┌─┐  ┌─┤ ┌─┘
-        //     └──────┤1├─┤2├─┤4├──┘ └─┘
-        //            └─┘ └─┘ └─┘
+	// If weight = 4 = 4'b0100, delay line A would have delay 1, while
+	// delay line B would have delay 2. Delay line C would have delay 1,
+	// while delay line D would have delay 3. This corresponds to a total
+	// delay of -3.
+	//
+	//   bit:  1   2   3 
+        //        ┌─┐ ┌─┐ ┌─┐
+        // A:  ┌──┤1├─┤1├─┤2├─┐ ┌─┐
+        //     │  └─┘ └─┘ └─┘ └─┤ └─┐
+        //  in─┤                │mux├──
+        //     │      ┌─┐ ┌─┐ ┌─┤ ┌─┘
+        // B:  └──────┤1├─┤2├─┘ └─┘
+        //            └─┘ └─┘
+	//  bit:      ~2  ~3
+	//
+	//
+	//   bit:  1   2   3 
+        //        ┌─┐ ┌─┐ ┌─┐
+        // C:  ┌──┤1├─┤1├─┤2├─┐ ┌─┐
+        //     │  └─┘ └─┘ └─┘ └─┤ └─┐
+        //  in─┤                │mux├──
+        //     │  ┌─┐ ┌─┐ ┌─┐ ┌─┤ ┌─┘
+        // D:  └──┤1├─┤1├─┤2├─┘ └─┘
+        //        └─┘ └─┘ └─┘
+	//   bit: ~0  ~2  ~3 
+	//
 	//
 	// This design consumes O(n) hardware resources, while using
 	// a multipliexor tree for selecting a signal from a tapped delay
