@@ -9,8 +9,10 @@
 
 module shorted_cell #(parameter NUM_LUTS = 2) (
 	               input  wire ising_rstn,
-	               input  wire sin ,
-		       output wire dout,
+	               input  wire tin ,
+	               input  wire rin ,
+		       output wire tout,
+		       output wire rout,
 
 		       // Synchronous AXI write interface
                        input  wire        clk,
@@ -21,6 +23,7 @@ module shorted_cell #(parameter NUM_LUTS = 2) (
                        output wire [31:0] rdata
 	               );
 
+    //--------------------------------------------------------------------
     // Local registers for storing start spins.
     reg  spin;
     wire spin_nxt;
@@ -37,18 +40,26 @@ module shorted_cell #(parameter NUM_LUTS = 2) (
         end
     end
 
-    //--------------------------
+    //--------------------------------------------------------------------
+    // AND-gate coupling means that we send out the faster coupling on the
+    // falling edge, and the slower coupling on the rising edge.
 
-    wire s_int;
-    assign out = ising_rstn ? s_int : spin ;
+    wire out_int;
+    assign out_int = tin & rin;
 
-    buffer #(NUM_LUTS) dbuf(.in(~out), .out(dout));
+    wire out_rst;
+    assign out_rst = ising_rstn ? out_int : spin ;
+    
+    wire out_latch;    
+    assign tout = out_latch;
+    assign rout = out_latch;
 
+    //--------------------------------------------------------------------
     // Latches here trick the tool into not thinking there's
     // a combinational loop in the design.
     `ifdef SIM
-        assign s_int = ising_rstn ? sin : 1'b0;
+        assign out_latch = out_rst;
     `else
-        (* dont_touch = "yes" *) LDCE s_latch (.Q(s_int), .D(sin), .G(ising_rstn), .GE(1'b1), .CLR(1'b0)); 
+        (* dont_touch = "yes" *) LDCE o_latch (.Q(out_latch), .D(out_rst), .G(ising_rstn), .GE(1'b1), .CLR(1'b0)); 
     `endif
 endmodule

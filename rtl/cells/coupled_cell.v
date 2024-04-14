@@ -74,17 +74,17 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
     assign mismatch_tr  = (tin ^ lout);
 
     // Build our delayed signals
-    wire [$clog2(NUM_WEIGHTS)-1:0] l_buf_ma;
-    wire [$clog2(NUM_WEIGHTS)-1:0] l_buf_mi;
-    wire [$clog2(NUM_WEIGHTS)-1:0] b_buf_ma;
-    wire [$clog2(NUM_WEIGHTS)-1:0] b_buf_mi;
-    wire [$clog2(NUM_WEIGHTS)-1:0] r_buf_ma;
-    wire [$clog2(NUM_WEIGHTS)-1:0] r_buf_mi;
-    wire [$clog2(NUM_WEIGHTS)-1:0] t_buf_ma;
-    wire [$clog2(NUM_WEIGHTS)-1:0] t_buf_mi;
+    wire [$clog2(NUM_WEIGHTS)-2:0] l_buf_ma;
+    wire [$clog2(NUM_WEIGHTS)-2:0] l_buf_mi;
+    wire [$clog2(NUM_WEIGHTS)-2:0] b_buf_ma;
+    wire [$clog2(NUM_WEIGHTS)-2:0] b_buf_mi;
+    wire [$clog2(NUM_WEIGHTS)-2:0] r_buf_ma;
+    wire [$clog2(NUM_WEIGHTS)-2:0] r_buf_mi;
+    wire [$clog2(NUM_WEIGHTS)-2:0] t_buf_ma;
+    wire [$clog2(NUM_WEIGHTS)-2:0] t_buf_mi;
 
     // Depending on the weight bit, either add a delay or don't
-    generate for (i = 0; i < $clog2(NUM_WEIGHTS); i = i + 1) begin
+    generate for (i = 0; i < $clog2(NUM_WEIGHTS) - 1; i = i + 1) begin
 	wire l_buf_ma_in, l_buf_mi_in ;
 	wire b_buf_ma_in, b_buf_mi_in ;
 	wire r_buf_ma_in, r_buf_mi_in ;
@@ -209,10 +209,10 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
     wire tout_mis;
     wire lout_mis;
     wire bout_mis;
-    assign rout_mis = mismatch_lb ? l_buf_mi[$clog2(NUM_WEIGHTS)-1] : l_buf_ma[$clog2(NUM_WEIGHTS)-1];
-    assign tout_mis = mismatch_bl ? b_buf_mi[$clog2(NUM_WEIGHTS)-1] : b_buf_ma[$clog2(NUM_WEIGHTS)-1];
-    assign lout_mis = mismatch_rt ? r_buf_mi[$clog2(NUM_WEIGHTS)-1] : r_buf_ma[$clog2(NUM_WEIGHTS)-1];
-    assign bout_mis = mismatch_tr ? t_buf_mi[$clog2(NUM_WEIGHTS)-1] : t_buf_ma[$clog2(NUM_WEIGHTS)-1];
+    assign rout_mis = mismatch_lb ? l_buf_mi[$clog2(NUM_WEIGHTS)-2] : l_buf_ma[$clog2(NUM_WEIGHTS)-2];
+    assign tout_mis = mismatch_bl ? b_buf_mi[$clog2(NUM_WEIGHTS)-2] : b_buf_ma[$clog2(NUM_WEIGHTS)-2];
+    assign lout_mis = mismatch_rt ? r_buf_mi[$clog2(NUM_WEIGHTS)-2] : r_buf_ma[$clog2(NUM_WEIGHTS)-2];
+    assign bout_mis = mismatch_tr ? t_buf_mi[$clog2(NUM_WEIGHTS)-2] : t_buf_ma[$clog2(NUM_WEIGHTS)-2];
 
     // Prevent glitching: An output should never switch from the current
     // input value, only to that value.
