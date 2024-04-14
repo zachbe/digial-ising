@@ -14,16 +14,16 @@ module recursive_matrix #(parameter N = 8,
 	             parameter DIAGONAL   = 1) (
 		     input  wire ising_rstn,
 
-		     input  wire [N-1:0] inputs_ver_a ,
-		     input  wire [N-1:0] inputs_hor_a ,
-		     output wire [N-1:0] outputs_ver_a,
-		     output wire [N-1:0] outputs_hor_a,
-		     input  wire [N-1:0] inputs_ver_b,
-		     input  wire [N-1:0] inputs_hor_b,
-		     output wire [N-1:0] outputs_ver_b,
-		     output wire [N-1:0] outputs_hor_b,
+		     input  wire [N-1:0] inputs_top ,
+		     input  wire [N-1:0] inputs_bottom ,
+		     output wire [N-1:0] outputs_top,
+		     output wire [N-1:0] outputs_bottom,
+		     input  wire [N-1:0] inputs_right,
+		     input  wire [N-1:0] inputs_left,
+		     output wire [N-1:0] outputs_right,
+		     output wire [N-1:0] outputs_left,
 
-		     output wire [N-1:0] bot_row,
+		     output wire [N-1:0] right_col,
 
 		     input  wire        clk,
 		     input  wire        axi_rstn,
@@ -57,10 +57,10 @@ module recursive_matrix #(parameter N = 8,
 		       tr ? tr_r :
 		       br ? br_r : 32'hAAAAAAAA;
 
-	// Get right row for phase measurement
-	wire [(N/2)-1:0] bot_row_left ;
-	wire [(N/2)-1:0] bot_row_right;
-	assign bot_row = {bot_row_left, bot_row_right};
+	// Get right col for phase measurement
+	wire [(N/2)-1:0] right_col_top;
+	wire [(N/2)-1:0] right_col_bot;
+	assign right_col = {right_col_left, right_col_right};
 
 	// Top left
         recursive_matrix #(.N(N/2),
@@ -73,7 +73,7 @@ module recursive_matrix #(parameter N = 8,
 				 .outputs_ver(outputs_ver[N-1:(N/2)]),
 				 .outputs_hor(osc_hor_out[N-1:(N/2)]),
 
-				 .bot_row(),
+				 .right_col(),
 
 				 .clk(clk),
 				 .axi_rstn(axi_rstn),
@@ -95,7 +95,7 @@ module recursive_matrix #(parameter N = 8,
 				 .outputs_ver(outputs_ver[(N/2)-1:0]),
 				 .outputs_hor(outputs_hor[N-1:(N/2)]),
 
-				 .bot_row(),
+				 .right_col(right_col_top),
 
 				 .clk(clk),
 				 .axi_rstn(axi_rstn),
@@ -117,7 +117,7 @@ module recursive_matrix #(parameter N = 8,
 				 .outputs_ver(osc_ver_out[(N/2)-1:0]),
 				 .outputs_hor(outputs_hor[(N/2)-1:0]),
 
-				 .bot_row(bot_row_right),
+				 .right_col(right_col_bot),
 
 				 .clk(clk),
 				 .axi_rstn(axi_rstn),
@@ -142,24 +142,35 @@ module recursive_matrix #(parameter N = 8,
 
     // Diagonal base case is a shorted cell.
     end else if (DIAGONAL == 1) begin : shorted_cell
-        assign bot_row = inputs_hor;
+        assign right_col = outputs_hor;
 	shorted_cell #(.NUM_LUTS(NUM_LUTS))
 	             i_short(.ising_rstn(ising_rstn),
-			     .sin (inputs_ver ),
-		             .din (inputs_hor ),
-			     .sout(outputs_ver),
-			     .dout(outputs_hor));
+			     .tin  (inputs_ver ),
+		             .rin  (inputs_hor ),
+			     .tout (outputs_ver),
+			     .sout (outputs_hor),
+	    	              
+		             .clk            (clk),
+                             .axi_rstn       (axi_rstn),
+                             .wready         (wready),
+                             .wr_addr_match  (wr_match),
+                             .wdata          (wdata),
+		             .rdata          (rdata));
 
     // Otherwise, it's a coupled cell.
     end else begin : coupled_cell
-        assign bot_row = inputs_hor;
+        assign right_col = outputs_hor;
         coupled_cell #(.NUM_WEIGHTS(NUM_WEIGHTS),
                        .NUM_LUTS   (NUM_LUTS   ))
 	             ij   (.ising_rstn  (ising_rstn),
-                              .sin   (inputs_ver ),
-                              .din   (inputs_hor ),
-                              .sout  (outputs_ver),
-                              .dout  (outputs_hor),
+                              .lin  (inputs_ver ),
+                              .rin  (inputs_hor ),
+                              .tin  (outputs_ver),
+                              .bin  (outputs_hor),
+			      .lout (),
+			      .rout (),
+			      .tout (),
+			      .bout (),
 
 	    	              .clk            (clk),
                               .axi_rstn       (axi_rstn),
