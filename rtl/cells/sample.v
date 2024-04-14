@@ -18,6 +18,7 @@ module sample #(parameter N = 3)(
                 input  wire [31 :0] counter_max,
 		input  wire [31 :0] counter_cutoff,
 	        input  wire [N-1:0] outputs,
+	        input  wire [N-1:0] external_spin,
 		output wire [31:0]  phase,
 		input  wire [31:0]  rd_addr 
 	       );
@@ -27,7 +28,7 @@ module sample #(parameter N = 3)(
     reg  [N-1:0] phase_mismatch_1;
     reg  [N-1:0] phase_mismatch_2;
     reg  [N-1:0] phase_mismatch_3;
-    assign phase_mismatch_0 = outputs ^ {N{outputs[N-1]}};
+    assign phase_mismatch_0 = outputs ^ external_spin;
     always @(posedge clk) begin
         phase_mismatch_1 <= phase_mismatch_0;
         phase_mismatch_2 <= phase_mismatch_1;

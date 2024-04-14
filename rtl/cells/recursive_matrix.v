@@ -172,13 +172,13 @@ module recursive_matrix #(parameter N = 8,
 
     // Diagonal base case is a shorted cell.
     end else if (DIAGONAL == 1) begin : shorted_cell
-        assign right_col = outputs_hor;
+        assign right_col = tout;
 	shorted_cell #(.NUM_LUTS(NUM_LUTS))
 	             i_short(.ising_rstn(ising_rstn),
 			     .tin  (tin),
 		             .rin  (rin),
 			     .tout (tout),
-			     .sout (sout),
+			     .rout (rout),
 	    	              
 		             .clk            (clk),
                              .axi_rstn       (axi_rstn),
@@ -189,7 +189,7 @@ module recursive_matrix #(parameter N = 8,
 
     // Otherwise, it's a coupled cell.
     end else begin : coupled_cell
-        assign right_col = outputs_hor;
+        assign right_col = tout;
         coupled_cell #(.NUM_WEIGHTS(NUM_WEIGHTS),
                        .NUM_LUTS   (NUM_LUTS   ))
 	             ij   (.ising_rstn  (ising_rstn),

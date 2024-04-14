@@ -30,7 +30,8 @@ module top_ising   #(parameter N = 3,
 		     output wire [31:0] rdata
 	            );
 
-    wire [N-1:0] outputs;
+    wire [N-1:0] outputs      ;
+    wire [N-1:0] external_spin;
 
     core_matrix #(.N(N),
 	          .NUM_WEIGHTS(NUM_WEIGHTS),
@@ -38,6 +39,7 @@ module top_ising   #(parameter N = 3,
 	          .NUM_LUTS(NUM_LUTS)) u_core_matrix (
 		  .ising_rstn(ising_rstn),
 		  .outputs(outputs),
+		  .external_spin(external_spin),
 		  .clk(clk),
 	          .axi_rstn(axi_rstn),
 	          .wready(wready),
@@ -53,6 +55,7 @@ module top_ising   #(parameter N = 3,
 	     .counter_max(counter_max),
 	     .counter_cutoff(counter_cutoff),
 	     .outputs(outputs),
+             .external_spin(external_spin),
 	     .phase(phase),
              .rd_addr(rd_addr)
      );
