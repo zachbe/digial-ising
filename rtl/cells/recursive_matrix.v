@@ -14,14 +14,14 @@ module recursive_matrix #(parameter N = 8,
 	             parameter DIAGONAL   = 1) (
 		     input  wire ising_rstn,
 
-		     input  wire [N-1:0] inputs_top ,
-		     input  wire [N-1:0] inputs_bottom ,
-		     output wire [N-1:0] outputs_top,
-		     output wire [N-1:0] outputs_bottom,
-		     input  wire [N-1:0] inputs_right,
-		     input  wire [N-1:0] inputs_left,
-		     output wire [N-1:0] outputs_right,
-		     output wire [N-1:0] outputs_left,
+                     input  wire [N-1:0] lin,
+                     input  wire [N-1:0] rin,
+                     input  wire [N-1:0] tin,
+                     input  wire [N-1:0] bin,
+                     output wire [N-1:0] lout,
+                     output wire [N-1:0] rout,
+                     output wire [N-1:0] tout,
+                     output wire [N-1:0] bout,
 
 		     output wire [N-1:0] right_col,
 
@@ -31,7 +31,7 @@ module recursive_matrix #(parameter N = 8,
 		     input  wire        wr_match,
                      input  wire [$clog2(N)-1:0] s_addr,
                      input  wire [$clog2(N)-1:0] d_addr,
-		     input  wire        s_gt_d,
+		     input  wire        vh,
                      input  wire [31:0] wdata,
 		     output wire [31:0] rdata
 	            );
@@ -41,21 +41,31 @@ module recursive_matrix #(parameter N = 8,
     // If N != 1, recurse.
     // Else, create the cells.
     generate if (N != 1) begin : recurse
-        wire [N-1:0] osc_hor_in  ;
-        wire [N-1:0] osc_ver_in  ;
-        wire [N-1:0] osc_hor_out ;
-        wire [N-1:0] osc_ver_out ;
+        wire [(N/2)-1:0] int_r_i;
+        wire [(N/2)-1:0] int_t_i;
+        wire [(N/2)-1:0] int_b_i;
+        wire [(N/2)-1:0] int_l_i;
+        wire [(N/2)-1:0] int_r_o;
+        wire [(N/2)-1:0] int_t_o;
+        wire [(N/2)-1:0] int_b_o;
+        wire [(N/2)-1:0] int_l_o;
 
         // Select cell based on addr
         wire tl, tr, bl;
         assign tl = wr_match & (~s_addr[0]) & (~d_addr[0]);
         assign br = wr_match & ( s_addr[0]) & ( d_addr[0]);
-        assign tr = wr_match & (~tl       ) & (~br       ); 
+        assign tr = wr_match & (~tl       ) & (~br       );	
 
 	wire [31:0] tl_r, tr_r, br_r;
 	assign rdata = tl ? tl_r :
 		       tr ? tr_r :
 		       br ? br_r : 32'hAAAAAAAA;
+
+	// When we step off the diagonal, set vh value.
+	// If we're already off the diagonal, keep vh value.
+	wire vh_new;
+	assign vh_new = DIAGONAL ? s_addr[0] :
+		                   vh        ;
 
 	// Get right col for phase measurement
 	wire [(N/2)-1:0] right_col_top;
@@ -68,10 +78,14 @@ module recursive_matrix #(parameter N = 8,
 			   .NUM_LUTS(NUM_LUTS),
 			   .DIAGONAL(DIAGONAL))
 			top_left(.ising_rstn (ising_rstn),
-				 .inputs_ver (osc_ver_in [N-1:(N/2)]),
-				 .inputs_hor (inputs_hor [N-1:(N/2)]),
-				 .outputs_ver(outputs_ver[N-1:(N/2)]),
-				 .outputs_hor(osc_hor_out[N-1:(N/2)]),
+                                 .lin  (    /* None */     ),
+                                 .rin  (int_r_i            ),
+                                 .tin  (tin     [N-1:(N/2)]),
+                                 .bin  (    /* None */     ),
+			         .lout (    /* None */     ),
+			         .rout (int_r_o            ),
+			         .tout (tout    [N-1:(N/2)]),
+			         .bout (    /* None */     ),
 
 				 .right_col(),
 
@@ -81,7 +95,7 @@ module recursive_matrix #(parameter N = 8,
 				 .wr_match(tl),
 				 .s_addr(s_addr[$clog2(N)-1:1]),
 				 .d_addr(d_addr[$clog2(N)-1:1]),
-				 .s_gt_d(s_gt_d),
+				 .vh(vh_new),
 				 .wdata(wdata),
 			         .rdata(tl_r));
 	// Top right
@@ -94,6 +108,14 @@ module recursive_matrix #(parameter N = 8,
 				 .inputs_hor (osc_hor_in [N-1:(N/2)]),
 				 .outputs_ver(outputs_ver[(N/2)-1:0]),
 				 .outputs_hor(outputs_hor[N-1:(N/2)]),
+                                 .lin  (int_l_i            ),
+                                 .rin  (rin     [N-1:(N/2)]),
+                                 .tin  (tin     [(N/2)-1:0]),
+                                 .bin  (int_b_i            ),
+			         .lout (int_l_o            ),
+			         .rout (rout    [N-1:(N/2)]),
+			         .tout (tout    [(N/2)-1:0]),
+			         .bout (int_b_o            ),
 
 				 .right_col(right_col_top),
 
@@ -103,7 +125,7 @@ module recursive_matrix #(parameter N = 8,
 				 .wr_match(tr),
 				 .s_addr(s_addr[$clog2(N)-1:1]),
 				 .d_addr(d_addr[$clog2(N)-1:1]),
-				 .s_gt_d(s_gt_d),
+				 .vh(vh_new),
 				 .wdata(wdata),
 			         .rdata(tr_r));
 	// Bottom right
@@ -112,10 +134,14 @@ module recursive_matrix #(parameter N = 8,
 			   .NUM_LUTS(NUM_LUTS),
 			   .DIAGONAL(DIAGONAL))
 		       bot_right(.ising_rstn (ising_rstn),
-				 .inputs_ver (inputs_ver [(N/2)-1:0]),
-				 .inputs_hor (osc_hor_in [(N/2)-1:0]),
-				 .outputs_ver(osc_ver_out[(N/2)-1:0]),
-				 .outputs_hor(outputs_hor[(N/2)-1:0]),
+                                 .lin  (    /* None */     ),
+                                 .rin  (rin     [(N/2)-1:0]),
+                                 .tin  (int_t_i            ),
+                                 .bin  (    /* None */     ),
+			         .lout (    /* None */     ),
+			         .rout (rout    [(N/2)-1:0]),
+			         .tout (int_t_o            ),
+			         .bout (    /* None */     ),
 
 				 .right_col(right_col_bot),
 
@@ -125,19 +151,23 @@ module recursive_matrix #(parameter N = 8,
 				 .wr_match(br),
 				 .s_addr(s_addr[$clog2(N)-1:1]),
 				 .d_addr(d_addr[$clog2(N)-1:1]),
-				 .s_gt_d(s_gt_d),
+				 .vh(vh_new),
 				 .wdata(wdata),
 			         .rdata(br_r));
 
 	 // Add delays (only in sim)
 	 `ifdef SIM
 	     for (j = 0; j < N; j = j + 1) begin: delays
-                  always @(osc_hor_out[j]) begin #20 osc_hor_in[j] <= osc_hor_out[j]; end
-                  always @(osc_ver_out[j]) begin #20 osc_ver_in[j] <= osc_ver_out[j]; end
+                  always @(int_b_o[j]) begin #20 int_t_i[j] <= int_b_o[j]; end
+                  always @(int_l_o[j]) begin #20 int_r_i[j] <= int_l_o[j]; end
+                  always @(int_t_o[j]) begin #20 int_b_i[j] <= int_t_o[j]; end
+                  always @(int_r_o[j]) begin #20 int_l_i[j] <= int_r_o[j]; end
 	     end
          `else
-             assign osc_hor_in = osc_hor_out;
-	     assign osc_ver_in = osc_ver_out;
+             assign int_t_i = int_b_o;
+             assign int_r_i = int_l_o;
+             assign int_b_i = int_t_o;
+             assign int_l_i = int_r_o;
          `endif
 
     // Diagonal base case is a shorted cell.
@@ -145,10 +175,10 @@ module recursive_matrix #(parameter N = 8,
         assign right_col = outputs_hor;
 	shorted_cell #(.NUM_LUTS(NUM_LUTS))
 	             i_short(.ising_rstn(ising_rstn),
-			     .tin  (inputs_ver ),
-		             .rin  (inputs_hor ),
-			     .tout (outputs_ver),
-			     .sout (outputs_hor),
+			     .tin  (tin),
+		             .rin  (rin),
+			     .tout (tout),
+			     .sout (sout),
 	    	              
 		             .clk            (clk),
                              .axi_rstn       (axi_rstn),
@@ -163,20 +193,20 @@ module recursive_matrix #(parameter N = 8,
         coupled_cell #(.NUM_WEIGHTS(NUM_WEIGHTS),
                        .NUM_LUTS   (NUM_LUTS   ))
 	             ij   (.ising_rstn  (ising_rstn),
-                              .lin  (inputs_ver ),
-                              .rin  (inputs_hor ),
-                              .tin  (outputs_ver),
-                              .bin  (outputs_hor),
-			      .lout (),
-			      .rout (),
-			      .tout (),
-			      .bout (),
+                              .lin  (lin ),
+                              .rin  (rin ),
+                              .tin  (tin ),
+                              .bin  (bin ),
+			      .lout (lout),
+			      .rout (rout),
+			      .tout (tout),
+			      .bout (bout),
 
 	    	              .clk            (clk),
                               .axi_rstn       (axi_rstn),
                               .wready         (wready),
                               .wr_addr_match  (wr_match),
-			      .s_gt_d         (s_gt_d),
+			      .vh             (vh),
                               .wdata          (wdata),
 		              .rdata          (rdata));
     end endgenerate

@@ -32,7 +32,7 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
 		       input  wire        axi_rstn,
                        input  wire        wready,
 		       input  wire        wr_addr_match,
-		       input  wire        s_gt_d,
+		       input  wire        vh,
 		       input  wire [31:0] wdata,
 		       output wire [31:0] rdata
 	               );
@@ -46,10 +46,10 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
 
     assign rdata = s_gt_d ? weight_vh : weight_hv;
 
-    assign weight_vh_nxt = (wready & wr_addr_match &  s_gt_d) ? wdata[NUM_WEIGHTS-1:0] :
-	                                                        weight_vh              ;
-    assign weight_hv_nxt = (wready & wr_addr_match & ~s_gt_d) ? wdata[NUM_WEIGHTS-1:0] :
-	                                                        weight_hv              ;
+    assign weight_vh_nxt = (wready & wr_addr_match &  vh) ? wdata[NUM_WEIGHTS-1:0] :
+	                                                    weight_vh              ;
+    assign weight_hv_nxt = (wready & wr_addr_match & ~vh) ? wdata[NUM_WEIGHTS-1:0] :
+	                                                    weight_hv              ;
     always @(posedge clk) begin
 	if (!axi_rstn) begin
       	    weight_hv <= (NUM_WEIGHTS/2); //NUM_WEIGHTS must be odd.
