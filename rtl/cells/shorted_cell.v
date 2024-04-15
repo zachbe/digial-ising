@@ -45,7 +45,7 @@ module shorted_cell #(parameter NUM_LUTS = 2) (
     // falling edge, and the slower coupling on the rising edge.
 
     wire out_int;
-    assign out_int = tin & rin;
+    assign out_int = ~(tin & rin);
 
     wire out_rst;
     assign out_rst = ising_rstn ? out_int : spin ;

@@ -106,7 +106,7 @@ module maxcut_tb();
 	// Program initial spins
 	
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + (32'd1 << 2) + (32'd1 << 13); //B
+	waddr = `WEIGHT_ADDR_BASE + (32'd0 << 2) + (32'd0 << 13); //B
 	wdata = 32'h00000001;                                     //000
 	
 	/////////////////////////////////////////////////////////////
@@ -225,38 +225,38 @@ module maxcut_tb();
 	// Test resetting
 	@(posedge clk);
 	waddr = `START_ADDR;
-	wdata = 32'h00000100;
+	wdata = 32'h00000200;
 	
 	@(posedge clk);
 	wready = 1'b0;
 
-	#50000;
+	#100000;
 	
 	/////////////////////////////////////////////////////////////
 	// Read phases
 	
 	@(posedge clk);
-	raddr = `PHASE_ADDR_BASE + (0 << 2);
+	raddr = `PHASE_ADDR_BASE + (7 << 2);
 	@(posedge clk);
 	#1
 	if(rdata < 32'h4) $display("!!! A FAILED !!!"); //A
-	raddr = `PHASE_ADDR_BASE + (1 << 2);
+	raddr = `PHASE_ADDR_BASE + (6 << 2);
 	@(posedge clk);
 	#1
 	if(rdata > 32'h4) $display("!!! B FAILED !!!"); //B
-	raddr = `PHASE_ADDR_BASE + (2 << 2);
+	raddr = `PHASE_ADDR_BASE + (5 << 2);
 	@(posedge clk);
 	#1
 	if(rdata < 32'h4) $display("!!! C FAILED !!!"); //C
-	raddr = `PHASE_ADDR_BASE + (3 << 2);
-	@(posedge clk);
-	#1
-	if(rdata < 32'h4) $display("!!! D FAILED !!!"); //D
 	raddr = `PHASE_ADDR_BASE + (4 << 2);
 	@(posedge clk);
 	#1
+	if(rdata < 32'h4) $display("!!! D FAILED !!!"); //D
+	raddr = `PHASE_ADDR_BASE + (3 << 2);
+	@(posedge clk);
+	#1
 	if(rdata > 32'h4) $display("!!! E FAILED !!!"); //E
-	raddr = `PHASE_ADDR_BASE + (7 << 2);
+	raddr = `PHASE_ADDR_BASE + (0 << 2);
 	@(posedge clk);
 	#1
 	if(rdata < 32'h4) $display("!!! H FAILED !!!"); //F

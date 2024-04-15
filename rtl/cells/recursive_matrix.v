@@ -61,10 +61,10 @@ module recursive_matrix #(parameter N = 8,
 	
         // Select cell based on addr and vh
         wire tl, tr, bl, br;
-        assign tl = wr_match & (~s_addr[$clog2(N)]) & (~d_addr[$clog2(N)]);
-        assign br = wr_match & ( s_addr[$clog2(N)]) & ( d_addr[$clog2(N)]);
-        assign tr = wr_match & ( s_addr[$clog2(N)]) & (~d_addr[$clog2(N)]);	
-        assign bl = wr_match & (~s_addr[$clog2(N)]) & ( d_addr[$clog2(N)]);	
+        assign tl = wr_match & (~s_addr[$clog2(N)-1]) & (~d_addr[$clog2(N)-1]);
+        assign br = wr_match & ( s_addr[$clog2(N)-1]) & ( d_addr[$clog2(N)-1]);
+        assign tr = wr_match & ( s_addr[$clog2(N)-1]) & (~d_addr[$clog2(N)-1]);	
+        assign bl = wr_match & (~s_addr[$clog2(N)-1]) & ( d_addr[$clog2(N)-1]);	
 	
 	// "Fold" the matrix in half on the diagonal
 	wire tr_m = DIAGONAL ? (tr | bl) : tr;
@@ -176,7 +176,7 @@ module recursive_matrix #(parameter N = 8,
 			         .tout (int_t_o [N-1:(N/2)]),
 			         .bout (bout    [N-1:(N/2)]),
 
-				 .right_col(right_col_top),
+				 .right_col(),
 
 				 .clk(clk),
 				 .axi_rstn(axi_rstn),

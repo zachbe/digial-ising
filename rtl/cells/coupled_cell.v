@@ -68,10 +68,10 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
     // oscillator when it does match the source oscillator, and speed it up
     // otherwise.
   
-    assign mismatch_lb  = (lin ^ tout);
-    assign mismatch_bl  = (bin ^ rout);
-    assign mismatch_rt  = (rin ^ bout);
-    assign mismatch_tr  = (tin ^ lout);
+    assign mismatch_lb  = ~(lin ^ tout);
+    assign mismatch_bl  = ~(bin ^ rout);
+    assign mismatch_rt  = ~(rin ^ bout);
+    assign mismatch_tr  = ~(tin ^ lout);
 
     // Build our delayed signals
     wire [$clog2(NUM_WEIGHTS)-2:0] l_buf_ma;
@@ -220,10 +220,10 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
     wire tout_pre;
     wire lout_pre;
     wire bout_pre;
-    assign rout_pre = (rout == rin) ? rout     : rout_mis ;
-    assign tout_pre = (tout == tin) ? tout     : tout_mis ;
-    assign lout_pre = (lout == lin) ? lout     : lout_mis ;
-    assign bout_pre = (bout == bin) ? bout     : bout_mis ;
+    assign rout_pre = (rout == lin) ? rout     : rout_mis ;
+    assign tout_pre = (tout == bin) ? tout     : tout_mis ;
+    assign lout_pre = (lout == rin) ? lout     : lout_mis ;
+    assign bout_pre = (bout == tin) ? bout     : bout_mis ;
     
     // When resetting, pass the input through directly
     wire rout_rst;

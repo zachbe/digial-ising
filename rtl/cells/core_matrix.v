@@ -65,6 +65,7 @@ module core_matrix #(parameter N = 8,
                   .NUM_LUTS(NUM_LUTS),
 	          .DIAGONAL(1))
 		  u_rec_matrix (
+                  .ising_rstn(ising_rstn),
                   .lin  (    /* None */     ),
                   .rin  (rin                ),
                   .tin  (tin                ),
