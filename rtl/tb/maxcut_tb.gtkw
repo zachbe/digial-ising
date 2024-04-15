@@ -1,56 +1,106 @@
 [*]
 [*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
-[*] Mon Mar 25 04:51:28 2024
+[*] Mon Apr 15 22:41:50 2024
 [*]
-[dumpfile] "/home/zach/repos/ising/rtl/tb/maxcut.vcd"
-[dumpfile_mtime] "Mon Mar 25 04:50:48 2024"
-[dumpfile_size] 13842443
-[savefile] "/home/zach/repos/ising/rtl/tb/maxcut_tb.gtkw"
-[timestart] 61304000
-[size] 1720 1412
+[dumpfile] "/home/zach/repos/digial-ising/rtl/tb/maxcut.vcd"
+[dumpfile_mtime] "Mon Apr 15 22:25:55 2024"
+[dumpfile_size] 4427556
+[savefile] "/home/zach/repos/digial-ising/rtl/tb/maxcut_tb.gtkw"
+[timestart] 2238000
+[size] 1920 1052
 [pos] -1 -1
-*-18.972090 62314000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-18.856607 3253000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] maxcut_tb.
 [treeopen] maxcut_tb.dut.
 [treeopen] maxcut_tb.dut.u_top_ising.
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.column_loop[1].main_column_loop.
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.column_loop[1].main_column_loop.col_k.
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.column_loop[1].main_column_loop.col_k.coupled_loop[0].
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.column_loop[1].main_column_loop.col_k.coupled_loop[1].
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.column_loop[1].main_column_loop.col_k.coupled_loop[2].
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.column_loop[1].main_column_loop.col_k.coupled_loop[3].
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.column_loop[1].main_column_loop.col_k.coupled_loop[4].
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.column_loop[1].main_column_loop.col_k.coupled_loop[5].
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.column_loop[1].main_column_loop.col_k.coupled_loop[6].
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.column_loop[1].main_column_loop.col_k.coupled_loop[7].
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.column_loop[2].main_column_loop.
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.column_loop[2].main_column_loop.col_k.
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.column_loop[2].main_column_loop.col_k.coupled_loop[1].
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.column_loop[2].main_column_loop.col_k.coupled_loop[2].
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.column_loop[3].
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.column_loop[3].main_column_loop.
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.column_loop[6].
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.column_loop[6].main_column_loop.
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.column_loop[7].
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.column_loop[7].main_column_loop.
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.column_loop[7].main_column_loop.col_k.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_right.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_right.recurse.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_right.recurse.bot_right.recurse.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_right.recurse.bot_right.recurse.bot_right.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_right.recurse.bot_right.recurse.bot_right.shorted_cell.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_right.recurse.top_right.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_right.recurse.top_right.recurse.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_right.recurse.top_right.recurse.genblk2.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_right.recurse.top_right.recurse.genblk2.bottom_left.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_right.recurse.top_right.recurse.genblk2.bottom_left.coupled_cell.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.bot_right.recurse.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_left.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_left.recurse.bot_right.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_left.recurse.bot_right.shorted_cell.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_left.recurse.top_left.shorted_cell.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_left.recurse.top_right.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_left.recurse.top_right.coupled_cell.
 [sst_width] 576
-[signals_width] 222
+[signals_width] 349
 [sst_expanded] 1
-[sst_vpaned_height] 424
-@800023
-maxcut_tb.dut.u_top_ising.u_core_matrix.outputs[7:0]
-@29
-(0)maxcut_tb.dut.u_top_ising.u_core_matrix.outputs[7:0]
-(1)maxcut_tb.dut.u_top_ising.u_core_matrix.outputs[7:0]
-(2)maxcut_tb.dut.u_top_ising.u_core_matrix.outputs[7:0]
-(3)maxcut_tb.dut.u_top_ising.u_core_matrix.outputs[7:0]
-(4)maxcut_tb.dut.u_top_ising.u_core_matrix.outputs[7:0]
-(5)maxcut_tb.dut.u_top_ising.u_core_matrix.outputs[7:0]
-(6)maxcut_tb.dut.u_top_ising.u_core_matrix.outputs[7:0]
-(7)maxcut_tb.dut.u_top_ising.u_core_matrix.outputs[7:0]
-@1001201
+[sst_vpaned_height] 423
+@800022
+maxcut_tb.dut.u_top_ising.u_core_matrix.external_spin[7:0]
+@1001200
 -group_end
+@800022
+maxcut_tb.dut.u_top_ising.u_core_matrix.outputs[7:0]
+@200
+-A
+@1001200
+-group_end
+@200
+-A
+@28
+(0)maxcut_tb.dut.u_top_ising.u_core_matrix.external_spin[7:0]
+(0)maxcut_tb.dut.u_top_ising.u_core_matrix.outputs[7:0]
+@22
+maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[7][31:0]
+@200
+-B
+@28
+(1)maxcut_tb.dut.u_top_ising.u_core_matrix.outputs[7:0]
+(1)maxcut_tb.dut.u_top_ising.u_core_matrix.external_spin[7:0]
+@22
+maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[6][31:0]
+@200
+-C
+@28
+(2)maxcut_tb.dut.u_top_ising.u_core_matrix.outputs[7:0]
+(2)maxcut_tb.dut.u_top_ising.u_core_matrix.external_spin[7:0]
+@22
+maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[5][31:0]
+@200
+-D
+@28
+(3)maxcut_tb.dut.u_top_ising.u_core_matrix.outputs[7:0]
+(3)maxcut_tb.dut.u_top_ising.u_core_matrix.external_spin[7:0]
+@22
+maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[4][31:0]
+@200
+-E
+@28
+(4)maxcut_tb.dut.u_top_ising.u_core_matrix.outputs[7:0]
+(4)maxcut_tb.dut.u_top_ising.u_core_matrix.external_spin[7:0]
+@22
+maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[3][31:0]
+@200
+-F
+@28
+(5)maxcut_tb.dut.u_top_ising.u_core_matrix.outputs[7:0]
+(5)maxcut_tb.dut.u_top_ising.u_core_matrix.external_spin[7:0]
+@22
+maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[2][31:0]
+@200
+-G
+@28
+(6)maxcut_tb.dut.u_top_ising.u_core_matrix.outputs[7:0]
+(6)maxcut_tb.dut.u_top_ising.u_core_matrix.external_spin[7:0]
+@22
+maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[1][31:0]
+@200
+-H
+@28
+(7)maxcut_tb.dut.u_top_ising.u_core_matrix.outputs[7:0]
+(7)maxcut_tb.dut.u_top_ising.u_core_matrix.external_spin[7:0]
 @c00022
 maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[0][31:0]
 @28
@@ -88,13 +138,12 @@ maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[0][31:0]
 (31)maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[0][31:0]
 @1401200
 -group_end
-@22
-maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[1][31:0]
-maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[2][31:0]
-maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[3][31:0]
-maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[4][31:0]
-maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[5][31:0]
-maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[6][31:0]
-maxcut_tb.dut.u_top_ising.u_sampler.\phase_counters[7][31:0]
+@200
+-wefwef
+@28
+maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_right.recurse.top_right.recurse.genblk2.bottom_left.coupled_cell.ij.weight_hv[1:0]
+maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_right.recurse.top_right.recurse.genblk2.bottom_left.coupled_cell.ij.weight_vh[1:0]
+@29
+maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_right.recurse.top_right.recurse.genblk2.bottom_left.coupled_cell.ij.wr_addr_match
 [pattern_trace] 1
 [pattern_trace] 0
