@@ -13,7 +13,6 @@
 
 module ising_axi    #(parameter N = 3,
 	             parameter NUM_WEIGHTS = 5,
-	             parameter WIRE_DELAY = 20,
 		     parameter NUM_LUTS = 2) (
 		     input  wire clk,
 		     input  wire axi_rstn,
@@ -90,8 +89,7 @@ module ising_axi    #(parameter N = 3,
 
     top_ising   #(.N(N),
 	          .NUM_LUTS(NUM_LUTS),
-                  .NUM_WEIGHTS(NUM_WEIGHTS),
-                  .WIRE_DELAY(WIRE_DELAY)) u_top_ising (
+                  .NUM_WEIGHTS(NUM_WEIGHTS)) u_top_ising (
                   .clk(clk),
                   .ising_rstn(ising_rstn),
                   .counter_max(counter_max),

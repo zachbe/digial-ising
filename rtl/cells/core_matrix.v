@@ -8,7 +8,8 @@
 
 `ifdef SIM
     `include "shorted_cell.v"
-    `include "coupled_col.v"
+    `include "coupled_cell.v"
+    `include "recursive_matrix.v"
 `endif
 
 module core_matrix #(parameter N = 8,
@@ -29,8 +30,13 @@ module core_matrix #(parameter N = 8,
 		     output wire [31:0] rdata
 	            );
 
+    `ifdef SIM
+    reg  [N-1:0] rin;
+    reg  [N-1:0] tin;
+    `else
     wire [N-1:0] rin;
     wire [N-1:0] tin;
+    `endif
     wire [N-1:0] rout;
     wire [N-1:0] tout;
     wire [N-1:0] right_col;
@@ -46,10 +52,12 @@ module core_matrix #(parameter N = 8,
     wire [15:0] d_addr;
     wire [15:0] sd_dist;
     wire [31:0] addr;
+    wire        vh;
 
     assign addr = wready ? wr_addr : rd_addr;
     assign s_addr = {5'b0, addr[12: 2]} ;
     assign d_addr = {5'b0, addr[23:13]} ;
+    assign vh     = (s_addr > d_addr  ) ;
 
     // Create recursive matrix
     recursive_matrix #(.N(N),
@@ -72,9 +80,9 @@ module core_matrix #(parameter N = 8,
                   .axi_rstn(axi_rstn),
                   .wready(wready),
                   .wr_match(wr_match),
-                  .s_addr(s_addr),
-                  .d_addr(d_addr),
-                  .vh(1'b0),
+                  .s_addr(s_addr[$clog2(N):0]),
+                  .d_addr(d_addr[$clog2(N):0]),
+                  .vh(vh),
                   .wdata(wdata),
                   .rdata(rdata) 
     );
@@ -82,10 +90,10 @@ module core_matrix #(parameter N = 8,
     // Add delays (only in sim)
     genvar j;
     `ifdef SIM
-        for (j = 0; j < N; j = j + 1) begin: delays
+        generate for (j = 0; j < N; j = j + 1) begin: delays
              always @(rout[j]) begin #20 tin[j] <= rout[j]; end
              always @(tout[j]) begin #20 rin[j] <= tout[j]; end
-        end
+        end endgenerate
     `else
         assign rin = tout;
         assign tin = rout;

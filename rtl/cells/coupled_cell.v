@@ -13,7 +13,7 @@
 `endif
 
 module coupled_cell #(parameter NUM_WEIGHTS = 15,
-                      parameter NUM_LUTS    = 2 ) (
+                      parameter NUM_LUTS    = 1 ) (
 		       // Oscillator RST
 		       input  wire ising_rstn,
 
@@ -44,7 +44,7 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
     reg  [$clog2(NUM_WEIGHTS)-1:0] weight_hv;
     wire [$clog2(NUM_WEIGHTS)-1:0] weight_hv_nxt;
 
-    assign rdata = s_gt_d ? weight_vh : weight_hv;
+    assign rdata = vh ? weight_vh : weight_hv;
 
     assign weight_vh_nxt = (wready & wr_addr_match &  vh) ? wdata[NUM_WEIGHTS-1:0] :
 	                                                    weight_vh              ;
@@ -226,10 +226,10 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
     assign bout_pre = (bout == bin) ? bout     : bout_mis ;
     
     // When resetting, pass the input through directly
-    wire rout_pre;
-    wire tout_pre;
-    wire lout_pre;
-    wire bout_pre;
+    wire rout_rst;
+    wire tout_rst;
+    wire lout_rst;
+    wire bout_rst;
     assign rout_rst = ising_rstn    ? rout_pre : lin      ;
     assign tout_rst = ising_rstn    ? tout_pre : bin      ;
     assign lout_rst = ising_rstn    ? lout_pre : rin      ;
