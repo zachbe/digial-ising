@@ -67,7 +67,8 @@ module recursive_matrix #(parameter N = 8,
         assign bl = wr_match & (~s_addr[$clog2(N)-1]) & ( d_addr[$clog2(N)-1]);	
 	
 	// "Fold" the matrix in half on the diagonal
-	wire tr_m = DIAGONAL ? (tr | bl) : tr;
+	wire tr_m = DIAGONAL ? (tr | bl) : ( vh ? tr : bl);
+	wire bl_m = DIAGONAL ? (  1'b0 ) : (~vh ? tr : bl);
 
 	// Read value based on selection
 	wire [31:0] tl_r, tr_r, br_r, bl_r;
@@ -181,7 +182,7 @@ module recursive_matrix #(parameter N = 8,
 				 .clk(clk),
 				 .axi_rstn(axi_rstn),
 				 .wready(wready),
-				 .wr_match(bl),
+				 .wr_match(bl_m),
 				 .s_addr(s_addr[$clog2(N)-1:0]),
 				 .d_addr(d_addr[$clog2(N)-1:0]),
 				 .vh(vh),

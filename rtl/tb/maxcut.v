@@ -106,8 +106,8 @@ module maxcut_tb();
 	// Program initial spins
 	
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + (32'd0 << 2) + (32'd0 << 13); //B
-	wdata = 32'h00000001;                                     //000
+	waddr = `WEIGHT_ADDR_BASE + (32'd0 << 2) + (32'd0 << 13); //A
+	wdata = 32'h00000000;                                     //+1
 	
 	/////////////////////////////////////////////////////////////
 	// Program (asymmetric) weights

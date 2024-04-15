@@ -165,6 +165,7 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
 
 	if (i == 0) begin
 	    // Use a buffer for our skipped slice to factor in the mux delay
+	    // TODO: Should this only be in sim???
             buffer #(1) buf_l_mi(.in(l_buf_mi_in), .out(l_buf_mi[i]));
             buffer #(1) buf_b_mi(.in(b_buf_mi_in), .out(b_buf_mi[i]));
 	    // Only 3 delays per coupling for our first slice
