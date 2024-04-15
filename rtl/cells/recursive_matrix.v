@@ -49,23 +49,23 @@ module recursive_matrix #(parameter N = 8,
         wire [(N/2)-1:0] int_t_o;
         wire [(N/2)-1:0] int_b_o;
         wire [(N/2)-1:0] int_l_o;
-
-        // Select cell based on addr
-        wire tl, tr, bl;
-        assign tl = wr_match & (~s_addr[0]) & (~d_addr[0]);
-        assign br = wr_match & ( s_addr[0]) & ( d_addr[0]);
-        assign tr = wr_match & (~tl       ) & (~br       );	
-
-	wire [31:0] tl_r, tr_r, br_r;
-	assign rdata = tl ? tl_r :
-		       tr ? tr_r :
-		       br ? br_r : 32'hAAAAAAAA;
-
+	
 	// When we step off the diagonal, set vh value.
 	// If we're already off the diagonal, keep vh value.
 	wire vh_new;
 	assign vh_new = DIAGONAL ? s_addr[0] :
 		                   vh        ;
+
+        // Select cell based on addr and vh
+        wire tl, tr, bl;
+        assign tl = wr_match & (~s_addr[0]) & (~d_addr[0]);
+        assign br = wr_match & ( s_addr[0]) & ( d_addr[0]);
+        assign tr = wr_match & ( s_addr[0]) & (~d_addr[0]);	
+
+	wire [31:0] tl_r, tr_r, br_r;
+	assign rdata = tl ? tl_r :
+		       tr ? tr_r :
+		       br ? br_r : 32'hAAAAAAAA;
 
 	// Get right col for phase measurement
 	wire [(N/2)-1:0] right_col_top;
