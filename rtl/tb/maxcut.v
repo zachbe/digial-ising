@@ -225,7 +225,7 @@ module maxcut_tb();
 	// Test resetting
 	@(posedge clk);
 	waddr = `START_ADDR;
-	wdata = 32'h00001000;
+	wdata = 32'h00002000;
 	
 	@(posedge clk);
 	wready = 1'b0;

@@ -11,7 +11,7 @@ module buffer #(parameter NUM_LUTS = 2)
         reg o_reg;
         assign out = o_reg;
         always @(in) begin
-            #1 o_reg = in;
+            #NUM_LUTS o_reg = in;
         end
     `else
 	wire [NUM_LUTS-1 : 0] lut_out;
