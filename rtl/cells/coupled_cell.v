@@ -73,151 +73,60 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
     assign mismatch_rt  = ~(rin ^ bout);
     assign mismatch_tr  = ~(tin ^ lout);
 
-    // Build our delayed signals
-    wire [$clog2(NUM_WEIGHTS)-2:0] l_buf_ma;
-    wire [$clog2(NUM_WEIGHTS)-2:0] l_buf_mi;
-    wire [$clog2(NUM_WEIGHTS)-2:0] b_buf_ma;
-    wire [$clog2(NUM_WEIGHTS)-2:0] b_buf_mi;
-    wire [$clog2(NUM_WEIGHTS)-2:0] r_buf_ma;
-    wire [$clog2(NUM_WEIGHTS)-2:0] r_buf_mi;
-    wire [$clog2(NUM_WEIGHTS)-2:0] t_buf_ma;
-    wire [$clog2(NUM_WEIGHTS)-2:0] t_buf_mi;
+    // Build our delay lines
+    wire [NUM_WEIGHTS-1:0] l_buf;
+    wire [NUM_WEIGHTS-1:0] b_buf;
+    wire [NUM_WEIGHTS-1:0] r_buf;
+    wire [NUM_WEIGHTS-1:0] t_buf;
 
-    // Depending on the weight bit, either add a delay or don't
-    generate for (i = 0; i < $clog2(NUM_WEIGHTS) - 1; i = i + 1) begin
-	wire l_buf_ma_in, l_buf_mi_in ;
-	wire b_buf_ma_in, b_buf_mi_in ;
-	wire r_buf_ma_in, r_buf_mi_in ;
-	wire t_buf_ma_in, t_buf_mi_in ;
+    generate for (i = 0; i < NUM_WEIGHTS; i = i + 1) begin
+	wire l_buf_in;
+	wire b_buf_in;
+	wire r_buf_in;
+	wire t_buf_in;
 
 	if (i == 0) begin
-            assign l_buf_ma_in = lin;
-            assign l_buf_mi_in = lin;
-            assign b_buf_ma_in = bin;
-            assign b_buf_mi_in = bin;
-            assign r_buf_ma_in = rin;
-            assign r_buf_mi_in = rin;
-            assign t_buf_ma_in = tin;
-            assign t_buf_mi_in = tin;
+            assign l_buf_in = lin;
+            assign b_buf_in = bin;
+            assign r_buf_in = rin;
+            assign t_buf_in = tin;
         end else begin
-	    assign l_buf_ma_in = l_buf_ma[i-1];
-	    assign l_buf_mi_in = l_buf_mi[i-1];
-	    assign b_buf_ma_in = b_buf_ma[i-1];
-	    assign b_buf_mi_in = b_buf_mi[i-1];
-	    assign r_buf_ma_in = r_buf_ma[i-1];
-	    assign r_buf_mi_in = r_buf_mi[i-1];
-	    assign t_buf_ma_in = t_buf_ma[i-1];
-	    assign t_buf_mi_in = t_buf_mi[i-1];
+	    assign l_buf_in = l_buf[i-1];
+	    assign b_buf_in = b_buf[i-1];
+	    assign r_buf_in = r_buf[i-1];
+	    assign t_buf_in = t_buf[i-1];
         end
-
-	//------------------------------------------------------------------
-        // Delay line structure:
-	// ---------------------
-	//
-	// Each weight bit corresponds to one verical slice of delay cells.
-	// The total weight is divided between the two couplings in each cell.
-	//
-	// For example, if weight = 7 = 4'b0111, delay line A, B, C, and D
-	// would all have delay 2.
-	//
-	// If weight = 14 = 4'b1110, delay line A would have delay 4, while delay
-	// line B would have delay 0. Also, delay line C would have delay 4,
-	// while delay like D would have delay 1. This corresponds to a total
-	// delay of +7.
-	//
-	// If weight = 4 = 4'b0100, delay line A would have delay 1, while
-	// delay line B would have delay 2. Delay line C would have delay 1,
-	// while delay line D would have delay 3. This corresponds to a total
-	// delay of -3.
-	//
-	//   bit:  1   2   3 
-        //        ┌─┐ ┌─┐ ┌─┐
-        // A:  ┌──┤1├─┤1├─┤2├─┐ ┌─┐
-        //     │  └─┘ └─┘ └─┘ └─┤ └─┐
-        //  in─┤                │mux├──
-        //     │      ┌─┐ ┌─┐ ┌─┤ ┌─┘
-        // B:  └──────┤1├─┤2├─┘ └─┘
-        //            └─┘ └─┘
-	//  bit:      ~2  ~3
-	//
-	//
-	//   bit:  1   2   3 
-        //        ┌─┐ ┌─┐ ┌─┐
-        // C:  ┌──┤1├─┤1├─┤2├─┐ ┌─┐
-        //     │  └─┘ └─┘ └─┘ └─┤ └─┐
-        //  in─┤                │mux├──
-        //     │  ┌─┐ ┌─┐ ┌─┐ ┌─┤ ┌─┘
-        // D:  └──┤1├─┤1├─┤2├─┘ └─┘
-        //        └─┘ └─┘ └─┘
-	//   bit: ~0  ~2  ~3 
-	//
-	//
-	// This design consumes O(n) hardware resources, while using
-	// a multipliexor tree for selecting a signal from a tapped delay
-	// line consumes O(n log(n)) hardware resources.
-	// It also inserts less unecessary logic in the delay line.
-	//------------------------------------------------------------------
 	
-	wire l_buf_ma_out, l_buf_mi_out;
-	wire b_buf_ma_out, b_buf_mi_out;
-	wire r_buf_ma_out, r_buf_mi_out;
-	wire t_buf_ma_out, t_buf_mi_out;
-
-	if (i == 0) begin
-	    `ifdef SIM
-	    assign l_buf_mi[i] = l_buf_mi_in;
-	    assign b_buf_mi[i] = b_buf_mi_in;
-            `else  
-            // Use a buffer for our skipped slice to factor in the mux delay
-            buffer #(1) buf_l_mi(.in(l_buf_mi_in), .out(l_buf_mi[i]));
-            buffer #(1) buf_b_mi(.in(b_buf_mi_in), .out(b_buf_mi[i]));
-            `endif
-	    // Only 3 delays per coupling for our first slice
-            buffer #(NUM_LUTS) buf_r_mi(.in(r_buf_mi_in), .out(r_buf_mi_out));
-            buffer #(NUM_LUTS) buf_t_mi(.in(t_buf_mi_in), .out(t_buf_mi_out));
-            buffer #(NUM_LUTS) buf_l_ma(.in(l_buf_ma_in), .out(l_buf_ma_out));
-            buffer #(NUM_LUTS) buf_b_ma(.in(b_buf_ma_in), .out(b_buf_ma_out));
-            buffer #(NUM_LUTS) buf_r_ma(.in(r_buf_ma_in), .out(r_buf_ma_out));
-            buffer #(NUM_LUTS) buf_t_ma(.in(t_buf_ma_in), .out(t_buf_ma_out));
-	    // TODO: Should these be built using LUTs manually?
-	    assign r_buf_mi[i] = ~weight_vh[0] ? r_buf_mi_out : r_buf_mi_in;
-	    assign t_buf_mi[i] = ~weight_hv[0] ? t_buf_mi_out : t_buf_mi_in;
-	    assign l_buf_ma[i] =  weight_vh[1] ? l_buf_ma_out : l_buf_ma_in;
-	    assign b_buf_ma[i] =  weight_hv[1] ? b_buf_ma_out : b_buf_ma_in;
-	    assign r_buf_ma[i] =  weight_vh[1] ? r_buf_ma_out : r_buf_ma_in;
-	    assign t_buf_ma[i] =  weight_hv[1] ? t_buf_ma_out : t_buf_ma_in;
-	end else begin
-	    // 4 delays per coupling for future slices
-            buffer #(NUM_LUTS * (2^(i-1))) buf_l_mi(.in(l_buf_mi_in), .out(l_buf_mi_out));
-            buffer #(NUM_LUTS * (2^(i-1))) buf_b_mi(.in(b_buf_mi_in), .out(b_buf_mi_out));
-            buffer #(NUM_LUTS * (2^(i-1))) buf_r_mi(.in(r_buf_mi_in), .out(r_buf_mi_out));
-            buffer #(NUM_LUTS * (2^(i-1))) buf_t_mi(.in(t_buf_mi_in), .out(t_buf_mi_out));
-            buffer #(NUM_LUTS * (2^(i-1))) buf_l_ma(.in(l_buf_ma_in), .out(l_buf_ma_out));
-            buffer #(NUM_LUTS * (2^(i-1))) buf_b_ma(.in(b_buf_ma_in), .out(b_buf_ma_out));
-            buffer #(NUM_LUTS * (2^(i-1))) buf_r_ma(.in(r_buf_ma_in), .out(r_buf_ma_out));
-            buffer #(NUM_LUTS * (2^(i-1))) buf_t_ma(.in(t_buf_ma_in), .out(t_buf_ma_out));
-	    // TODO: Should these be built using LUTs manually?
-	    assign l_buf_mi[i] = ~weight_vh[i+1] ? l_buf_mi_out : l_buf_mi_in;
-	    assign b_buf_mi[i] = ~weight_hv[i+1] ? b_buf_mi_out : b_buf_mi_in;
-	    assign r_buf_mi[i] = ~weight_vh[i+1] ? r_buf_mi_out : r_buf_mi_in;
-	    assign t_buf_mi[i] = ~weight_hv[i+1] ? t_buf_mi_out : t_buf_mi_in;
-	    assign l_buf_ma[i] =  weight_vh[i+1] ? l_buf_ma_out : l_buf_ma_in;
-	    assign b_buf_ma[i] =  weight_hv[i+1] ? b_buf_ma_out : b_buf_ma_in;
-	    assign r_buf_ma[i] =  weight_vh[i+1] ? r_buf_ma_out : r_buf_ma_in;
-	    assign t_buf_ma[i] =  weight_hv[i+1] ? t_buf_ma_out : t_buf_ma_in;
-	end
-        
+        buffer #(NUM_LUTS) buf_l(.in(l_buf_in), .out(l_buf[i]));
+        buffer #(NUM_LUTS) buf_b(.in(b_buf_in), .out(b_buf[i]));
+        buffer #(NUM_LUTS) buf_r(.in(r_buf_in), .out(r_buf[i]));
+        buffer #(NUM_LUTS) buf_t(.in(t_buf_in), .out(t_buf[i]));
     end endgenerate
+
+    // Tap those delay lines based on weight
+    // TODO: Do we need to manually balance these decoder trees?
+    wire l_buf_out_ma, l_buf_out_mi;
+    wire b_buf_out_ma, b_buf_out_mi;
+    wire r_buf_out_ma, r_buf_out_mi;
+    wire t_buf_out_ma, t_buf_out_mi;
+    assign l_buf_out_ma = l_buf[              weight_vh    ];
+    assign l_buf_out_mi = l_buf[NUM_WEIGHTS - weight_vh - 1];
+    assign b_buf_out_ma = b_buf[              weight_hv    ];
+    assign b_buf_out_mi = b_buf[NUM_WEIGHTS - weight_hv - 1];
+    assign r_buf_out_ma = r_buf[              weight_vh    ];
+    assign r_buf_out_mi = r_buf[NUM_WEIGHTS - weight_vh - 1];
+    assign t_buf_out_ma = t_buf[              weight_hv    ];
+    assign t_buf_out_mi = t_buf[NUM_WEIGHTS - weight_hv - 1];
 
     // Select output based on mismatch status
     wire rout_mis;
     wire tout_mis;
     wire lout_mis;
     wire bout_mis;
-    assign rout_mis = mismatch_lb ? l_buf_mi[$clog2(NUM_WEIGHTS)-2] : l_buf_ma[$clog2(NUM_WEIGHTS)-2];
-    assign tout_mis = mismatch_bl ? b_buf_mi[$clog2(NUM_WEIGHTS)-2] : b_buf_ma[$clog2(NUM_WEIGHTS)-2];
-    assign lout_mis = mismatch_rt ? r_buf_mi[$clog2(NUM_WEIGHTS)-2] : r_buf_ma[$clog2(NUM_WEIGHTS)-2];
-    assign bout_mis = mismatch_tr ? t_buf_mi[$clog2(NUM_WEIGHTS)-2] : t_buf_ma[$clog2(NUM_WEIGHTS)-2];
+    assign rout_mis = mismatch_lb ? l_buf_out_mi : l_buf_out_ma;
+    assign tout_mis = mismatch_bl ? b_buf_out_mi : b_buf_out_ma;
+    assign lout_mis = mismatch_rt ? r_buf_out_mi : r_buf_out_ma;
+    assign bout_mis = mismatch_tr ? t_buf_out_mi : t_buf_out_ma;
 
     // Prevent glitching: An output should never switch from the current
     // input value, only to that value.
