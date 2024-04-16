@@ -74,12 +74,12 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
     assign mismatch_tr  = ~(tin ^ lout);
 
     // Build our delay lines
-    wire [NUM_WEIGHTS-1:0] l_buf;
-    wire [NUM_WEIGHTS-1:0] b_buf;
-    wire [NUM_WEIGHTS-1:0] r_buf;
-    wire [NUM_WEIGHTS-1:0] t_buf;
+    wire [NUM_WEIGHTS/2:0] l_buf;
+    wire [NUM_WEIGHTS/2:0] b_buf;
+    wire [NUM_WEIGHTS/2:0] r_buf;
+    wire [NUM_WEIGHTS/2:0] t_buf;
 
-    generate for (i = 0; i < NUM_WEIGHTS; i = i + 1) begin
+    generate for (i = 0; i <= NUM_WEIGHTS/2; i = i + 1) begin
 	wire l_buf_in;
 	wire b_buf_in;
 	wire r_buf_in;
@@ -103,20 +103,26 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
         buffer #(NUM_LUTS) buf_t(.in(t_buf_in), .out(t_buf[i]));
     end endgenerate
 
+    // Generate half-weights for tapping delay lines
+    wire [(NUM_WEIGHTS/2) - 1:0] weight_l = (weight_vh >> 1)               ;
+    wire [(NUM_WEIGHTS/2) - 1:0] weight_b = (weight_hv >> 1)               ;
+    wire [(NUM_WEIGHTS/2) - 1:0] weight_r = (weight_vh >> 1) + weight_vh[0];
+    wire [(NUM_WEIGHTS/2) - 1:0] weight_t = (weight_hv >> 1) + weight_hv[0];
+
     // Tap those delay lines based on weight
     // TODO: Do we need to manually balance these decoder trees?
     wire l_buf_out_ma, l_buf_out_mi;
     wire b_buf_out_ma, b_buf_out_mi;
     wire r_buf_out_ma, r_buf_out_mi;
     wire t_buf_out_ma, t_buf_out_mi;
-    assign l_buf_out_ma = l_buf[              weight_vh    ];
-    assign l_buf_out_mi = l_buf[NUM_WEIGHTS - weight_vh - 1];
-    assign b_buf_out_ma = b_buf[              weight_hv    ];
-    assign b_buf_out_mi = b_buf[NUM_WEIGHTS - weight_hv - 1];
-    assign r_buf_out_ma = r_buf[              weight_vh    ];
-    assign r_buf_out_mi = r_buf[NUM_WEIGHTS - weight_vh - 1];
-    assign t_buf_out_ma = t_buf[              weight_hv    ];
-    assign t_buf_out_mi = t_buf[NUM_WEIGHTS - weight_hv - 1];
+    assign l_buf_out_ma = l_buf[                  weight_l    ];
+    assign l_buf_out_mi = l_buf[(NUM_WEIGHTS/2) - weight_l - 1];
+    assign b_buf_out_ma = b_buf[                  weight_b    ];
+    assign b_buf_out_mi = b_buf[(NUM_WEIGHTS/2) - weight_b - 1];
+    assign r_buf_out_ma = r_buf[                  weight_r    ];
+    assign r_buf_out_mi = r_buf[(NUM_WEIGHTS/2) - weight_r - 1];
+    assign t_buf_out_ma = t_buf[                  weight_t    ];
+    assign t_buf_out_mi = t_buf[(NUM_WEIGHTS/2) - weight_t - 1];
 
     // Select output based on mismatch status
     wire rout_mis;
