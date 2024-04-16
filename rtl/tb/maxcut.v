@@ -107,7 +107,7 @@ module maxcut_tb();
 	
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd0 << 2) + (32'd0 << 13); //A
-	wdata = 32'h00000000;                                     //+1
+	wdata = 32'h00000001;                                     //+1
 	
 	/////////////////////////////////////////////////////////////
 	// Program (asymmetric) weights
@@ -225,12 +225,12 @@ module maxcut_tb();
 	// Test resetting
 	@(posedge clk);
 	waddr = `START_ADDR;
-	wdata = 32'h00000200;
+	wdata = 32'h00001000;
 	
 	@(posedge clk);
 	wready = 1'b0;
 
-	#100000;
+	#1000000;
 	
 	/////////////////////////////////////////////////////////////
 	// Read phases

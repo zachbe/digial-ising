@@ -164,10 +164,14 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
 	wire t_buf_ma_out, t_buf_mi_out;
 
 	if (i == 0) begin
-	    // Use a buffer for our skipped slice to factor in the mux delay
-	    // TODO: Should this only be in sim???
+	    `ifdef SIM
+	    assign l_buf_mi[i] = l_buf_mi_in;
+	    assign b_buf_mi[i] = b_buf_mi_in;
+            `else  
+            // Use a buffer for our skipped slice to factor in the mux delay
             buffer #(1) buf_l_mi(.in(l_buf_mi_in), .out(l_buf_mi[i]));
             buffer #(1) buf_b_mi(.in(b_buf_mi_in), .out(b_buf_mi[i]));
+            `endif
 	    // Only 3 delays per coupling for our first slice
             buffer #(NUM_LUTS) buf_r_mi(.in(r_buf_mi_in), .out(r_buf_mi_out));
             buffer #(NUM_LUTS) buf_t_mi(.in(t_buf_mi_in), .out(t_buf_mi_out));
