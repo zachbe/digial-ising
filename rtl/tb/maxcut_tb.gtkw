@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
-[*] Tue Apr 16 05:07:34 2024
+[*] Tue Apr 16 05:34:56 2024
 [*]
 [dumpfile] "/home/zach/repos/ising/rtl/tb/maxcut.vcd"
 [dumpfile_mtime] "Tue Apr 16 05:07:21 2024"
 [dumpfile_size] 32627663
 [savefile] "/home/zach/repos/ising/rtl/tb/maxcut_tb.gtkw"
-[timestart] 427059000
+[timestart] 412700000
 [size] 3440 1412
 [pos] -1 -1
-*-19.452524 429229000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-21.205610 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] maxcut_tb.
 [treeopen] maxcut_tb.dut.
 [treeopen] maxcut_tb.dut.u_top_ising.
@@ -27,11 +27,11 @@
 [treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_right.recurse.top_right.recurse.genblk2.bottom_left.coupled_cell.
 [treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_right.recurse.top_right.recurse.top_right.
 [treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.bot_right.recurse.top_right.recurse.top_right.coupled_cell.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.
 [treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.
 [treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.bot_right.recurse.
 [treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.bot_right.recurse.top_right.
 [treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.bot_right.recurse.top_right.coupled_cell.
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_left.
 [treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_left.recurse.
 [treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_left.recurse.bot_right.shorted_cell.
 [treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_left.recurse.top_left.shorted_cell.
@@ -40,13 +40,13 @@
 [treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_right.
 [treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_right.recurse.
 [treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_right.recurse.bot_right.coupled_cell.
+[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_right.recurse.genblk2.
 [treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_right.recurse.genblk2.bottom_left.
 [treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_right.recurse.genblk2.bottom_left.coupled_cell.
 [treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_right.recurse.top_left.
 [treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_right.recurse.top_left.coupled_cell.
 [treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_right.recurse.top_right.
 [treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_right.recurse.top_right.coupled_cell.
-[treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_right.
 [treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_right.recurse.
 [treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_right.recurse.bot_right.recurse.
 [treeopen] maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_right.recurse.bot_right.recurse.bot_right.
@@ -223,13 +223,17 @@ maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_right.recurse.t
 maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_right.recurse.top_right.recurse.top_right.coupled_cell.ij.tout
 maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_right.recurse.top_right.recurse.top_right.coupled_cell.ij.rout
 maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_right.recurse.top_right.recurse.top_right.coupled_cell.ij.lout
-@29
 maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_right.recurse.top_right.recurse.top_right.coupled_cell.ij.bout
 @200
 -BC
 @28
 maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_right.recurse.genblk2.bottom_left.coupled_cell.ij.weight_hv[1:0]
 maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_right.recurse.genblk2.bottom_left.coupled_cell.ij.weight_vh[1:0]
+maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_right.recurse.genblk2.bottom_left.coupled_cell.ij.tout
+maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_right.recurse.genblk2.bottom_left.coupled_cell.ij.rout
+maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_right.recurse.genblk2.bottom_left.coupled_cell.ij.lout
+@29
+maxcut_tb.dut.u_top_ising.u_core_matrix.u_rec_matrix.recurse.top_left.recurse.top_right.recurse.genblk2.bottom_left.coupled_cell.ij.bout
 @200
 -BD
 @28
