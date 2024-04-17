@@ -80,27 +80,17 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
     wire [NUM_WEIGHTS/2:0] t_buf;
 
     generate for (i = 0; i <= NUM_WEIGHTS/2; i = i + 1) begin
-	wire l_buf_in;
-	wire b_buf_in;
-	wire r_buf_in;
-	wire t_buf_in;
-
 	if (i == 0) begin
-            assign l_buf_in = lin;
-            assign b_buf_in = bin;
-            assign r_buf_in = rin;
-            assign t_buf_in = tin;
+            assign l_buf[0] = lin;
+            assign b_buf[0] = bin;
+            assign r_buf[0] = rin;
+            assign t_buf[0] = tin;
         end else begin
-	    assign l_buf_in = l_buf[i-1];
-	    assign b_buf_in = b_buf[i-1];
-	    assign r_buf_in = r_buf[i-1];
-	    assign t_buf_in = t_buf[i-1];
+            buffer #(NUM_LUTS) buf_l(.in(l_buf[i-1]), .out(l_buf[i]));
+            buffer #(NUM_LUTS) buf_b(.in(b_buf[i-1]), .out(b_buf[i]));
+            buffer #(NUM_LUTS) buf_r(.in(r_buf[i-1]), .out(r_buf[i]));
+            buffer #(NUM_LUTS) buf_t(.in(t_buf[i-1]), .out(t_buf[i]));
         end
-	
-        buffer #(NUM_LUTS) buf_l(.in(l_buf_in), .out(l_buf[i]));
-        buffer #(NUM_LUTS) buf_b(.in(b_buf_in), .out(b_buf[i]));
-        buffer #(NUM_LUTS) buf_r(.in(r_buf_in), .out(r_buf[i]));
-        buffer #(NUM_LUTS) buf_t(.in(t_buf_in), .out(t_buf[i]));
     end endgenerate
 
     // Generate half-weights for tapping delay lines
