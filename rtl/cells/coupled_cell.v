@@ -52,8 +52,8 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
 	                                                    weight_hv              ;
     always @(posedge clk) begin
 	if (!axi_rstn) begin
-      	    weight_hv <= (NUM_WEIGHTS/2); //NUM_WEIGHTS must be odd.
-      	    weight_vh <= (NUM_WEIGHTS/2); //NUM_WEIGHTS must be odd.
+      	    weight_hv <= (NUM_WEIGHTS/2); //NUM_WEIGHTS must be 2n-1, for N odd.
+      	    weight_vh <= (NUM_WEIGHTS/2); //NUM_WEIGHTS must be 2n-1, for N odd.
         end else begin
             weight_vh <= weight_vh_nxt;
             weight_hv <= weight_hv_nxt;
@@ -104,10 +104,11 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
     end endgenerate
 
     // Generate half-weights for tapping delay lines
-    wire [(NUM_WEIGHTS/2) - 1:0] weight_l = (weight_vh >> 1)               ;
-    wire [(NUM_WEIGHTS/2) - 1:0] weight_b = (weight_hv >> 1)               ;
-    wire [(NUM_WEIGHTS/2) - 1:0] weight_r = (weight_vh >> 1) + weight_vh[0];
-    wire [(NUM_WEIGHTS/2) - 1:0] weight_t = (weight_hv >> 1) + weight_hv[0];
+    wire [$clog2(NUM_WEIGHTS)-2:0] weight_l = (weight_vh >> 1)               ;
+    wire [$clog2(NUM_WEIGHTS)-2:0] weight_b = (weight_hv >> 1)               ;
+    // TODO: can we reduce gate count here somehow?
+    wire [$clog2(NUM_WEIGHTS)-2:0] weight_r = (weight_vh >> 1) + weight_vh[0];
+    wire [$clog2(NUM_WEIGHTS)-2:0] weight_t = (weight_hv >> 1) + weight_hv[0];
 
     // Tap those delay lines based on weight
     // TODO: Do we need to manually balance these decoder trees?
@@ -115,14 +116,14 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
     wire b_buf_out_ma, b_buf_out_mi;
     wire r_buf_out_ma, r_buf_out_mi;
     wire t_buf_out_ma, t_buf_out_mi;
-    assign l_buf_out_ma = l_buf[                  weight_l    ];
-    assign l_buf_out_mi = l_buf[(NUM_WEIGHTS/2) - weight_l - 1];
-    assign b_buf_out_ma = b_buf[                  weight_b    ];
-    assign b_buf_out_mi = b_buf[(NUM_WEIGHTS/2) - weight_b - 1];
-    assign r_buf_out_ma = r_buf[                  weight_r    ];
-    assign r_buf_out_mi = r_buf[(NUM_WEIGHTS/2) - weight_r - 1];
-    assign t_buf_out_ma = t_buf[                  weight_t    ];
-    assign t_buf_out_mi = t_buf[(NUM_WEIGHTS/2) - weight_t - 1];
+    assign l_buf_out_ma = l_buf[                  weight_l];
+    assign l_buf_out_mi = l_buf[(NUM_WEIGHTS/2) - weight_l];
+    assign b_buf_out_ma = b_buf[                  weight_b];
+    assign b_buf_out_mi = b_buf[(NUM_WEIGHTS/2) - weight_b];
+    assign r_buf_out_ma = r_buf[                  weight_r];
+    assign r_buf_out_mi = r_buf[(NUM_WEIGHTS/2) - weight_r];
+    assign t_buf_out_ma = t_buf[                  weight_t];
+    assign t_buf_out_mi = t_buf[(NUM_WEIGHTS/2) - weight_t];
 
     // Select output based on mismatch status
     wire rout_mis;
