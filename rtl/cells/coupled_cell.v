@@ -161,10 +161,10 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
         assign lout = lout_int;
         assign bout = bout_int;
     `else
-        (* dont_touch = "yes" *) LDCE r_latch (.Q(rout), .D(rout_int), .G(1'b1), .GE(1'b1), .CLR(1'b0));
-        (* dont_touch = "yes" *) LDCE t_latch (.Q(tout), .D(tout_int), .G(1'b1), .GE(1'b1), .CLR(1'b0));
-        (* dont_touch = "yes" *) LDCE l_latch (.Q(lout), .D(lout_int), .G(1'b1), .GE(1'b1), .CLR(1'b0));
-        (* dont_touch = "yes" *) LDCE b_latch (.Q(bout), .D(bout_int), .G(1'b1), .GE(1'b1), .CLR(1'b0));
+        (* dont_touch = "yes" *) LDCE r_latch (.Q(rout), .D(rout_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0));
+        (* dont_touch = "yes" *) LDCE t_latch (.Q(tout), .D(tout_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0));
+        (* dont_touch = "yes" *) LDCE l_latch (.Q(lout), .D(lout_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0));
+        (* dont_touch = "yes" *) LDCE b_latch (.Q(bout), .D(bout_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0));
     `endif
 
 endmodule
