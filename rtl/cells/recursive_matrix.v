@@ -75,7 +75,7 @@ module recursive_matrix #(parameter N = 8,
 	assign rdata = tl   ? tl_r :
 		       tr_m ? tr_r :
 		       br   ? br_r :
-		       bl   ? bl_r : 32'hAAAAAAAA;
+		       bl_m ? bl_r : 32'hAAAAAAAA;
 
 	// Get right col for phase measurement
 	wire [(N/2)-1:0] right_col_top;
