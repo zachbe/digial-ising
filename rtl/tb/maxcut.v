@@ -107,8 +107,8 @@ module maxcut_tb();
 	// Program initial spins
 	
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + (32'd1 << 2) + (32'd1 << 13); //B
-	wdata = 32'h00000000;                                     //+1
+	waddr = `WEIGHT_ADDR_BASE + (32'd0 << 2) + (32'd0 << 13); //A
+	wdata = 32'h00000001;                                     //+1
 	
 	/////////////////////////////////////////////////////////////
 	// Program (asymmetric) weights
@@ -132,10 +132,10 @@ module maxcut_tb();
 	
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd0 << 2) + (32'd7 << 13); //AH
-	wdata = 32'h00000003;                                     //2
+	wdata = 32'h00000004;                                     //2
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd7 << 2) + (32'd0 << 13); //AH
-	wdata = 32'h00000003;                                     //2
+	wdata = 32'h00000004;                                     //2
 
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd1 << 2) + (32'd2 << 13); //BC
@@ -150,13 +150,6 @@ module maxcut_tb();
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd3 << 2) + (32'd1 << 13); //BD
 	wdata = 32'h00000000;                                     //-2
-	
-	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + (32'd1 << 2) + (32'd7 << 13); //BH
-	wdata = 32'h00000003;                                     //2
-	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + (32'd7 << 2) + (32'd1 << 13); //BH
-	wdata = 32'h00000003;                                     //2
 
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd2 << 2) + (32'd3 << 13); //CD
@@ -166,33 +159,12 @@ module maxcut_tb();
 	wdata = 32'h00000000;                                     //-2
 	
 	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + (32'd2 << 2) + (32'd7 << 13); //CH
-	wdata = 32'h00000003;                                     //2
-	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + (32'd7 << 2) + (32'd2 << 13); //CH
-	wdata = 32'h00000003;                                     //2
-	
-	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd3 << 2) + (32'd4 << 13); //DE
 	wdata = 32'h00000000;                                     //-2
 	@(posedge clk);
 	waddr = `WEIGHT_ADDR_BASE + (32'd4 << 2) + (32'd3 << 13); //DE
 	wdata = 32'h00000000;                                     //-2
-	
-	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + (32'd3 << 2) + (32'd7 << 13); //DH
-	wdata = 32'h00000003;                                     //2
-	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + (32'd7 << 2) + (32'd3 << 13); //DH
-	wdata = 32'h00000003;                                     //2
-	
-	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + (32'd4 << 2) + (32'd7 << 13); //EH
-	wdata = 32'h00000003;                                     //2
-	@(posedge clk);
-	waddr = `WEIGHT_ADDR_BASE + (32'd7 << 2) + (32'd4 << 13); //EH
-	wdata = 32'h00000003;                                     //2
-	
+		
 	/////////////////////////////////////////////////////////////
 	// Check weights
 	
