@@ -135,36 +135,40 @@ module coupled_cell #(parameter NUM_WEIGHTS = 13,
     assign tout_pre = (tout == bin) ? tout     : tout_mis ;
     assign lout_pre = (lout == rin) ? lout     : lout_mis ;
     assign bout_pre = (bout == tin) ? bout     : bout_mis ;
-    
-    // When resetting, pass the input through directly
+        
+    // One more buffer to keep the output-input
+    // feedback loop stable
+    wire rout_int;
+    wire tout_int;
+    wire lout_int;
+    wire bout_int;
+    buffer #(NUM_LUTS) bufr(.in(rout_pre), .out(rout_int));
+    buffer #(NUM_LUTS) buft(.in(tout_pre), .out(tout_int));
+    buffer #(NUM_LUTS) bufl(.in(lout_pre), .out(lout_int));
+    buffer #(NUM_LUTS) bufb(.in(bout_pre), .out(bout_int));
+
+    // Latches here trick the tool into not thinking there's
+    // a combinational loop in the design.
     wire rout_rst;
     wire tout_rst;
     wire lout_rst;
     wire bout_rst;
-    assign rout_rst = ising_rstn    ? rout_pre : lin      ;
-    assign tout_rst = ising_rstn    ? tout_pre : bin      ;
-    assign lout_rst = ising_rstn    ? lout_pre : rin      ;
-    assign bout_rst = ising_rstn    ? bout_pre : tin      ;
-    
-    // One more buffer to keep the output-input
-    // feedback loop stable
-    buffer #(NUM_LUTS) bufr(.in(rout_rst), .out(rout_int));
-    buffer #(NUM_LUTS) buft(.in(tout_rst), .out(tout_int));
-    buffer #(NUM_LUTS) bufl(.in(lout_rst), .out(lout_int));
-    buffer #(NUM_LUTS) bufb(.in(bout_rst), .out(bout_int));
-
-    // Latches here trick the tool into not thinking there's
-    // a combinational loop in the design.
     `ifdef SIM
-        assign rout = rout_int;
-        assign tout = tout_int;
-        assign lout = lout_int;
-        assign bout = bout_int;
+        assign rout_rst = rout_int;
+        assign tout_rst = tout_int;
+        assign lout_rst = lout_int;
+        assign bout_rst = bout_int;
     `else
-        (* dont_touch = "yes" *) LDCE r_latch (.Q(rout), .D(rout_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0));
-        (* dont_touch = "yes" *) LDCE t_latch (.Q(tout), .D(tout_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0));
-        (* dont_touch = "yes" *) LDCE l_latch (.Q(lout), .D(lout_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0));
-        (* dont_touch = "yes" *) LDCE b_latch (.Q(bout), .D(bout_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0));
+        (* dont_touch = "yes" *) LDCE r_latch (.Q(rout_rst), .D(rout_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0));
+        (* dont_touch = "yes" *) LDCE t_latch (.Q(tout_rst), .D(tout_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0));
+        (* dont_touch = "yes" *) LDCE l_latch (.Q(lout_rst), .D(lout_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0));
+        (* dont_touch = "yes" *) LDCE b_latch (.Q(bout_rst), .D(bout_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0));
     `endif
+    
+    // When resetting, pass the input through directly
+    assign rout = ising_rstn    ? rout_rst : lin      ;
+    assign tout = ising_rstn    ? tout_rst : bin      ;
+    assign lout = ising_rstn    ? lout_rst : rin      ;
+    assign bout = ising_rstn    ? bout_rst : tin      ;
 
 endmodule
