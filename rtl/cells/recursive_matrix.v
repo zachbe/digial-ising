@@ -10,7 +10,8 @@
 
 module recursive_matrix #(parameter N = 8,
 	             parameter NUM_WEIGHTS = 5,
-	             parameter NUM_LUTS   = 2, 
+	             parameter NUM_LUTS   = 2,
+		     parameter WIRE_DELAY = 20,
 	             parameter DIAGONAL   = 1) (
 		     input  wire ising_rstn,
 
@@ -38,22 +39,15 @@ module recursive_matrix #(parameter N = 8,
 		     output wire [31:0] rdata
 	            );
 
-    genvar j;
+    genvar j,k;
 
     // If N != 1, recurse.
     // Else, create the cells.
     generate if (N != 1) begin : recurse
-	`ifdef SIM
-        reg  [N-1:0] int_r_i;
-        reg  [N-1:0] int_t_i;
-        reg  [N-1:0] int_b_i;
-        reg  [N-1:0] int_l_i;
-	`else
         wire [N-1:0] int_r_i;
         wire [N-1:0] int_t_i;
         wire [N-1:0] int_b_i;
         wire [N-1:0] int_l_i;
-        `endif
         wire [N-1:0] int_r_o;
         wire [N-1:0] int_t_o;
         wire [N-1:0] int_b_o;
@@ -86,6 +80,7 @@ module recursive_matrix #(parameter N = 8,
         recursive_matrix #(.N(N/2),
 		           .NUM_WEIGHTS(NUM_WEIGHTS),
 			   .NUM_LUTS(NUM_LUTS),
+			   .WIRE_DELAY(WIRE_DELAY),
 			   .DIAGONAL(DIAGONAL))
 			top_left(.ising_rstn (ising_rstn),
                                  .lin  (lin     [N-1:(N/2)]),
@@ -112,6 +107,7 @@ module recursive_matrix #(parameter N = 8,
         recursive_matrix #(.N(N/2),
 		           .NUM_WEIGHTS(NUM_WEIGHTS),
 			   .NUM_LUTS(NUM_LUTS),
+			   .WIRE_DELAY(WIRE_DELAY),
 			   .DIAGONAL(0))
 		       top_right(.ising_rstn (ising_rstn),
                                  .lin  (int_l_i [N-1:(N/2)]),
@@ -138,6 +134,7 @@ module recursive_matrix #(parameter N = 8,
         recursive_matrix #(.N(N/2),
 		           .NUM_WEIGHTS(NUM_WEIGHTS),
 			   .NUM_LUTS(NUM_LUTS),
+			   .WIRE_DELAY(WIRE_DELAY),
 			   .DIAGONAL(DIAGONAL))
 		       bot_right(.ising_rstn (ising_rstn),
                                  .lin  (int_l_i [(N/2)-1:0]),
@@ -166,6 +163,7 @@ module recursive_matrix #(parameter N = 8,
         recursive_matrix #(.N(N/2),
 		           .NUM_WEIGHTS(NUM_WEIGHTS),
 			   .NUM_LUTS(NUM_LUTS),
+			   .WIRE_DELAY(WIRE_DELAY),
 			   .DIAGONAL(0))
 		     bottom_left(.ising_rstn (ising_rstn),
                                  .lin  (lin     [(N/2)-1:0]),
@@ -192,20 +190,36 @@ module recursive_matrix #(parameter N = 8,
 	    assign bl_r = 32'hAAAAAAAA;
         end
 
-	// Add delays (only in sim)
-	`ifdef SIM
-	    for (j = 0; j < N; j = j + 1) begin: delays
-                 always @(int_b_o[j]) begin #20 int_t_i[j] <= int_b_o[j]; end
-                 always @(int_l_o[j]) begin #20 int_r_i[j] <= int_l_o[j]; end
-                 always @(int_t_o[j]) begin #20 int_b_i[j] <= int_t_o[j]; end
-                 always @(int_r_o[j]) begin #20 int_l_i[j] <= int_r_o[j]; end
-	    end
-        `else
+	// Add delays
+	if (WIRE_DELAY == 0) begin : no_delay
             assign int_t_i = int_b_o;
             assign int_r_i = int_l_o;
             assign int_b_i = int_t_o;
             assign int_l_i = int_r_o;
-        `endif
+        end else begin : delay
+            for (j = 0; j < N; j = j + 1) begin : rec_delays
+                wire [WIRE_DELAY-1:0] t_del;
+                wire [WIRE_DELAY-1:0] r_del;
+                wire [WIRE_DELAY-1:0] b_del;
+                wire [WIRE_DELAY-1:0] l_del;
+                // Array of generic delay buffers
+                buffer #(NUM_LUTS) buf0t(.in(int_b_o[j]), .out(t_del[0]));
+                buffer #(NUM_LUTS) buf0r(.in(int_l_o[j]), .out(r_del[0]));
+                buffer #(NUM_LUTS) buf0b(.in(int_t_o[j]), .out(b_del[0]));
+                buffer #(NUM_LUTS) buf0l(.in(int_r_o[j]), .out(l_del[0]));
+                for (k = 1; k < WIRE_DELAY; k = k + 1) begin
+                    buffer #(NUM_LUTS) bufit(.in(t_del[k-1]), .out(t_del[k]));
+                    buffer #(NUM_LUTS) bufir(.in(r_del[k-1]), .out(r_del[k]));
+                    buffer #(NUM_LUTS) bufib(.in(b_del[k-1]), .out(b_del[k]));
+                    buffer #(NUM_LUTS) bufil(.in(l_del[k-1]), .out(l_del[k]));
+                end
+
+                assign int_t_i[j] = t_del[WIRE_DELAY-1];
+                assign int_r_i[j] = r_del[WIRE_DELAY-1];
+                assign int_b_i[j] = b_del[WIRE_DELAY-1];
+                assign int_l_i[j] = l_del[WIRE_DELAY-1];
+            end
+        end
 
     // Diagonal base case is a shorted cell.
     end else if (DIAGONAL == 1) begin : shorted_cell

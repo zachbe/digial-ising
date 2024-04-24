@@ -30,13 +30,8 @@ module core_matrix #(parameter N = 8,
 		     output wire [31:0] rdata
 	            );
 
-    `ifdef SIM
-    reg  [N-1:0] rin;
-    reg  [N-1:0] tin;
-    `else
     wire [N-1:0] rin;
     wire [N-1:0] tin;
-    `endif
     wire [N-1:0] rout;
     wire [N-1:0] tout;
     wire [N-1:0] right_col;
@@ -63,6 +58,7 @@ module core_matrix #(parameter N = 8,
     recursive_matrix #(.N(N),
                   .NUM_WEIGHTS(NUM_WEIGHTS),
                   .NUM_LUTS(NUM_LUTS),
+		  .WIRE_DELAY(WIRE_DELAY),
 	          .DIAGONAL(1))
 		  u_rec_matrix (
                   .ising_rstn(ising_rstn),
@@ -88,16 +84,26 @@ module core_matrix #(parameter N = 8,
                   .rdata(rdata) 
     );
 
-    // Add delays (only in sim)
-    genvar j;
-    `ifdef SIM
-        generate for (j = 0; j < N; j = j + 1) begin: delays
-             always @(rout[j]) begin #20 tin[j] <= rout[j]; end
-             always @(tout[j]) begin #20 rin[j] <= tout[j]; end
-        end endgenerate
-    `else
+    genvar j,k;
+    // Add delays
+    if (WIRE_DELAY == 0) begin : no_delay
         assign rin = tout;
         assign tin = rout;
-    `endif
+    end else begin : delay
+        for (j = 0; j < N; j = j + 1) begin : rec_delays
+            wire [WIRE_DELAY-1:0] t_del;
+            wire [WIRE_DELAY-1:0] r_del;
+            // Array of generic delay buffers
+            buffer #(NUM_LUTS) buf0t(.in(rout[j]), .out(t_del[0]));
+            buffer #(NUM_LUTS) buf0r(.in(tout[j]), .out(r_del[0]));
+            for (k = 1; k < WIRE_DELAY; k = k + 1) begin
+                buffer #(NUM_LUTS) buf0t(.in(t_del[k-1]), .out(t_del[k]));
+                buffer #(NUM_LUTS) buf0r(.in(r_del[k-1]), .out(r_del[k]));
+            end
+    
+            assign rin[j] = r_del[WIRE_DELAY-1];
+            assign tin[j] = t_del[WIRE_DELAY-1];
+        end
+    end
 
 endmodule

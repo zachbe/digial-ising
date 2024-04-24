@@ -38,6 +38,7 @@ module maxcut_tb();
     // Cell H is the local field, which is positively coupled with all of the
     // other active cells.
     ising_axi   #(.N(8),
+                  .WIRE_DELAY(20),
 	          .NUM_WEIGHTS(5) // Each coupling will be {-1,0,+1}
 	         ) dut(
 		  .clk(clk),

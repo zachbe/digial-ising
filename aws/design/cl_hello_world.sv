@@ -253,6 +253,8 @@ assign arready = !arvalid_q && !rvalid;
 // Cell F is the local field, which is positively coupled with all of the
 // other cells.
 ising_axi   #(.N(64),
+              .NUM_LUTS(4),
+	      .WIRE_DELAY(1),
               .NUM_WEIGHTS(13)) dut(
               .clk(clk_main_a0),
               .axi_rstn(rst_main_n_sync),
