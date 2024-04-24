@@ -197,27 +197,52 @@ module recursive_matrix #(parameter N = 8,
             assign int_b_i = int_t_o;
             assign int_l_i = int_r_o;
         end else begin : delay
-            for (j = 0; j < N; j = j + 1) begin : rec_delays
-                wire [WIRE_DELAY-1:0] t_del;
-                wire [WIRE_DELAY-1:0] r_del;
-                wire [WIRE_DELAY-1:0] b_del;
-                wire [WIRE_DELAY-1:0] l_del;
-                // Array of generic delay buffers
-                buffer #(NUM_LUTS) buf0t(.in(int_b_o[j]), .out(t_del[0]));
-                buffer #(NUM_LUTS) buf0r(.in(int_l_o[j]), .out(r_del[0]));
-                buffer #(NUM_LUTS) buf0b(.in(int_t_o[j]), .out(b_del[0]));
-                buffer #(NUM_LUTS) buf0l(.in(int_r_o[j]), .out(l_del[0]));
-                for (k = 1; k < WIRE_DELAY; k = k + 1) begin
-                    buffer #(NUM_LUTS) bufit(.in(t_del[k-1]), .out(t_del[k]));
-                    buffer #(NUM_LUTS) bufir(.in(r_del[k-1]), .out(r_del[k]));
-                    buffer #(NUM_LUTS) bufib(.in(b_del[k-1]), .out(b_del[k]));
-                    buffer #(NUM_LUTS) bufil(.in(l_del[k-1]), .out(l_del[k]));
-                end
+	    if (DIAGONAL == 1) begin
+                for (j = 0; j < N/2; j = j + 1) begin : rec_delays
+                    wire [WIRE_DELAY-1:0] t_del;
+                    wire [WIRE_DELAY-1:0] r_del;
+                    wire [WIRE_DELAY-1:0] b_del;
+                    wire [WIRE_DELAY-1:0] l_del;
+                    // Array of generic delay buffers
+                    buffer #(NUM_LUTS) buf0t(.in(int_b_o[j    ]), .out(t_del[0]));
+                    buffer #(NUM_LUTS) buf0r(.in(int_l_o[j+N/2]), .out(r_del[0]));
+                    buffer #(NUM_LUTS) buf0b(.in(int_t_o[j    ]), .out(b_del[0]));
+                    buffer #(NUM_LUTS) buf0l(.in(int_r_o[j+N/2]), .out(l_del[0]));
+                    for (k = 1; k < WIRE_DELAY; k = k + 1) begin
+                        buffer #(NUM_LUTS) bufit(.in(t_del[k-1]), .out(t_del[k]));
+                        buffer #(NUM_LUTS) bufir(.in(r_del[k-1]), .out(r_del[k]));
+                        buffer #(NUM_LUTS) bufib(.in(b_del[k-1]), .out(b_del[k]));
+                        buffer #(NUM_LUTS) bufil(.in(l_del[k-1]), .out(l_del[k]));
+                    end
 
-                assign int_t_i[j] = t_del[WIRE_DELAY-1];
-                assign int_r_i[j] = r_del[WIRE_DELAY-1];
-                assign int_b_i[j] = b_del[WIRE_DELAY-1];
-                assign int_l_i[j] = l_del[WIRE_DELAY-1];
+                    assign int_t_i[j    ] = t_del[WIRE_DELAY-1];
+                    assign int_r_i[j+N/2] = r_del[WIRE_DELAY-1];
+                    assign int_b_i[j    ] = b_del[WIRE_DELAY-1];
+                    assign int_l_i[j+N/2] = l_del[WIRE_DELAY-1];
+                end
+            end else begin
+                for (j = 0; j < N; j = j + 1) begin : rec_delays
+                    wire [WIRE_DELAY-1:0] t_del;
+                    wire [WIRE_DELAY-1:0] r_del;
+                    wire [WIRE_DELAY-1:0] b_del;
+                    wire [WIRE_DELAY-1:0] l_del;
+                    // Array of generic delay buffers
+                    buffer #(NUM_LUTS) buf0t(.in(int_b_o[j]), .out(t_del[0]));
+                    buffer #(NUM_LUTS) buf0r(.in(int_l_o[j]), .out(r_del[0]));
+                    buffer #(NUM_LUTS) buf0b(.in(int_t_o[j]), .out(b_del[0]));
+                    buffer #(NUM_LUTS) buf0l(.in(int_r_o[j]), .out(l_del[0]));
+                    for (k = 1; k < WIRE_DELAY; k = k + 1) begin
+                        buffer #(NUM_LUTS) bufit(.in(t_del[k-1]), .out(t_del[k]));
+                        buffer #(NUM_LUTS) bufir(.in(r_del[k-1]), .out(r_del[k]));
+                        buffer #(NUM_LUTS) bufib(.in(b_del[k-1]), .out(b_del[k]));
+                        buffer #(NUM_LUTS) bufil(.in(l_del[k-1]), .out(l_del[k]));
+                    end
+
+                    assign int_t_i[j] = t_del[WIRE_DELAY-1];
+                    assign int_r_i[j] = r_del[WIRE_DELAY-1];
+                    assign int_b_i[j] = b_del[WIRE_DELAY-1];
+                    assign int_l_i[j] = l_del[WIRE_DELAY-1];
+                end
             end
         end
 
