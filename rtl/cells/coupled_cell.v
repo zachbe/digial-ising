@@ -13,7 +13,7 @@
 `endif
 
 module coupled_cell #(parameter NUM_WEIGHTS = 13,
-                      parameter NUM_LUTS    = 1 ) (
+                      parameter NUM_LUTS    = 4 ) (
 		       // Oscillator RST
 		       input  wire ising_rstn,
 

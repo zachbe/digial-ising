@@ -48,18 +48,18 @@ module shorted_cell #(parameter NUM_LUTS = 2) (
     assign out_int = ~(tin & rin);
 
     wire out_rst;
-    assign out_rst = ising_rstn ? out_int : spin ;
+    wire out;
+    assign out = ising_rstn ? out_rst : spin ;
     
-    wire out_latch;    
-    assign tout = out_latch;
-    assign rout = out_latch;
+    assign tout = out;
+    assign rout = out;
 
     //--------------------------------------------------------------------
     // Latches here trick the tool into not thinking there's
     // a combinational loop in the design.
     `ifdef SIM
-        assign out_latch = out_rst;
+        assign out_rst = out_int;
     `else
-        (* dont_touch = "yes" *) LDCE o_latch (.Q(out_latch), .D(out_rst), .G(ising_rstn), .GE(1'b1), .CLR(1'b0)); 
+        (* dont_touch = "yes" *) LDCE o_latch (.Q(out_rst), .D(out_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0)); 
     `endif
 endmodule
