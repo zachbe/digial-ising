@@ -131,10 +131,10 @@ module coupled_cell #(parameter NUM_WEIGHTS = 13,
     wire tout_pre;
     wire lout_pre;
     wire bout_pre;
-    assign rout_pre = (rout == lin) ? rout     : rout_mis ;
-    assign tout_pre = (tout == bin) ? tout     : tout_mis ;
-    assign lout_pre = (lout == rin) ? lout     : lout_mis ;
-    assign bout_pre = (bout == tin) ? bout     : bout_mis ;
+    assign rout_pre = (rout_rst == lin) ? rout     : rout_mis ;
+    assign tout_pre = (tout_rst == bin) ? tout     : tout_mis ;
+    assign lout_pre = (lout_rst == rin) ? lout     : lout_mis ;
+    assign bout_pre = (bout_rst == tin) ? bout     : bout_mis ;
         
     // One more buffer to keep the output-input
     // feedback loop stable
