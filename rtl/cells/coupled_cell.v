@@ -36,22 +36,25 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
 	               );
 
     // Local registers for storing weights.
-    // TODO: Weights are currently stored as 1-hot values which is not the
-    // most efficent way to store them. (Issue #7)
-    reg  [NUM_WEIGHTS-1:0] weight;
-    wire [NUM_WEIGHTS-1:0] weight_nxt;
+    reg  [$clog2(NUM_WEIGHTS)-1:0] weight;
+    wire [$clog2(NUM_WEIGHTS)-1:0] weight_nxt;
 
     assign rdata = weight;
 
-    assign weight_nxt = (wready & wr_addr_match) ? wdata[NUM_WEIGHTS-1:0] :
-	                                           weight                 ;
+    assign weight_nxt = (wready & wr_addr_match) ? wdata[$clog2(NUM_WEIGHTS)-1:0] :
+	                                           weight                         ;
     always @(posedge clk) begin
 	if (!axi_rstn) begin
-      	    weight <= {{(NUM_WEIGHTS/2){1'b0}},1'b1,{(NUM_WEIGHTS/2){1'b0}}}; //NUM_WEIGHTS must be odd.
+      	    weight <= (NUM_WEIGHTS/2); //NUM_WEIGHTS must be odd.
         end else begin
             weight <= weight_nxt;
         end
     end
+
+    wire [NUM_WEIGHTS-1:0] weight_oh;
+    generate for (i = 0; i < NUM_WEIGHTS; i = i + 1) begin
+        assign weight_oh[i] = (weight == i);
+    end endgenerate
 
     // If coupling is positive, we want to slow down the destination
     // oscillator when it doesn't match the source oscillator, and speed it up
@@ -76,10 +79,10 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
     wire [NUM_WEIGHTS-1:0] d_sel_mi;
 
     generate for (i = 0; i < NUM_WEIGHTS; i = i + 1) begin
-        assign s_sel_ma[i] = weight[NUM_WEIGHTS-1-i] & s_buf[i];
-        assign s_sel_mi[i] = weight[i              ] & s_buf[i];
-        assign d_sel_ma[i] = weight[NUM_WEIGHTS-1-i] & d_buf[i];
-        assign d_sel_mi[i] = weight[i              ] & d_buf[i];
+        assign s_sel_ma[i] = weight_oh[NUM_WEIGHTS-1-i] & s_buf[i];
+        assign s_sel_mi[i] = weight_oh[i              ] & s_buf[i];
+        assign d_sel_ma[i] = weight_oh[NUM_WEIGHTS-1-i] & d_buf[i];
+        assign d_sel_mi[i] = weight_oh[i              ] & d_buf[i];
     end endgenerate
     
     wire s_ma;
