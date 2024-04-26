@@ -35,6 +35,8 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
 		       output wire [31:0] rdata
 	               );
 
+    genvar i;
+    
     // Local registers for storing weights.
     reg  [$clog2(NUM_WEIGHTS)-1:0] weight;
     wire [$clog2(NUM_WEIGHTS)-1:0] weight_nxt;
@@ -69,8 +71,6 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
     
     wire [NUM_WEIGHTS-1:0] s_buf;
     wire [NUM_WEIGHTS-1:0] d_buf;
- 
-    genvar i;
  
     // Select our pair of possible delay elements using the weight array
     wire [NUM_WEIGHTS-1:0] s_sel_ma;
