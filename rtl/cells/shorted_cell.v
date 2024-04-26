@@ -9,6 +9,7 @@
 
 module shorted_cell #(parameter NUM_LUTS = 2) (
 	               input  wire ising_rstn,
+		       input  wire start,
 	               input  wire tin ,
 	               input  wire rin ,
 		       output wire tout,
@@ -49,7 +50,7 @@ module shorted_cell #(parameter NUM_LUTS = 2) (
 
     wire out_rst;
     wire out;
-    assign out = ising_rstn ? out_rst : spin ;
+    assign out = start ? out_rst : spin ;
     
     assign tout = out;
     assign rout = out;

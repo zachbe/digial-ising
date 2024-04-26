@@ -15,6 +15,7 @@
 module sample #(parameter N = 3)(
 	        input  wire clk,
 	        input  wire rstn,
+		input  wire start,
                 input  wire [31 :0] counter_max,
 		input  wire [31 :0] counter_cutoff,
 	        input  wire [N-1:0] outputs,
@@ -47,9 +48,9 @@ module sample #(parameter N = 3)(
     // Reset the counters on the rising edge of the start signal.
     reg rstn_old;
     always @(posedge clk) begin
-        rstn_old <= rstn;
+        rstn_old <= start;
     end
-    wire rst_start = rstn & ~rstn_old;
+    wire rst_start = start & ~rstn_old;
 
     genvar i;
     generate for (i = 0; i < N ; i = i+1) begin

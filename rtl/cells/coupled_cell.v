@@ -131,10 +131,10 @@ module coupled_cell #(parameter NUM_WEIGHTS = 13,
     wire tout_pre;
     wire lout_pre;
     wire bout_pre;
-    assign rout_pre = (rout_rst == lin) ? rout     : rout_mis ;
-    assign tout_pre = (tout_rst == bin) ? tout     : tout_mis ;
-    assign lout_pre = (lout_rst == rin) ? lout     : lout_mis ;
-    assign bout_pre = (bout_rst == tin) ? bout     : bout_mis ;
+    assign rout_pre = (rout == lin) ? rout     : rout_mis ;
+    assign tout_pre = (tout == bin) ? tout     : tout_mis ;
+    assign lout_pre = (lout == rin) ? lout     : lout_mis ;
+    assign bout_pre = (bout == tin) ? bout     : bout_mis ;
         
     // One more buffer to keep the output-input
     // feedback loop stable
@@ -149,26 +149,16 @@ module coupled_cell #(parameter NUM_WEIGHTS = 13,
 
     // Latches here trick the tool into not thinking there's
     // a combinational loop in the design.
-    wire rout_rst;
-    wire tout_rst;
-    wire lout_rst;
-    wire bout_rst;
     `ifdef SIM
-        assign rout_rst = rout_int;
-        assign tout_rst = tout_int;
-        assign lout_rst = lout_int;
-        assign bout_rst = bout_int;
+        assign rout = ising_rstn ? rout_int : 1'b0;
+        assign tout = ising_rstn ? tout_int : 1'b0;
+        assign lout = ising_rstn ? lout_int : 1'b0;
+        assign bout = ising_rstn ? bout_int : 1'b0;
     `else
-        (* dont_touch = "yes" *) LDCE r_latch (.Q(rout_rst), .D(rout_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0));
-        (* dont_touch = "yes" *) LDCE t_latch (.Q(tout_rst), .D(tout_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0));
-        (* dont_touch = "yes" *) LDCE l_latch (.Q(lout_rst), .D(lout_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0));
-        (* dont_touch = "yes" *) LDCE b_latch (.Q(bout_rst), .D(bout_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0));
+        (* dont_touch = "yes" *) LDCE r_latch (.Q(rout), .D(rout_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0));
+        (* dont_touch = "yes" *) LDCE t_latch (.Q(tout), .D(tout_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0));
+        (* dont_touch = "yes" *) LDCE l_latch (.Q(lout), .D(lout_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0));
+        (* dont_touch = "yes" *) LDCE b_latch (.Q(bout), .D(bout_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0));
     `endif
-    
-    // When resetting, pass the input through directly
-    assign rout = ising_rstn    ? rout_rst : lin      ;
-    assign tout = ising_rstn    ? tout_rst : bin      ;
-    assign lout = ising_rstn    ? lout_rst : rin      ;
-    assign bout = ising_rstn    ? bout_rst : tin      ;
 
 endmodule

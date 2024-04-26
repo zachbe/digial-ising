@@ -17,6 +17,7 @@ module core_matrix #(parameter N = 8,
 	             parameter WIRE_DELAY = 20,
 	             parameter NUM_LUTS   = 2) (
 		     input  wire ising_rstn,
+                     input  wire start,
 
 		     output wire [N-1:0] external_spin,
 		     output wire [N-1:0] outputs,
@@ -62,6 +63,7 @@ module core_matrix #(parameter N = 8,
 	          .DIAGONAL(1))
 		  u_rec_matrix (
                   .ising_rstn(ising_rstn),
+		  .start(start),
                   .lin  (    /* None */     ),
                   .rin  (rin                ),
                   .tin  (tin                ),

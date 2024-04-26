@@ -63,30 +63,39 @@ module ising_axi    #(parameter N = 3,
     reg [31:0] counter_cutoff;
     reg [31:0] counter_max;
     reg [31:0] ising_rstn_cnt;
+    reg [31:0] start_countdown;
     
     wire [31:0] counter_cutoff_nxt = (wready & (wr_addr == `CTR_CUTOFF_ADDR)) ?
-	                             wdata : counter_cutoff; 
+	                             wdata  : counter_cutoff; 
     wire [31:0] counter_max_nxt    = (wready & (wr_addr == `CTR_MAX_ADDR)) ?
-	                             wdata : counter_max; 
+	                             wdata  : counter_max; 
     wire [31:0] ising_rstn_nxt     = (wready & (wr_addr == `START_ADDR)) ?
-	                             wdata : (
+	                             wdata  : (
 				     ising_rstn_cnt != 0 ? ising_rstn_cnt - 1 :
-				                           ising_rstn_cnt    ); 
+				                           ising_rstn_cnt    );
+    
+    wire ising_rstn = (ising_rstn_cnt > 0);
+    wire [31:0] start_countdown_nxt    = ising_rstn ? (
+	                                 start_countdown != 0 ? start_countdown - 1 :
+					                        start_countdown     )
+					 : 31'd10; // Count down from 10
+    wire start      = (start_countdown == 0);
     
     always @(posedge clk) begin
         if (!axi_rstn) begin
             counter_cutoff <= 32'b0;
 	    counter_max <= 32'b0;
             ising_rstn_cnt <= 32'b0;
+            start_countdown <= 32'd10;
         end
         else begin
             counter_cutoff <= counter_cutoff_nxt;
             counter_max <= counter_max_nxt;
             ising_rstn_cnt <= ising_rstn_nxt;
+            start_countdown <= start_countdown_nxt;
         end
     end
 
-    wire ising_rstn = (ising_rstn_cnt > 0);
 
     top_ising   #(.N(N),
 	          .NUM_LUTS(NUM_LUTS),
@@ -94,6 +103,7 @@ module ising_axi    #(parameter N = 3,
                   .NUM_WEIGHTS(NUM_WEIGHTS)) u_top_ising (
                   .clk(clk),
                   .ising_rstn(ising_rstn),
+		  .start(start),
                   .counter_max(counter_max),
                   .counter_cutoff(counter_cutoff),
                   .phase(phase_read_val),
