@@ -164,7 +164,14 @@ module maxcut_tb();
 	@(posedge clk);
 	#1
 	if(rdata[2:0] != 3'b001) $display("!!! AB FAILED !!!"); //A
+
+	/////////////////////////////////////////////////////////////
+	// Program initial spins
 	
+	@(posedge clk);
+	waddr = `WEIGHT_ADDR_BASE + (32'd1 << 2) + (32'd1 << 13); //B
+	wdata = 32'h00000001;                                     //+1
+
 	/////////////////////////////////////////////////////////////
 	// Ach, Hans, run!
 	
@@ -173,25 +180,26 @@ module maxcut_tb();
 	
 	@(posedge clk);
 	waddr = `START_ADDR;
-	wdata = 32'h00000001;
+	wdata = 32'h00000010;
+	
+	@(posedge clk);
+	wready = 1'b0;
 
 	#10000;
 	
 	@(posedge clk);
-	waddr = `START_ADDR;
-	wdata = 32'h00000000;
+	wready = 1'b1;
 	
 	// Test resetting
 	@(posedge clk);
 	waddr = `START_ADDR;
-	wdata = 32'h00000001;
-
-	#50000;
+	wdata = 32'h00000100;
 	
 	@(posedge clk);
-	waddr = `START_ADDR;
-	wdata = 32'h00000000;
-	
+	wready = 1'b0;
+
+	#50000;
+
 	/////////////////////////////////////////////////////////////
 	// Read phases
 	

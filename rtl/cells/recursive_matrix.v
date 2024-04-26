@@ -15,6 +15,7 @@ module recursive_matrix #(parameter N = 8,
 	             parameter DIAGONAL   = 1,
 	             parameter TRANSPOSE  = 0) (
 		     input  wire ising_rstn,
+		     input  wire start,
 
 		     input  wire [N-1:0] inputs_ver,
 		     input  wire [N-1:0] inputs_hor,
@@ -73,6 +74,7 @@ module recursive_matrix #(parameter N = 8,
 			   .DIAGONAL(DIAGONAL),
 		           .TRANSPOSE(TRANSPOSE))
 			top_left(.ising_rstn (ising_rstn),
+				 .start      (start),
 				 .inputs_ver (osc_ver_in [N-1:(N/2)]),
 				 .inputs_hor (inputs_hor [N-1:(N/2)]),
 				 .outputs_ver(outputs_ver[N-1:(N/2)]),
@@ -96,6 +98,7 @@ module recursive_matrix #(parameter N = 8,
 			   .DIAGONAL(0),
 		           .TRANSPOSE(TRANSPOSE))
 		       top_right(.ising_rstn (ising_rstn),
+				 .start      (start),
 				 .inputs_ver (osc_ver_in [(N/2)-1:0]),
 				 .inputs_hor (osc_hor_in [N-1:(N/2)]),
 				 .outputs_ver(outputs_ver[(N/2)-1:0]),
@@ -119,6 +122,7 @@ module recursive_matrix #(parameter N = 8,
 			   .DIAGONAL(DIAGONAL),
 		           .TRANSPOSE(TRANSPOSE))
 		       bot_right(.ising_rstn (ising_rstn),
+				 .start      (start),
 				 .inputs_ver (inputs_ver [(N/2)-1:0]),
 				 .inputs_hor (osc_hor_in [(N/2)-1:0]),
 				 .outputs_ver(osc_ver_out[(N/2)-1:0]),
@@ -142,6 +146,7 @@ module recursive_matrix #(parameter N = 8,
 			   .DIAGONAL(0),
 		           .TRANSPOSE(DIAGONAL | TRANSPOSE))
 		        bot_left(.ising_rstn (ising_rstn),
+				 .start      (start),
 				 .inputs_ver (inputs_ver [N-1:(N/2)]),
 				 .inputs_hor (inputs_hor [(N/2)-1:0]),
 				 .outputs_ver(osc_ver_out[N-1:(N/2)]),
@@ -178,10 +183,18 @@ module recursive_matrix #(parameter N = 8,
         assign bot_row = inputs_hor;
 	shorted_cell #(.NUM_LUTS(NUM_LUTS))
 	             i_short(.ising_rstn(ising_rstn),
+		             .start     (start),
 			     .sin (inputs_ver ),
 		             .din (inputs_hor ),
 			     .sout(outputs_ver),
-			     .dout(outputs_hor));
+			     .dout(outputs_hor),
+
+		             .clk            (clk),
+                             .axi_rstn       (axi_rstn),
+                             .wready         (wready),
+                             .wr_addr_match  (wr_match),
+                             .wdata          (wdata),
+                             .rdata          (rdata));
 
     // Otherwise, it's a coupled cell.
     end else begin : coupled_cell
