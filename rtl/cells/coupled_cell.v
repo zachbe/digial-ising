@@ -82,9 +82,16 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
     
     // Select correct option based on mismatch status
     wire dout_pre;
-    assign dout_pre = mismatch_d ? d_mi : d_ma; 
-    wire  dout_int;
-    buffer #(NUM_LUTS) bufNs(.in(dout_pre), .out(dout_int));
+    assign dout_pre = mismatch_d ? d_mi : d_ma;
+
+    // Output should never switch away from input, just to
+    // input.
+    wire dout_no_glitch;
+    assign dout_no_glitch = (dout == din) ? dout : dout_pre;
+
+    // Buffer to keep feedback loop stable.
+    wire dout_int;
+    buffer #(NUM_LUTS) bufNs(.in(dout_no_glitch), .out(dout_int));
 
     // Array of generic delay buffers
     // TODO: Potentially replace this with an asynchronous counter and
@@ -97,7 +104,7 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
     // Latches here trick the tool into not thinking there's
     // a combinational loop in the design.
     `ifdef SIM
-        assign dout = ising_rstn ? dout_int : 1'b0;
+        assign dout = ising_rstn ? dout_int : din;
     `else
         (* dont_touch = "yes" *) LDCE d_latch (.Q(dout), .D(dout_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0)); 
     `endif
