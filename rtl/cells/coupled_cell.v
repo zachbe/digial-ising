@@ -61,25 +61,7 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
     // oscillator when it does match the source oscillator, and speed it up
     // otherwise.
    
-    // This sampling removes the "combinational loop" and also prevents
-    // ringing. 
-    `ifdef SIM
-    reg sout_samp_pos;
-    reg sout_samp_neg;
-    always @(posedge din) begin
-        sout_samp_pos <= sout;
-    end
-    always @(negedge din) begin
-        sout_samp_neg <= sout;
-    end
-    `else 
-    wire sout_samp_pos;
-    wire sout_samp_neg;
-        (* dont_touch = "yes" *) FDPE d_neg_latch (.Q(sout_samp_neg), .D(sout), .C(~din), .CE(1'b1), .PRE(1'b0)); 
-        (* dont_touch = "yes" *) FDPE d_pos_latch (.Q(sout_samp_pos), .D(sout), .C( din), .CE(1'b1), .PRE(1'b0)); 
-    `endif
-
-    assign mismatch_d  = din ? ~sout_samp_pos : sout_samp_neg;
+    assign mismatch_d  = sout ^ din;
     
     wire [NUM_WEIGHTS-1:0] d_buf;
   
@@ -99,9 +81,10 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
     assign d_mi = |d_sel_mi;
     
     // Select correct option based on mismatch status
-    wire dout_int;
-    assign dout_int = mismatch_d ? d_mi : d_ma; 
-    assign dout = dout_int;
+    wire dout_pre;
+    assign dout_pre = mismatch_d ? d_mi : d_ma; 
+    wire  dout_int;
+    buffer #(NUM_LUTS) bufNs(.in(dout_pre), .out(dout_int));
 
     // Array of generic delay buffers
     // TODO: Potentially replace this with an asynchronous counter and
@@ -111,4 +94,11 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
         buffer #(NUM_LUTS) bufid(.in(d_buf[i-1]), .out(d_buf[i]));
     end endgenerate
 
+    // Latches here trick the tool into not thinking there's
+    // a combinational loop in the design.
+    `ifdef SIM
+        assign dout = ising_rstn ? dout_int : 1'b0;
+    `else
+        (* dont_touch = "yes" *) LDCE d_latch (.Q(dout), .D(dout_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0)); 
+    `endif
 endmodule
