@@ -103,9 +103,13 @@ module coupled_cell #(parameter NUM_WEIGHTS = 15,
 
     // Latches here trick the tool into not thinking there's
     // a combinational loop in the design.
+    wire dout_rst;
     `ifdef SIM
-        assign dout = ising_rstn ? dout_int : din;
+        assign dout_rst = ising_rstn ? dout_int : 1'b0;
     `else
-        (* dont_touch = "yes" *) LDCE d_latch (.Q(dout), .D(dout_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0)); 
+        (* dont_touch = "yes" *) LDCE d_latch (.Q(dout_rst), .D(dout_int), .G(ising_rstn), .GE(1'b1), .CLR(1'b0)); 
     `endif
+
+    // Allow spin programming
+    assign dout = ising_rstn ? dout_rst : din;
 endmodule
