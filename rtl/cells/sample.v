@@ -50,6 +50,8 @@ module sample #(parameter N = 3)(
     end
     wire rst_start = rstn & ~rstn_old;
 
+    // TODO: replace the averager with a FIFO of raw samples a user can read
+    // out
     genvar i;
     generate for (i = 0; i < N ; i = i+1) begin
 	assign overflow [i] = (phase_counters[i] >= counter_max);
